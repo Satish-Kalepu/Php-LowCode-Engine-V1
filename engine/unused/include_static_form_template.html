@@ -1,0 +1,39 @@
+<div>
+	<div v-if="vshow" >
+		<div v-if="params__['heading']['enable']" >
+			<p><b>{{ params__['heading']['title'] }}</b></p>
+			<p>{{ params__['heading']['des'] }}</p>
+		</div>
+		<table class="table table-bordered table-sm w-auto"><tbody>
+			<tr v-for="fd,fi in params__['fields']" >
+				<td align="right">{{ fd['name'] }}</td>
+				<td class="has-validation">
+					<input v-if="fd['type']=='text'||fd['type']=='number'" v-bind:id="fd['var']" v-bind:class="{'form-control form-control-sm':true,'is-valid':(vposte[fd['var']]==true),'is-invalid':(vposte[fd['var']]==false)}" v-bind:type="fd['type']" v-bind:placeholder="fd['name']" v-model="vpost[fd['var']]" v-on:keyup="validate__(fi)" >
+					<textarea v-else-if="fd['type']=='textarea'" v-bind:id="fd['var']"  v-bind:class="{'form-control form-control-sm':true,'is-valid':(vposte[fd['var']]==true),'is-invalid':(vposte[fd['var']]==false)}" v-bind:placeholder="fd['name']" v-model="vpost[fd['var']]" v-on:keyup="validate__(fi)" ></textarea>
+					<select v-else-if="fd['type']=='select'" v-bind:id="fd['var']" v-model="vpost[fd['var']]"  v-bind:class="{'form-select form-select-sm':true,'is-valid':(vposte[fd['var']]==true),'is-invalid':(vposte[fd['var']]==false)}"  v-on:change="validate__(fi)">
+						<option v-for="opd,opi in fd['data']" v-bind:value="opd['p']" >{{ opd['v'] }}</option>
+					</select>
+					<template v-else-if="fd['type']=='checks'">
+						<div v-for="opd,opi in fd['data']" ><label><input type="checkbox" v-model="vpost[fd['var']]" v-bind:value="opd['p']" v-on:click="validate__(fi)" > {{ opd['v'] }}</label></div>
+					</template>
+					<template v-else-if="fd['type']=='option'">
+						<div v-for="opd,opi in fd['data']" ><label><input type="radio" v-bind:name="fd['var']" v-model="vpost[fd['var']]" v-bind:value="opd['p']"  v-on:click="validate__(fi)" > {{ opd['v'] }}</label></div>
+					</template>
+					<div v-else-if="fd['type']=='check'"><input type="checkbox" v-model="vpost[fd['var']]" value="true" ></div>
+					<div v-if="vposte[fd['var']]==true" class="valid-feedback" style="display:block;">{{fd['msg1']}}</div>
+					<div v-if="vposte[fd['var']]==false" class="invalid-feedback" style="display:block;">{{fd['msg2']}}</div>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<input v-if="show_submit__" class="btn btn-primary btn-sm" type="button" value="SUBMIT" v-on:click="submit__">
+					<div v-if="submit_err__" class="text-danger">{{ submit_err__ }}</div>
+					<div v-if="submit_msg__" class="text-success" v-html="submit_msg__" ></div>
+				</td>
+			</tr>
+		</tbody>
+		</table>
+	</div>
+	<!-- <pre>{{ params__ }}</pre> -->
+</div>

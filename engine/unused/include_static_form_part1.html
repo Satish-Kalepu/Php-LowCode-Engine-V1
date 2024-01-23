@@ -1,0 +1,267 @@
+<script>
+document['backendless_static_forms'][ static_form_rand_id ]['app'] = new Vue({
+	"el"	: "#"+static_form_rand_id,
+	"data"	: {
+		"params__": {},
+		"vshow": false,
+		"vpost": {},
+		"vposte": {},
+		"submit_err__": "",
+		"submit_msg__": "",
+		"show_submit__": true,
+		"log__": {"request":{},"response":{}, "status":""}
+	},
+	mounted:function(){
+		this.params__ = document['backendless_static_forms'][ static_form_rand_id ]['params'];
+		var v = {};
+		var ve = {};
+		for(var i=0;i<this.params__['fields'].length;i++){
+			if( this.params__['fields'][i]['type'] == "checks" ){
+				v[this.params__['fields'][i]['var']] = [];
+			}else if( this.params__['fields'][i]['type'] == "check" ){
+				v[this.params__['fields'][i]['var']] = false;
+			}else{
+				v[this.params__['fields'][i]['var']] = "";
+			}
+			ve[this.params__['fields'][i]['var']] = -1;
+		}
+		this.vpost = v;
+		this.vposte = ve;
+		setTimeout(function(v){v.vshow=true;},100,this);
+	},
+	methods:{
+		echo__: function(v__){if( typeof(v__) == "object" ){console.log( JSON.stringify(v__,null,4) );}else{console.log( v__ );}},
+
+		submit_click: function(){
+			var f = this.params__['fields'];
+			for(var i=0;i<f.length;i++){
+				///f[i].
+			}
+		},
+		validate__: function(fi){
+			setTimeout(function(v,fi){v.validate2__(fi);},100,this,fi);
+		},
+		validate2__: function(fi){
+			var v = false;
+			var fd = this.params__['fields'][fi];
+			if( fd['type'] == "select" ){
+				for(var i=0;i<fd['data'].length;i++){
+					console.log( fd['data'][i]['p'] + ": " + this.vpost[ fd['var'] ] );
+					if( fd['data'][i]['p'] == this.vpost[ fd['var'] ] ){
+						v = true;
+						break;
+					}
+				}
+			}else if( fd['type'] == "option" ){
+				if( ( fd['m'] == false && this.vpost[ fd['var'] ].trim() == "" ) || ( fd['m'] == true && this.vpost[ fd['var'] ].trim() != "" ) ){
+					v =  true;
+				}
+			}else if( fd['type'] == "checks" ){
+				//this.echo__(fd);
+				//this.echo__(this.vpost[ fd['var'] ]);
+				if( ( fd['m'] == false ) ){
+					v = true;
+				}else if( ( fd['m'] == true ) ){
+					if( Number(fd['length']['min']) > 0 && Number(this.vpost[ fd['var'] ].length) < Number(fd['length']['min']) ){
+						v = false;
+					}else if( Number(fd['length']['max']) > 0 && Number(this.vpost[ fd['var'] ].length) > Number(fd['length']['max']) ){
+						v = false;
+					}else if( Number(this.vpost[ fd['var'] ].length) > 0 ){
+						v = true;
+					}else{
+						v = false;
+					}
+				}
+				if( v==false ){
+					var m = "";
+					if( Number(fd['length']['min']) > 0 ){
+						m = m+"Minimum " + fd['length']['min'] + " ticks ";
+					}
+					if( Number(fd['length']['max']) > 0 ){
+						m = m+"Maximum " + fd['length']['max'] + " ticks";
+					}
+					if( m == "" && fd['m'] ){
+						m = "At least one tick required!";
+					}
+					this.$set( this.params__['fields'][fi],'msg2',m);
+				}
+			}else if( fd['type'] == "text" || fd['type'] == "number"  || fd['type'] == "textarea" ){
+				if( fd['val'] == "text" ){
+					var ptr = /^[A-Za-z]+$/;
+				}else if( fd['val'] == "text2" ){
+					var ptr = /^[A-Za-z0-9\-\_\ \.]+$/;
+				}else if( fd['val'] == "text3" ){
+					var ptr = /^[A-Za-z0-9\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\[\]\{\}\;\'\:\"\,\.\/\<\>\?\ \t]+$/;
+				}else if( fd['val'] == "address" ){
+					var ptr = /^[A-Za-z0-9\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\[\]\{\}\;\'\:\"\,\.\/\<\>\?\ \t\r\n]+$/;
+				}else if( fd['val'] == "number" ){
+					var ptr = /^[0-9\.]+$/;
+				}else if( fd['val'] == "number2" ){
+					var ptr = /^[0-9\+\-\,\.\ ]+$/;
+				}else if( fd['val'] == "regexp" ){
+					try{
+						var ptr = new RegExp(fd['regexp']);
+					}catch(e){
+						var ptr = "xxxxxxxx";
+					}
+				}
+				if( fd['m'] == false && this.vpost[ fd['var'] ].trim() == "" ){
+					v = true;
+				}else if( this.vpost[ fd['var'] ].trim().match(ptr) == null ){
+					v = false;
+				}else if( fd['length']['min'] > 0 && this.vpost[ fd['var'] ].length < fd['length']['min'] ){
+					v = false;
+				}else if( fd['length']['max'] > 0 && this.vpost[ fd['var'] ].length > fd['length']['max'] ){
+					v = false;
+				}else{
+					v = true;
+				}
+			}
+			this.$set( this.vposte, fd['var'], v );
+		},
+		submit__: function(){
+			var er = false;
+			for(var fi=0;fi<this.params__['fields'].length;fi++){
+				this.validate2__(fi);
+				if( this.vposte[ this.params__['fields'][fi]['var']+'' ] == false ){
+					er = true;
+				}
+			}
+			if( er ){
+				this.submit_err__ = "Information required!";
+				return 0;
+			}
+			this.show_submit__ = false;
+			this.submit_err__ = "";
+			this.submit_msg__ = "Connecting...";
+			this.call_api__();
+		},
+		call_api__: function(){
+			var v = {
+				method: this.params__['api']['request']['method'],
+				url: this.params__['api']['request']['url']['url'],
+				headers: {},
+			};
+			if( this.params__['api']['request']['method'] == 'POST' ){
+				if( this.params__['api']['request']['content-type'] == "application/x-www-form-urlencoded" ){
+					v['headers']['content-type'] = this.params__['api']['request']['content-type'];
+					var vpost = "";
+					for(var i=0;i<this.params__['fields'].length;i++){
+						var val = this.vpost[this.params__['fields'][i]['var']];
+						if( this.params__['fields'][i]['type'] == "checks" ){
+							for(var ci=0;ci<val.length;ci++ ){
+								var val_ = val[ci];
+								vpost = vpost + this.params__['fields'][i]['var'] + "[]=" + encodeURIComponent(val_) + "&";
+							}
+						}else{
+							vpost = vpost + this.params__['fields'][i]['var'] + "=" + encodeURIComponent(val) + "&";
+						}
+					}
+					v['data'] = vpost;
+				}else if( this.params__['api']['request']['content-type'] == "application/json" ){
+					v['data'] = this.vpost;
+				}
+			}
+			this.$set( this.log__, 'request', v );
+			axios(v).then(response=>{
+				this.submit_msg__ = "";
+				//this.echo__(response);
+				this.$set( this.log__, 'response', response );
+				this.$set( this.log__, 'status', "success" );
+				var rs= this.params__['api']['response'];
+				for(var i=0;i<rs.length;i++){
+					if( rs[i]['status'] == response.status ){
+						var ct = "";
+						if('content-type' in response.headers ){
+							ct = response.headers['content-type'].split(";")[0].trim();
+						}
+						if('Content-Type' in response.headers ){
+							ct = response.headers['Content-Type'].split(";")[0].trim();
+						}
+						if( rs[i]['content-type'].toLowerCase() == ct.toLowerCase() ){
+							if( rs[i]['expect'] ){
+								var bd = "";
+								if( rs[i]['content-type'].toLowerCase().match("/json/i") ){
+									bd = JSON.stringify(response.data);
+								}else{
+									bd = response.data;
+								}
+								var ptr = new RegExp( rs[i]['expect'], "i");
+								console.log( ptr );
+								if( bd.match(ptr) ){
+									this.response_confirm(i);
+									return 0;
+								}else{
+									console.log("Expected body incorrect. Request partially successfull!");
+									console.log( bd );
+									this.submit_err__ = "";
+									this.submit_msg__ = "Request partially <b>successfull!</b>!<BR>Expected text in response body did not match!";
+									this.show_submit__ = false;
+									return 0;
+								}
+							}else{
+								this.response_confirm(i);
+								return 0;
+							}
+						}
+					}
+				}
+				this.submit_msg__ = "";
+				this.submit_err__ = 'Incorrect or unexpected response recieved from server!';
+				this.show_submit__ = true;
+			}).catch(error=>{
+				try{
+				this.$set( this.log__, 'response', error.response );
+				this.$set( this.log__, 'status', "fail" );
+				console.log( "error" );
+				console.log( error );
+				console.log( error.response.status );
+				console.log( error.response.data );
+				console.log( error.response.headers );
+				var rs= this.params__['api']['response'];
+				for(var i=0;i<rs.length;i++){
+					if( rs[i]['status'] == error.response.status ){
+						if( rs[i]['expect'] ){
+							var ptr = new RegExp( rs[i]['expect'], "i");
+							if( error.response.data.match(ptr) ){
+								this.response_confirm(i);
+								return 0;
+							}
+						}else{
+							this.response_confirm(i);
+							return 0;
+						}
+					}
+				}
+				this.submit_msg__ = "";
+				this.submit_err__ = error+'';
+				this.show_submit__ = true;
+				}catch(e){console.log(e);}
+			});
+		},
+		response_confirm: function(rsi){
+			console.log( "response confirmed: " + rsi );
+			if( this.params__['api']['response'][rsi]['consider'] == "success" ){
+				this.submit_err__ = "";
+				this.submit_msg__ = this.params__['api']['response'][rsi]['message'];
+				this.show_submit__ = false;
+			}else{
+				this.submit_err__ = this.params__['api']['response'][rsi]['message'];
+				this.submit_msg__ = "";
+				this.show_submit__ = false;
+			}
+			this.log_backend__();
+		},
+		log_backend__: function(){
+			axios.post("/log.php",{
+				"app_id": document['backendless_static_forms'][ static_form_rand_id+'' ]['app_id'],
+				"page_id": document['backendless_static_forms'][ static_form_rand_id+'' ]['page_id'],
+				"user_id": document['backendless_static_forms'][ static_form_rand_id+'' ]['user_id'],
+				"url": document.location.href+'',
+				"data":this.log__
+			});
+		}
+	},
+	template: document['backendless_static_forms'][ static_form_rand_id ]['template']+'',
+});
+</script>

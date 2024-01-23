@@ -1,0 +1,249 @@
+<script>
+document['backendless_dynamic_forms'][ dynamic_form_rand_id ]['app'] = new Vue({
+	"el"	: "#"+dynamic_form_rand_id,
+	"data"	: {
+		"params__"	: {},
+		"vshow__"	: false,
+		"vpost__"	: {},
+		"vposte__"	: {},
+		"fields__"	: {},
+		"submit_err__"	: "",
+		"submit_msg__"	: "",
+		"page_id__"	: "",
+		"stage_id__"	: "",
+		"version_id__"	: "",
+		"show_submit__"	: true,
+		"log__"		: {"request":{},"response":{}, "status":""}
+	},
+	template: document['backendless_dynamic_forms'][ dynamic_form_rand_id ]['template']+'',
+	mounted:function(){
+		this.init__();
+	},
+	methods:{
+		echo__: function(v__){
+			if( typeof(v__) == "object" ){
+				console.log( JSON.stringify(v__,null,4) );
+			}else{
+				console.log( v__ );
+			}
+		},
+		init__: function(){
+			this.params__ 	= document['backendless_dynamic_forms'][ dynamic_form_rand_id ]['params'];
+			this.page_id__ 	= document['backendless_dynamic_forms'][ dynamic_form_rand_id+'' ]['page_id'];
+			this.stage_id__ = document['backendless_dynamic_forms'][ dynamic_form_rand_id+'' ]['stage_id'];
+			this.version_id__ = document['backendless_dynamic_forms'][ dynamic_form_rand_id+'' ]['version_id'];
+			var v = {};
+			var ve = {};
+			var f_l = {};
+			for(var i=0;i<this.params__['fields'].length;i++){
+				if( (this.params__['outputs'].indexOf( this.params__['fields'][i] )) != -1  ){
+					var vfield__ = this.params__['fields'][i];
+					if( this.params__['f_l'][vfield__]['type'] == "checks" ){
+						v[ vfield__ ] = [];
+					}else if( this.params__['f_l'][vfield__]['type'] == "check" ){
+						v[ vfield__ ] = false;
+					}else{
+						v[ vfield__ ] = "";
+					}
+					ve[ vfield__ ] = -1;
+					f_l[ vfield__ ] = this.params__['f_l'][vfield__];
+				}
+			}
+			this.fields__ = f_l;
+			this.vpost__ = v;
+			this.vposte__ = ve;
+			setTimeout(function(v){v.vshow__=true;},100,this);
+		},
+		submit__: function(){
+			var er = false;
+			for(var fi=0;fi< this.fields__.length;fi++){
+				this.validate2__(fi);
+				if( this.vposte__[ this.fields__[fi]['key']+'' ] == false ){
+					er = true;
+				}
+			}
+			if( er ){
+				this.submit_err__ = "Information required!";
+				return 0;
+			}
+			var verror__ = false;
+			for(var i=0;i<this.params__['fields'].length;i++){
+				if( (this.params__['outputs'].indexOf( this.params__['fields'][i] )) != -1  ){
+					var vfield__ = this.params__['fields'][i];
+					if( this.params__['f_l'][vfield__]["m"] && this.vpost__[ vfield__ ] == false){
+						this.$set( this.vposte__, vfield__, false );
+						verror__ = true;
+					}
+				}
+			}
+			if( verror__ == false  ){
+				this.show_submit__ = false;
+				this.submit_err__ = "";
+				this.submit_msg__ = "Connecting...";
+				this.call_api__();
+			}else{
+				this.show_submit__ = true;
+				this.submit_err__ = "";
+				this.submit_msg__ = "";
+			
+			}
+		},
+		validate__: function(fi){
+			setTimeout(function(v,fi){v.validate2__(fi);},100,this,fi);
+		},
+		validate2__: function(fi){
+			var v = false;
+			var fd = this.fields__[fi];
+			if( fd['type'] == "select" ){
+				for(var i=0;i<fd['data'].length;i++){
+					if( fd['data'][i]['p'] == this.vpost__[ fd['key'] ] ){
+						v = true;
+						break;
+					}
+				}
+			}else if( fd['type'] == "option" ){
+				if( ( fd['m'] == false && this.vpost__[ fd['key'] ].trim() == "" ) || ( fd['m'] == true && this.vpost__[ fd['key'] ].trim() != "" ) ){
+					v =  true;
+				}
+			}else if( fd['type'] == "checks" ){
+				if( ( fd['m'] == false ) ){
+					v = true;
+				}else if( ( fd['m'] == true ) ){
+					if( Number(fd['length']['min']) > 0 && Number(this.vpost__[ fd['key'] ].length) < Number(fd['length']['min']) ){
+						v = false;
+					}else if( Number(fd['length']['max']) > 0 && Number(this.vpost__[ fd['key'] ].length) > Number(fd['length']['max']) ){
+						v = false;
+					}else if( Number(this.vpost__[ fd['key'] ].length) > 0 ){
+						v = true;
+					}else{
+						v = false;
+					}
+				}
+				if( v==false ){
+					var m = "";
+					if( Number(fd['length']['min']) > 0 ){
+						m = m+"Minimum " + fd['length']['min'] + " ticks ";
+					}
+					if( Number(fd['length']['max']) > 0 ){
+						m = m+"Maximum " + fd['length']['max'] + " ticks";
+					}
+					if( m == "" && fd['m'] ){
+						m = "At least one tick required!";
+					}
+					this.$set( this.fields__[fi],'msg2',m);
+				}
+			}else if( fd['type'] == "text" || fd['type'] == "number"  || fd['type'] == "textarea" ){
+				if( fd['val'] == "text" ){
+					var ptr = /^[A-Za-z]+$/;
+				}else if( fd['val'] == "text2" ){
+					var ptr = /^[A-Za-z0-9\-\_\ \.]+$/;
+				}else if( fd['val'] == "text3" ){
+					var ptr = /^[A-Za-z0-9\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\[\]\{\}\;\'\:\"\,\.\/\<\>\?\ \t]+$/;
+				}else if( fd['val'] == "address" ){
+					var ptr = /^[A-Za-z0-9\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\[\]\{\}\;\'\:\"\,\.\/\<\>\?\ \t\r\n]+$/;
+				}else if( fd['val'] == "number" ){
+					var ptr = /^[0-9\.]+$/;
+				}else if( fd['val'] == "number2" ){
+					var ptr = /^[0-9\+\-\,\.\ ]+$/;
+				}else if( fd['val'] == "regexp" ){
+					try{
+						var ptr = new RegExp(fd['regexp']);
+					}catch(e){
+						var ptr = "xxxxxxxx";
+					}
+				}
+				if( fd['m'] == false && this.vpost__[ fd['key'] ].trim() == "" ){
+					v = true;
+				}else if( this.vpost__[ fd['key'] ].trim().match(ptr) == null ){
+					v = false;
+				}else if( fd['length']['min'] > 0 && this.vpost__[ fd['key'] ].length < fd['length']['min'] ){
+					v = false;
+				}else if( fd['length']['max'] > 0 && this.vpost__[ fd['key'] ].length > fd['length']['max'] ){
+					v = false;
+				}else{
+					v = true;
+				}
+			}
+			this.$set( this.vposte__, fd['key'], v );
+		},
+		create_record_template__: function( vdata__,vp__  ){
+			var v__ = {};
+			for( var i__ in vdata__ ){
+				if( vp__ == "" || vp__ == undefined ){
+					var vname__ =  vdata__[i__]["key"] ;
+				}else{
+					var vname__ = vp__ + i__ ;
+				}
+				if( vdata__[i__]['type'] == "dict" ){
+					this.$set( v__ ,vdata__[i__]["key"], {}  );
+					var v2__ = this.create_record_template__( vdata__[i__]['sub'][0], vp__ + i__ + "->" );
+					for( var i2__ in v2__ ){
+						this.$set( v__[ vdata__[i__]["key"] ] ,i2__, v2__[i2__] );
+					}
+				}else if( vdata__[i__]['type'] == "list" ){
+					this.$set( v__ ,vdata__[i__]["key"], {}  );
+					var v2__ = this.create_record_template__( vdata__[i__]['sub'][0], vp__ + i__ + "->[]->" );
+					for( var i2__ in v2__ ){
+						this.$set( v__[ vdata__[i__]["key"] ] ,i2__, v2__[i2__] );
+					}
+				}else{
+					if( this.vposte__[ vname__ ] ){
+						if( this.vpost__[ vname__ ] != "" && this.vpost__[ vname__ ] != undefined ){
+							this.$set( v__ ,vdata__[i__]["key"], this.vpost__[ vname__ ] );
+						}
+					}	
+				}
+			}
+			return v__;
+		}, 
+		make_query_string__: function( vdata__ ){
+			var q = [];
+			for(var i in vdata__ ){
+				q.push( i+ "=" + encodeURIComponent( vdata__[i] ) );
+			}
+			return q.join("&");
+		},
+		call_api__: function(){
+			var new_record = this.create_record_template__( JSON.parse(JSON.stringify(this.params__['fields_list'])),'' );
+			if( this.params__["page_type"] == "api" ){
+				var vurl__ 	= this.params__["api_url"] + "?" + this.make_query_string__( new_record );
+				var vmethod__ 	= this.params__["input_method"];
+				var vdata__	= new_record;
+			}else{
+				var vmethod__ 	= "post";
+				var vurl__	= "/__dynamic_form";
+				var vdata__	= {"action": "call_api","record": new_record,"page_id": this.page_id__,"stage_id" : this.stage_id__,"version_id": this.version_id__};
+			}
+			var v = {method : vmethod__,url : vurl__,headers : {"content-type": "application/json"},data : vdata__ };
+			axios(v).then(response=>{
+				this.submit_msg__ = "";
+				if( response.data.hasOwnProperty("status") ){  
+					vdata = response.data;
+					if( vdata["status"] == "success" ){
+						this.submit_msg__ = "Succesfully submited";
+						this.submit_err__ = '';
+						this.show_submit__ = false;
+					}else{         	
+						this.submit_msg__ = "";
+						this.submit_err__ = vdata["error"];
+						this.show_submit__ = true;        
+					}
+					
+				}else{
+					this.submit_msg__ = "";
+					this.submit_err__ = 'Incorrect or unexpected response recieved from server!';
+					this.show_submit__ = true;     
+				}
+			}).catch(error=>{
+				try{
+					this.submit_msg__ = "";
+					this.submit_err__ = error+'';
+					this.show_submit__ = true;
+				}catch(e){
+					console.log(e);
+				}
+			});
+		},
+	}
+});
+</script>

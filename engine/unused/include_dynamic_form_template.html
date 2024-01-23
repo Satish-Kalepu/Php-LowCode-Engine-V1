@@ -1,0 +1,51 @@
+<div>
+	<div v-if="vshow__" class="card">
+		<div class="card-header bg-white text-center " v-if="params__['heading']['enable']" >
+			<h3>{{ params__['heading']['title'] }}</h3>
+			<p>{{ params__['heading']['des'] }}</p>
+		</div>
+		<div class="card-body">
+			<table class="table  table-sm table-borderless">
+				<tbody>
+					<tr v-for="fd,fi in fields__ " >
+						<td>{{ fd['label'] }}</td>
+						<td class="has-validation">
+							<input v-if=" fd['type']=='text' || fd['type']=='number' " v-bind:id="'dn_'+fd['key']" v-bind:class="{'form-control form-control-sm':true,'is-valid':(vposte__[fd['key']]==true),'is-invalid':(vposte__[fd['key']]==false)}" v-bind:type="fd['type']" v-bind:placeholder="'Please Enter '+fd['label']" v-model="vpost__[fd['key']]" v-on:keyup="validate__(fi)" >
+							<textarea v-else-if="fd['type']=='textarea'" v-bind:id="fd['key']"  v-bind:class="{'form-control form-control-sm':true,'is-valid':(vposte__[fd['key']]==true),'is-invalid':(vposte__[fd['key']]==false)}" v-bind:placeholder="'Please Enter '+fd['name']" v-model="vpost__[fd['key']]" v-on:keyup="validate__(fi)" ></textarea>
+							<select v-else-if=" fd['type']=='select' " v-bind:id="fd['key']" v-model="vpost__[fd['key']]"  v-bind:class="{'form-select form-select-sm':true,'is-valid':(vposte__[fd['key']]==true),'is-invalid':(vposte__[fd['key']]==false)}"  v-on:change="validate__(fi)">
+								<option v-for="opd,opi in fd['data']" v-bind:value="opd['p']" >{{ opd['v'] }}</option>
+							</select>
+							<template v-else-if="fd['type']=='checks'">
+								<div v-for="opd,opi in fd['data']" >
+									<label>
+										<input type="checkbox" v-model="vpost__[fd['key']]" v-bind:value="opd['p']" v-on:click="validate__(fi)" > 
+										{{ opd['v'] }}
+									</label>
+								</div>
+							</template>
+							<template v-else-if="fd['type']=='option'">
+								<div v-for="opd,opi in fd['data']" >
+									<label>
+										<input type="radio" v-bind:name="fd['key']" v-model="vpost__[fd['key']]" v-bind:value="opd['p']"  v-on:click="validate__(fi)" > 
+										{{ opd['v'] }}
+									</label>
+								</div>
+							</template>
+							<div v-else-if="fd['type']=='check'"><input type="checkbox" v-model="vpost__[fd['key']]" value="true" ></div>
+							<div v-if="vposte__[ fd['key'] ]==true" class="valid-feedback" style="display:block;">{{fd['msg1']}}</div>
+							<div v-if="vposte__[ fd['key'] ]==false" class="invalid-feedback" style="display:block;">{{fd['msg2']}}</div>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<input v-if="show_submit__" class="btn btn-primary btn-sm" type="button" value="SUBMIT" v-on:click="submit__">
+							<div v-if="submit_err__" class="text-danger">{{ submit_err__ }}</div>
+							<div v-if="submit_msg__" class="text-success" v-html="submit_msg__" ></div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
