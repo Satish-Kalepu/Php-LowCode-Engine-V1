@@ -1,4 +1,5 @@
 <?php
+//Ok
 
 $apps_folder = "apps";
 
