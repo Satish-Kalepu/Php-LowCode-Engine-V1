@@ -1,6 +1,6 @@
 <?php
 
-	$use_encrypted=false;
+	$use_encrypted=true;
 
 	require( "../../config_global_engine.php" );
 	require( "common_functions.php" );
