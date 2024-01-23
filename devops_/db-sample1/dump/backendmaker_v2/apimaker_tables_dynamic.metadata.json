@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"78f50e9bb4de4a1f8f1ac5ca02432184","collectionName":"apimaker_tables_dynamic","type":"collection"}

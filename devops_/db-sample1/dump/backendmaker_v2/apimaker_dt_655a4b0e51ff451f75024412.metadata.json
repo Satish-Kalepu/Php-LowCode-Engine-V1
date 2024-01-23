@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"ssss":{"$numberInt":"1"}},"name":"ssss","sparse":true}],"uuid":"1c4378442eb045a99b57c5469f28157d","collectionName":"apimaker_dt_655a4b0e51ff451f75024412","type":"collection"}
