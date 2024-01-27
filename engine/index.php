@@ -15,13 +15,18 @@
 		}
 	}
 	if( !$config_global_apimaker_engine ){
-		if( file_exists("__install.php") ){
-			$v = pathinfo($_SERVER['PHP_SELF'] );
-			if( !isset($v['dirname']) ){
-				echo "No configuration found!<BR>Please follow installation procedures";exit;
+		if( $_SERVER['REQUEST_METHOD'] == "GET" ){
+			if( file_exists("__install.php") ){
+				$v = pathinfo($_SERVER['PHP_SELF'] );
+				if( !isset($v['dirname']) ){
+					echo "No configuration found!<BR>Please follow installation procedures";exit;
+				}
+				header("Location: " . $v['dirname']. "/__install.php");
+				exit;
 			}
-			header("Location: " . $v['dirname']. "/__install.php");
-			exit;
+		}else{
+			http_response_code(500);
+			echo json_encode(["status"=>"fail","error"=>"APP not configured"]);exit;
 		}
 	}
 

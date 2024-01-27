@@ -14,7 +14,7 @@ foreach( $config_paths as $j ){if( file_exists($j) ){
 		require($j);break;
 }}
 if( !$config_global_apimaker ){
-	if( $_SERVER['HTTP_METHOD'] == "GET" ){
+	if( $_SERVER['REQUEST_METHOD'] == "GET" ){
 		if( file_exists("__install.php") ){
 			$v = pathinfo($_SERVER['PHP_SELF'] );
 			if( !isset($v['dirname']) ){

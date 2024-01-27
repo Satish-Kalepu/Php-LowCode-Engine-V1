@@ -51,7 +51,7 @@ if( $locc > 1 ){
 }
 
 if( $file_loc == "" ){
-	$file_loc = "../config_global_apimaker.php";
+	$file_loc = "../../config_global_apimaker.php";
 }
 
 function get_timezones(){
@@ -459,7 +459,10 @@ if( $_POST['action'] == "saveconf" ){
 
 	$res = $mongodb_con->list_collections();
 	if( $res['status'] != "success" ){
-		echo json_encode($res);exit;
+		echo json_encode([
+			"status"=>"fail",
+			"error"=>"Database Setup: " . $res['error']
+		]);exit;
 	}
 	$cols = $res['data'];
 	$collections_cnt = 0;
