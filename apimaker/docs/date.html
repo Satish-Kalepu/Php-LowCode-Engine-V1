@@ -1,0 +1,573 @@
+
+<table class="doctable table" style="border-collapse: collapse; border-spacing: 0px; margin: 0px 0px 1.5rem; width:auto; border-color: var(--background-text-color); color: rgb(51, 51, 51); font-family: &quot;Fira Sans&quot;, &quot;Source Sans Pro&quot;, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;; font-size: 16px; background-color: rgb(242, 242, 242);">
+<caption>
+<span style="text-rendering: optimizelegibility; font-weight: bolder;">The following characters are recognized in the&nbsp;
+<code class="parameter" style="font-size: 1rem;   color: rgb(51, 102, 153); cursor: pointer;">format</code>
+&nbsp;parameter string</span>
+</caption>
+<thead>
+<tr style="border-width: 1px; border-style: solid; border-top-color: rgb(196, 201, 223); border-right-color: rgb(196, 201, 223); border-bottom-color: var(--medium-blue-color); border-left-color: rgb(196, 201, 223); border-image: initial; color: var(--content-text-color);">
+<th style="text-align: left; padding: 0.25rem 0.5rem; background-color: rgb(196, 201, 223);">
+<code class="parameter" style="font-size: 1rem;   color: rgb(51, 102, 153); cursor: pointer;">format</code>
+&nbsp;character</th>
+<th style="text-align: left; padding: 0.25rem 0.5rem; background-color: rgb(196, 201, 223);">Description</th>
+<th style="text-align: left; padding: 0.25rem 0.5rem; background-color: rgb(196, 201, 223);">Example returned values</th>
+</tr>
+</thead>
+<tbody class="tbody">
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem; text-align: center;">
+<em style="text-rendering: optimizelegibility;">Day</em>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">---</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">---</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">d</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Day of the month, 2 digits with leading zeros</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">01</code>
+&nbsp;to&nbsp;
+<code class="literal">31</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">D</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">A textual representation of a day, three letters</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">Mon</code>
+&nbsp;through&nbsp;
+<code class="literal">Sun</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">j</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Day of the month without leading zeros</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">1</code>
+&nbsp;to&nbsp;
+<code class="literal">31</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">l</code>
+&nbsp;(lowercase 'L')</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">A full textual representation of the day of the week</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">Sunday</code>
+&nbsp;through&nbsp;
+<code class="literal">Saturday</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">N</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">ISO 8601 numeric representation of the day of the week</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">1</code>
+&nbsp;(for Monday) through&nbsp;
+<code class="literal">7</code>
+&nbsp;(for Sunday)</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">S</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">English ordinal suffix for the day of the month, 2 characters</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">st</code>
+,&nbsp;
+<code class="literal">nd</code>
+,&nbsp;
+<code class="literal">rd</code>
+&nbsp;or&nbsp;
+<code class="literal">th</code>
+. Works well with&nbsp;
+<code class="literal">j</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">w</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Numeric representation of the day of the week</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">0</code>
+&nbsp;(for Sunday) through&nbsp;
+<code class="literal">6</code>
+&nbsp;(for Saturday)</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">z</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">The day of the year (starting from 0)</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">0</code>
+&nbsp;through&nbsp;
+<code class="literal">365</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem; text-align: center;">
+<em style="text-rendering: optimizelegibility;">Week</em>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">---</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">---</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">W</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">ISO 8601 week number of year, weeks starting on Monday</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Example:&nbsp;
+<code class="literal">42</code>
+&nbsp;(the 42nd week in the year)</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem; text-align: center;">
+<em style="text-rendering: optimizelegibility;">Month</em>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">---</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">---</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">F</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">A full textual representation of a month, such as January or March</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">January</code>
+&nbsp;through&nbsp;
+<code class="literal">December</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">m</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Numeric representation of a month, with leading zeros</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">01</code>
+&nbsp;through&nbsp;
+<code class="literal">12</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">M</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">A short textual representation of a month, three letters</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">Jan</code>
+&nbsp;through&nbsp;
+<code class="literal">Dec</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">n</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Numeric representation of a month, without leading zeros</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">1</code>
+&nbsp;through&nbsp;
+<code class="literal">12</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">t</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Number of days in the given month</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">28</code>
+&nbsp;through&nbsp;
+<code class="literal">31</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem; text-align: center;">
+<em style="text-rendering: optimizelegibility;">Year</em>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">---</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">---</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">L</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Whether it's a leap year</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">1</code>
+&nbsp;if it is a leap year,&nbsp;
+<code class="literal">0</code>
+&nbsp;otherwise.</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">o</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">ISO 8601 week-numbering year. This has the same value as&nbsp;
+<code class="literal">Y</code>
+, except that if the ISO week number (
+<code class="literal">W</code>
+) belongs to the previous or next year, that year is used instead.</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Examples:&nbsp;
+<code class="literal">1999</code>
+&nbsp;or&nbsp;
+<code class="literal">2003</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">X</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">An expanded full numeric representation of a year, at least 4 digits, with&nbsp;
+<code class="literal">-</code>
+&nbsp;for years BCE, and&nbsp;
+<code class="literal">+</code>
+&nbsp;for years CE.</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Examples:&nbsp;
+<code class="literal">-0055</code>
+,&nbsp;
+<code class="literal">+0787</code>
+,&nbsp;
+<code class="literal">+1999</code>
+,&nbsp;
+<code class="literal">+10191</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">x</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">An expanded full numeric representation if requried, or a standard full numeral representation if possible (like&nbsp;
+<code class="literal">Y</code>
+). At least four digits. Years BCE are prefixed with a&nbsp;
+<code class="literal">-</code>
+. Years beyond (and including)&nbsp;
+<code class="literal">10000</code>
+&nbsp;are prefixed by a&nbsp;
+<code class="literal">+</code>
+.</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Examples:&nbsp;
+<code class="literal">-0055</code>
+,&nbsp;
+<code class="literal">0787</code>
+,&nbsp;
+<code class="literal">1999</code>
+,&nbsp;
+<code class="literal">+10191</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">Y</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">A full numeric representation of a year, at least 4 digits, with&nbsp;
+<code class="literal">-</code>
+&nbsp;for years BCE.</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Examples:&nbsp;
+<code class="literal">-0055</code>
+,&nbsp;
+<code class="literal">0787</code>
+,&nbsp;
+<code class="literal">1999</code>
+,&nbsp;
+<code class="literal">2003</code>
+,&nbsp;
+<code class="literal">10191</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">y</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">A two digit representation of a year</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Examples:&nbsp;
+<code class="literal">99</code>
+&nbsp;or&nbsp;
+<code class="literal">03</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem; text-align: center;">
+<em style="text-rendering: optimizelegibility;">Time</em>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">---</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">---</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">a</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Lowercase Ante meridiem and Post meridiem</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">am</code>
+&nbsp;or&nbsp;
+<code class="literal">pm</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">A</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Uppercase Ante meridiem and Post meridiem</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">AM</code>
+&nbsp;or&nbsp;
+<code class="literal">PM</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">B</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Swatch Internet time</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">000</code>
+&nbsp;through&nbsp;
+<code class="literal">999</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">g</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">12-hour format of an hour without leading zeros</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">1</code>
+&nbsp;through&nbsp;
+<code class="literal">12</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">G</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">24-hour format of an hour without leading zeros</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">0</code>
+&nbsp;through&nbsp;
+<code class="literal">23</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">h</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">12-hour format of an hour with leading zeros</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">01</code>
+&nbsp;through&nbsp;
+<code class="literal">12</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">H</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">24-hour format of an hour with leading zeros</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">00</code>
+&nbsp;through&nbsp;
+<code class="literal">23</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">i</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Minutes with leading zeros</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">00</code>
+&nbsp;to&nbsp;
+<code class="literal">59</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">s</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Seconds with leading zeros</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">00</code>
+&nbsp;through&nbsp;
+<code class="literal">59</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">u</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Microseconds. Note that&nbsp;
+<span class="function">
+<a href="https://www.php.net/manual/en/function.date.php" class="function" style="border-bottom: 1px solid; text-decoration-line: none; color: rgb(51, 102, 153);">date()</a>
+</span>
+&nbsp;will always generate&nbsp;
+<code class="literal">000000</code>
+&nbsp;since it takes an&nbsp;
+<span class="type">int</span>
+&nbsp;parameter, whereas&nbsp;
+<span class="methodname">
+<span style="text-rendering: optimizelegibility; color: rgb(51, 102, 153);">DateTime::format()</span>
+</span>
+&nbsp;does support microseconds if&nbsp;
+<span class="classname">
+<a href="https://www.php.net/manual/en/class.datetime.php" class="classname" style="border-bottom: 1px solid; text-decoration-line: none; color: rgb(51, 102, 153);">DateTime</a>
+</span>
+&nbsp;was created with microseconds.</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Example:&nbsp;
+<code class="literal">654321</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">v</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Milliseconds. Same note applies as for&nbsp;
+<code class="literal">u</code>
+.</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Example:&nbsp;
+<code class="literal">654</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem; text-align: center;">
+<em style="text-rendering: optimizelegibility;">Timezone</em>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">---</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">---</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">e</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Timezone identifier</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Examples:&nbsp;
+<code class="literal">UTC</code>
+,&nbsp;
+<code class="literal">GMT</code>
+,&nbsp;
+<code class="literal">Atlantic/Azores</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">I</code>
+&nbsp;(capital i)</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Whether or not the date is in daylight saving time</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">1</code>
+&nbsp;if Daylight Saving Time,&nbsp;
+<code class="literal">0</code>
+&nbsp;otherwise.</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">O</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Difference to Greenwich time (GMT) without colon between hours and minutes</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Example:&nbsp;
+<code class="literal">+0200</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">P</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Difference to Greenwich time (GMT) with colon between hours and minutes</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Example:&nbsp;
+<code class="literal">+02:00</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">p</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">The same as&nbsp;
+<code class="literal">P</code>
+, but returns&nbsp;
+<code class="literal">Z</code>
+&nbsp;instead of&nbsp;
+<code class="literal">+00:00</code>
+&nbsp;(available as of PHP 8.0.0)</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Examples:&nbsp;
+<code class="literal">Z</code>
+&nbsp;or&nbsp;
+<code class="literal">+02:00</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">T</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Timezone abbreviation, if known; otherwise the GMT offset.</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Examples:&nbsp;
+<code class="literal">EST</code>
+,&nbsp;
+<code class="literal">MDT</code>
+,&nbsp;
+<code class="literal">+05</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">Z</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Timezone offset in seconds. The offset for timezones west of UTC is always negative, and for those east of UTC is always positive.</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">-43200</code>
+&nbsp;through&nbsp;
+<code class="literal">50400</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem; text-align: center;">
+<em style="text-rendering: optimizelegibility;">Full Date/Time</em>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">---</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">---</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">c</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">ISO 8601 date</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">2004-02-12T15:19:21+00:00</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">r</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<a href="http://www.faqs.org/rfcs/rfc2822" class="link external" style="border-bottom: 1px solid; text-decoration-line: none; color: rgb(51, 102, 153);">»&nbsp;RFC 2822</a>
+/
+<a href="http://www.faqs.org/rfcs/rfc5322" class="link external" style="border-bottom: 1px solid; text-decoration-line: none; color: rgb(51, 102, 153);">»&nbsp;RFC 5322</a>
+&nbsp;formatted date</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Example:&nbsp;
+<code class="literal">Thu, 21 Dec 2000 16:01:07 +0200</code>
+</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">
+<code class="literal">U</code>
+</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">Seconds since the Unix Epoch (January 1 1970 00:00:00 GMT)</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">See also&nbsp;
+<span class="function">
+<a href="https://www.php.net/manual/en/function.time.php" class="function" style="border-bottom: 1px solid; text-decoration-line: none; color: rgb(51, 102, 153);">time()</a>
+</span>
+</td>
+</tr>
+</tbody>
+</table>

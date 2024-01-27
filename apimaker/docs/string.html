@@ -1,0 +1,104 @@
+
+<h3 class="title" style=" margin: 0px 0px 1.5rem; overflow: hidden; text-rendering: optimizelegibility; font-size: 1.25rem; font-weight: 500; color: var(--dark-magenta-color); position: relative; clear: both; font-family: &quot;Fira Sans&quot;, &quot;Source Sans Pro&quot;, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;; background-color: rgb(242, 242, 242);">Changelog</h3>
+<br>
+<table class="doctable informaltable" style="border-collapse: collapse; border-spacing: 0px; margin: 0px 0px 1.5rem; width: auto; border-color: var(--background-text-color); color: rgb(51, 51, 51); font-family: &quot;Fira Sans&quot;, &quot;Source Sans Pro&quot;, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;; font-size: 16px; background-color: rgb(242, 242, 242);">
+<thead>
+<tr style="border-width: 1px; border-style: solid; border-top-color: rgb(196, 201, 223); border-right-color: rgb(196, 201, 223); border-bottom-color: var(--medium-blue-color); border-left-color: rgb(196, 201, 223); border-image: initial; color: var(--content-text-color);">
+<th style="text-align: left; padding: 0.25rem 0.5rem; background-color: rgb(196, 201, 223);">Version</th>
+<th style="text-align: left; padding: 0.25rem 0.5rem; background-color: rgb(196, 201, 223);">Description</th>
+</tr>
+</thead>
+<tbody class="tbody">
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(255, 255, 255);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">8.2.0</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">The format characters&nbsp;
+<code class="literal" style="font: normal 0.875rem/1.5rem var(--font-family-mono); ">X</code>
+&nbsp;and&nbsp;
+<code class="literal" style="font: normal 0.875rem/1.5rem var(--font-family-mono); ">x</code>
+&nbsp;have been added.</td>
+</tr>
+<tr style="border-width: 1px; border-style: solid; border-color: var(--background-text-color); border-image: initial; background-color: rgb(230, 230, 230);">
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">8.0.0</td>
+<td style="vertical-align: top; padding: 0.25rem 0.5rem;">The format character&nbsp;
+<code class="literal" style="font: normal 0.875rem/1.5rem var(--font-family-mono); ">p</code>
+&nbsp;has been added.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<div>
+<div class="example" id="example-2097" style="scroll-margin-top: 3.25rem; margin: 1.5rem 0px; color: rgb(51, 51, 51); font-family: &quot;Fira Sans&quot;, &quot;Source Sans Pro&quot;, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;; font-size: 16px; background-color: rgb(242, 242, 242);">
+<p style="margin: 0px 0px 1.5rem;">
+<span style="text-rendering: optimizelegibility;">Example #2 More examples</span>
+</p>
+<div class="example-contents" style="margin-bottom: 1.5rem;">
+<div class="phpcode" style="background-color: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px inset; border-radius: 0px 0px 2px 2px; padding: 0.75rem; ">
+<code style="font: normal 0.875rem/1.5rem var(--font-family-mono);  display: block; white-space-collapse: preserve;">
+<span style="color: rgb(0, 0, 0);">
+<span style="color: rgb(0, 0, 187);">&lt;?php
+<br></span>
+<span style="color: rgb(255, 128, 0);">// set the default timezone to use.
+<br></span>
+<span style="color: rgb(0, 0, 187);">date_default_timezone_set</span>
+<span style="color: rgb(0, 119, 0);">(</span>
+<span style="color: rgb(221, 0, 0);">'UTC'</span>
+<span style="color: rgb(0, 119, 0);">);
+<br>
+<br></span>
+<span style="color: rgb(255, 128, 0);">// now
+<br></span>
+<span style="color: rgb(0, 0, 187);">$date </span>
+<span style="color: rgb(0, 119, 0);">= new </span>
+<span style="color: rgb(0, 0, 187);">DateTimeImmutable</span>
+<span style="color: rgb(0, 119, 0);">();
+<br>
+<br></span>
+<span style="color: rgb(255, 128, 0);">// Prints something like: Wednesday
+<br></span>
+<span style="color: rgb(0, 119, 0);">echo </span>
+<span style="color: rgb(0, 0, 187);">$date</span>
+<span style="color: rgb(0, 119, 0);">-&gt;</span>
+<span style="color: rgb(0, 0, 187);">format</span>
+<span style="color: rgb(0, 119, 0);">(</span>
+<span style="color: rgb(221, 0, 0);">'l'</span>
+<span style="color: rgb(0, 119, 0);">), </span>
+<span style="color: rgb(221, 0, 0);">"\n"</span>
+<span style="color: rgb(0, 119, 0);">;
+<br>
+<br></span>
+<span style="color: rgb(255, 128, 0);">// Prints something like: Wednesday 19th of October 2022 08:40:48 AM
+<br></span>
+<span style="color: rgb(0, 119, 0);">echo </span>
+<span style="color: rgb(0, 0, 187);">$date</span>
+<span style="color: rgb(0, 119, 0);">-&gt;</span>
+<span style="color: rgb(0, 0, 187);">format</span>
+<span style="color: rgb(0, 119, 0);">(</span>
+<span style="color: rgb(221, 0, 0);">'l jS \o\f F Y h:i:s A'</span>
+<span style="color: rgb(0, 119, 0);">), </span>
+<span style="color: rgb(221, 0, 0);">"\n"</span>
+<span style="color: rgb(0, 119, 0);">;
+<br>
+<br></span>
+<span style="color: rgb(255, 128, 0);">/* use the constants in the format parameter */
+<br>// prints something like: Wed, 19 Oct 2022 08:40:48 +0000
+<br></span>
+<span style="color: rgb(0, 119, 0);">echo </span>
+<span style="color: rgb(0, 0, 187);">$date</span>
+<span style="color: rgb(0, 119, 0);">-&gt;</span>
+<span style="color: rgb(0, 0, 187);">format</span>
+<span style="color: rgb(0, 119, 0);">(</span>
+<span style="color: rgb(0, 0, 187);">DateTimeInterface</span>
+<span style="color: rgb(0, 119, 0);">::</span>
+<span style="color: rgb(0, 0, 187);">RFC2822</span>
+<span style="color: rgb(0, 119, 0);">), </span>
+<span style="color: rgb(221, 0, 0);">"\n"</span>
+<span style="color: rgb(0, 119, 0);">;
+<br></span>
+<span style="color: rgb(0, 0, 187);">?&gt;</span>
+</span>
+</code>
+</div>
+</div>
+</div>
+<p class="para" style="margin: 0px 0px 1.5rem; color: rgb(51, 51, 51); font-family: &quot;Fira Sans&quot;, &quot;Source Sans Pro&quot;, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;; font-size: 16px; background-color: rgb(242, 242, 242);">You can prevent a recognized character in the format string from being expanded by escaping it with a preceding backslash. If the character with a backslash is already a special sequence, you may need to also escape the backslash.</p>
+</div>

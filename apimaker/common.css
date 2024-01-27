@@ -1,0 +1,22 @@
+.leftbar{
+	position: fixed;
+	left:0px; top:40px; height:calc( 100% - 40px ); width:150px; 
+	background-color: white; border-right: 1px solid #999;
+}
+.leftbar_page{
+	width:200px; 
+}
+
+.left_btn{
+	margin:5px; padding: 0px 5px; color:black; 
+	cursor: pointer;
+	border:1px solid #ccc;
+	border-right:5px solid #ccc; 
+	display: block;
+	text-decoration: none;
+}
+.left_btn_active{border:1px solid #333; border-right:5px solid #333;}
+.left_btn:hover{ border:1px solid #333; border-right:5px solid #333; text-decoration:none; color:black; font-weight:500; }
+.tick_btn{ padding:2px 5px; color:blue;cursor:pointer; display:inline-block; outline:none; font-weight:bold;  }
+pre.id{padding:0px;margin:0px;display: inline;}
+[contenteditable]{ outline:none; }

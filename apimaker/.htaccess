@@ -1,0 +1,34 @@
+##22517 = E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT
+##22519 = E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT
+##4181 = E_PARSE|E_COMPILE_ERROR|E_RECOVERABLE_ERROR|E_ERROR|E_CORE_ERROR
+
+php_value date.timezone 'Asia/Kolkata'
+php_value short_open_tag 1
+php_value post_max_size 20M
+php_value upload_max_filesize 50M
+php_value memory_limit 128M
+php_value max_execution_time 20	
+php_value max_input_time 20
+php_value error_reporting 4181
+php_value display_startup_errors On
+php_value display_errors On
+php_value html_errors Off
+php_value log_errors On
+
+RewriteEngine On
+
+RewriteRule (\%252e\%252e\%) - [R=401,L]
+
+RewriteCond %{REQUEST_METHOD} !^(POST|GET|OPTIONS)
+RewriteRule .* - [F,L]
+
+RewriteCond %{REQUEST_URI} \.php$ [NC]
+RewriteRule !^(index\.php|__install\.php)$ - [F,NC,L]
+##RewriteRule \.php$ - [F,L]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php?request_url=$1 [QSA,L]
+
+AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json application/x-javascript
+
