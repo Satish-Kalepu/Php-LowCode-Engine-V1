@@ -3,11 +3,11 @@
 $apps_folder = "apps_";
 
 ob_start();
-require("page_apps_apis_api_css.php"); 
-require("page_apps_apis_api_html.php"); 
-require("page_apps_apis_api_script.php");
+require("page_apps_apis_api_css_2.php"); 
+require("page_apps_apis_api_html_2.php"); 
+require("page_apps_apis_api_script_2.php");
 $d = ob_get_clean();
-if( 1==1 ){
+if( 1==15 ){
 	$d = preg_replace("/http\:\/\//", "httphttphttp", $d);
 	$d = preg_replace("/https\:\/\//", "httpshttpshttps", $d);
 	$d = preg_replace("/\/\/(.*?)[\r\n]/", "", $d);
@@ -17,5 +17,5 @@ if( 1==1 ){
 	$d = preg_replace("/httpshttpshttps/", "https://", $d);
 	$d = preg_replace("/httphttphttp/", "http://", $d);
 	$d = preg_replace("/elseif/", "else if", $d);
-	echo $d;
 }
+echo $d;
