@@ -1,8 +1,30 @@
 <?php
 
 	$use_encrypted=true;
+	$current_dir = __DIR__;
+	$config_paths = [
+		"./config_global_engine.php",
+		"../config_global_engine.php",
+		"../../config_global_engine.php",
+		"/var/tmp/config_global_engine.php"
+	];
+	foreach( $config_paths as $j ){
+		if( file_exists($j) ){
+			require($j);
+			break;
+		}
+	}
+	if( !$config_global_apimaker_engine ){
+		if( file_exists("__install.php") ){
+			$v = pathinfo($_SERVER['PHP_SELF'] );
+			if( !isset($v['dirname']) ){
+				echo "No configuration found!<BR>Please follow installation procedures";exit;
+			}
+			header("Location: " . $v['dirname']. "/__install.php");
+			exit;
+		}
+	}
 
-	require( "../../config_global_engine.php" );
 	require( "common_functions.php" );
 	require( "control_config.php" );
 
@@ -140,7 +162,7 @@
 		$app_var = "config_app_" . $app_id;
 		if( file_exists($app_cache_path) ){
 			// echo "cache found";
-			// echo "<pre>";echo file_get_contents($app_cache_path);exit;
+			//echo "<pre>";echo file_get_contents($app_cache_path);exit;
 			$cache_refresh = false;
 			require_once( $app_cache_path );
 			$config_app = ${$app_var};

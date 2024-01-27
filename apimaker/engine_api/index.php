@@ -1,6 +1,19 @@
 <?php
 
-require("../../../config_global_apimaker.php");
+$locs = [
+	"../config_global_apimaker.php",
+	"../../config_global_apimaker.php",
+	"../../../config_global_apimaker.php",
+	"../../../../config_global_apimaker.php",
+	"/var/tmp/config_global_apimaker.php",
+];
+foreach( $locs as $i=>$j ){
+	if( file_exists($j) ){
+		require($j);
+		break;
+	}
+}
+
 require("../common_functions.php");
 require("../control_config.php");
 

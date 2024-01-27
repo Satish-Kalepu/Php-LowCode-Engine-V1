@@ -170,7 +170,8 @@ if( $config_param4 && $main_api ){
 			"updated"=>date("Y-m-d H:i:s"),
 			"active"=>true,
 		]);
-		update_app_last_change_date( $config_param1 );
+		update_app_pages( $config_param1 );
+		//update_app_last_change_date( $config_param1 );
 		json_response($res);
 		exit;
 	}

@@ -1323,7 +1323,7 @@ var app = s2_ssssssssss({
 				}
 			});
 		},
-		s2_ttttinaelc(v){
+		s2_ttttinaelc( v ){
 			v = v.replace( /\-/g, "DASH" );
 			v = v.replace( /\_/g, "UDASH" );
 			v = v.replace( /\W/g, "-" );

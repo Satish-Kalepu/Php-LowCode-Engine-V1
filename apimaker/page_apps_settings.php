@@ -83,10 +83,10 @@
 						<div style="padding:10px;">
 							<div v-for="dd,di in settings['keys']" style=" border:1px solid #ccc; margin-bottom:10px; " >
 								<div class="p-2" style="border-bottom:1px solid #ccc;" >
-									<input type="button" class="btn btn-outline-light btn-sm" style="float:right;" value="X" v-on:click="delete_key(di)" >
+									<input type="button" class="btn btn-outline-dark btn-sm" style="float:right;" value="X" v-on:click="delete_key(di)" >
 									<div>Key: {{ dd['key'] }}</div>
 								</div>
-								<div class="p-2">
+								<div class="p-3">
 								<div>IPs Allowed</div>
 								<div v-for="ip,ipi in dd['ips_allowed']" style="display: flex; column-gap: 5px; padding:5px;" >
 									<input type="text" class="form-control form-control-sm w-auto" v-model="ip['ip']" >

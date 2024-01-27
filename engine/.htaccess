@@ -1,23 +1,12 @@
-Header Set "Access-Control-Allow-Origin" "*"
-Header Set "Access-Control-Allow-Methods" "*"
-Header Set "Access-Control-Allow-Headers" "*"
-
-php_value date.timezone 'Asia/Kolkata'
-php_value short_open_tag 1
-php_value post_max_size 20M
-php_value upload_max_filesize 50M
-php_value memory_limit 128M
-php_value max_execution_time 20	
-php_value max_input_time 20
-php_value error_reporting 30709
-php_value session.cookie_lifetime 86400
-php_value session.gc_maxlifetime 86400
-
-php_value session.cookie_httponly 1
 php_value display_startup_errors On
 php_value display_errors On
 php_value html_errors Off
 php_value log_errors On
+php_value short_open_tag 1
+php_value post_max_size 20M
+php_value upload_max_filesize 50M
+php_value max_input_time 20
+php_value error_reporting 373
 
 #<FilesMatch "\.php$">
     #Order allow,deny

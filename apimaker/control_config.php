@@ -12,6 +12,8 @@ if( !$config_global_apimaker['config_mongo_host'] || !$config_global_apimaker['c
 	exit;
 }
 
+//print_pre($config_global_apimaker);
+
 require( preg_replace("/[\/]{2,5}/", "/", $_SERVER['DOCUMENT_ROOT'] . "/" . $config_global_apimaker_path . "/classes/class_mongodb.php") );
 if( $config_global_apimaker['config_mongo_username'] ){
 	$mongodb_con = new mongodb_connection( 
@@ -27,7 +29,9 @@ if( $config_global_apimaker['config_mongo_username'] ){
 	$mongodb_con = new mongodb_connection( $config_global_apimaker['config_mongo_host'], $config_global_apimaker['config_mongo_port'], $config_global_apimaker['config_mongo_db'] );
 }
 
+//echo $config_global_apimaker['config_mongo_prefix'] . "_settings";exit;
 $res = $mongodb_con->find($config_global_apimaker['config_mongo_prefix'] . "_settings");
+//print_pre( $res );exit;
 $config_settings = [];
 $goto_install = false;
 if( $res['status'] == "success" ){
@@ -40,7 +44,7 @@ if( $res['status'] == "success" ){
 		}
 	}
 }else{
-	http_response(500,"Incorrect prefix settings: " . $res['error'] );
+	http_response(500,"Incorrect settings: " . $res['error'] );
 }
 $res = $mongodb_con->find($config_global_apimaker['config_mongo_prefix'] . "_vars");
 $config_vars = [];

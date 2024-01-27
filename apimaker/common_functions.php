@@ -203,7 +203,14 @@
 	function pass_hash( $pass ){
 		global $config_global_apimaker;
 		$ctx = hash_init('whirlpool');
+		//echo $config_global_apimaker['config_password_salt'];exit;
 		hash_update( $ctx, $config_global_apimaker['config_password_salt'] );
+		hash_update( $ctx, $pass );
+		return hash_final( $ctx );
+	}
+	function pass_hash2( $pass, $salt ){
+		$ctx = hash_init('whirlpool');
+		hash_update( $ctx, $salt );
 		hash_update( $ctx, $pass );
 		return hash_final( $ctx );
 	}

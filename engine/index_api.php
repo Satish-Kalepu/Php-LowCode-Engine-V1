@@ -119,15 +119,12 @@
 			"type"=>"page",
 			"api_key"=>"",
 			"app"=>[
-				"_id"=>$app['_id'],
-				"app"=>$app['name']
+				"_id"=>$app['_id'], "app"=>$app['name']
 			],
 			"domain"=>($_SERVER['HTTP_REALHOST']?$_SERVER['HTTP_REALHOST']:$_SERVER['HTTP_HOST']),
 			"url"=>$_SERVER['REQUEST_URI'],
 			"page"=>[
-				"_id"=>$api_version['_id'],
-				"version"=>$_GET['version_id'],
-				"reg_url"=>$api_version['reg_url'],
+				"_id"=>$api_version['_id'], "version"=>$_GET['version_id'], "reg_url"=>$api_version['reg_url'],
 			],
 			"ctype"=>$ctype,
 			"inputs"=>$test,

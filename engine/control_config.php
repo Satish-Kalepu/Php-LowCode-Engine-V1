@@ -26,25 +26,29 @@ if( file_exists($engine_cache_path) ){
 	$cache_refresh = true;
 }
 
+$url = $config_global_apimaker_engine["config_apimaker_endpoint_url"] . "config_api/get";
+
 if( $cache_refresh ){
 	$resp = get_request([
-		"url"=>$config_global_apimaker_engine["config_apimaker_endpoint_url"] . "/engine_api/configs/get",
+		"url"=>$url,
 		"headers"=>[
 			'APPID: ' . $config_global_apimaker_engine["config_engine_app_id"],
-	    	'APPKEY: ' . $config_global_apimaker_engine["config_engine_key"]
+			'APPKEY: ' . $config_global_apimaker_engine["config_engine_key"],
+			'DOMAIN: ' . $_SERVER['HTTP_HOST'],
+			'User-Agent: Php LowCode Engine Processor',
 		],
 	]);
 	//echo "<pre>";print_r( $resp );exit;
 	if( $resp['status'] == "error" ){
-		http_response_code(500); echo "Cache Engine: " . $resp['error'];	exit;
+		http_response_code(500); echo $url . "<BR>Connect Error: " . $resp['error'];	exit;
 	}else if( $resp['status'] != 200 ){
-		http_response_code(500); echo "Cache Engine: http: " .$resp['status'];	exit;
+		http_response_code(500); echo $url . "<BR>Connect Error: http: " .$resp['status'];	exit;
 	}else if( $resp['body'] == "" ){
-		http_response_code(500); echo "Cache Engine: empty response";	exit;
+		http_response_code(500); echo $url . "<BR>Connect Error: empty response";	exit;
 	}
 	$res = json_decode($resp['body'],true);
 	if( json_last_error() ){
-		http_response_code(500); echo "Cache Engine: json parse error "; exit;
+		http_response_code(500); echo "Cache Engine: json parse error "; echo $resp['body']; exit;
 	}
 	//print_r( $res );
 	if( $res['status'] != "success" ){

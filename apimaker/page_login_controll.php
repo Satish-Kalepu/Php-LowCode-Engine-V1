@@ -31,6 +31,7 @@ if( $_POST['action'] == "login" ){
 	$pass = str_replace("<?=session_id() ?>", "", $pass);
 	try{
 		$pass = base64_decode($pass);
+		//echo pass_hash($pass);exit;
 		$res = $mongodb_con->find_one( $config_global_apimaker['config_mongo_prefix'] . "_users", [
 			"username"=>$usr,
 			"password"=>pass_hash($pass)
@@ -51,7 +52,7 @@ if( $_POST['action'] == "login" ){
 		}else{
 			json_response([
 				"status"=>"fail",
-				"error"=>"incorrect"
+				"error"=>"Username or Password Incorrect"
 			]);
 		}
 	}catch(Exception $ex){

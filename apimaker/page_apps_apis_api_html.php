@@ -33,12 +33,10 @@
 		</div>
 	</div>
 
-
 	<div v-if="s2_ddeen_evas" class="save_block_a" >
 		<input spellcheck="false" type="button" class="btn btn-primary btn-sm" v-on:click="s2_aatad_evas" value="SAVE">
 	</div>
 	<div v-if="s2_gnivas_wohs" class="save_block_b">{{ s2_egassem_evas }}</div>  
-
 
 
 	<div class="modal fade" id="edit_modal" tabindex="-1" >
