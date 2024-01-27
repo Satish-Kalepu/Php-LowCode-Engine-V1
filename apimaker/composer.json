@@ -1,6 +1,0 @@
-{
-    "require": {
-        "aws/aws-sdk-php": "^3.269",
-        "mongodb/mongodb": "^1.8"
-    }
-}
