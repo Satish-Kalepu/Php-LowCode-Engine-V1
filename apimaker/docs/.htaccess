@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteRule (\%252e\%252e\%) - [R=401,L]
+
+RewriteCond %{REQUEST_METHOD} !^(POST|GET|OPTIONS)
+RewriteRule .* - [F,L]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule (.*) - [F,L]
