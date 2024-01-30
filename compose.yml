@@ -1,0 +1,26 @@
+version: "3"
+
+networks:
+  apimaker:
+
+services:
+  web:
+    container_name: apimaker_app
+    image: apimaker
+    ports:
+      - "8888:80"
+    networks:
+      - apimaker
+
+  mongo:
+    container_name: MongoDB
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: stage
+      MONGO_INITDB_ROOT_PASSWORD: stage 
+    ports:
+      - "27015:27017"
+    networks:
+      - apimaker
+
+

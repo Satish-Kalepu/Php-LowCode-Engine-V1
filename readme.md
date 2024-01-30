@@ -5,3 +5,7 @@ docker build -t apimaker .
 #To launch the container
 
 docker run -d -p 8888:80 --name=apimaker_app apimaker
+
+#Using docker compose llaunch the containers 
+
+docker compose up
