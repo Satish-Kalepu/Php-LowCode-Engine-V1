@@ -69,16 +69,16 @@ $variables = [
 
 	"config_enable_apps"			=> ["t"=>"boolean", "v"=>"true", "label"=>"Enable Multiple Apps"],
 
-	"config_apimaker_domain" 			=> ["t"=>"text", "v"=>$_SERVER['HTTP_HOST'], "label"=>"Engine Maker Domain", "preg"=>"/^[a-z][a-z0-9\ \.]{3,100}$/i"],
+	"config_apimaker_domain" 			=> ["t"=>"text", "v"=>$_SERVER['HTTP_HOST'], "label"=>"Engine Maker Domain", "preg"=>"/^[a-z][a-z0-9\ \.\:]{3,100}$/i"],
 	"config_apimaker_path" 			=> ["t"=>"text", "v"=>$config_apimaker_path, "label"=>"Engine Maker Path", "preg"=>"/^\/[a-z][a-z0-9\/\.\-\_]{2,25}$/i", "help"=> "https://www.example.com/(engine_maker_path). How do you want to access this application.<BR>Do not change the current folder."],
 
 	// default database settings:
 	"config_mongo_host" 			=> ["t"=>"text", "v"=>"localhost", "label"=>"DB Host","preg"=>"/^[a-z0-9\.\-\_]{3,100}$/i"],
-	"config_mongo_port" 			=> ["t"=>"number", "v"=>12717, "label"=>"DB Port","preg"=>"/^[0-9]{2,5}$/"],
+	"config_mongo_port" 			=> ["t"=>"number", "v"=>27017, "label"=>"DB Port","preg"=>"/^[0-9]{2,5}$/"],
 	"config_mongo_db" 				=> ["t"=>"text", "v"=>"phpengine", "label"=>"DB Name","preg"=>"/^[a-z0-9\-\_]{3,100}$/i"],
-	"config_mongo_username" 		=> ["t"=>"text", "v"=>"test", "label"=>"DB Username","preg"=>"/^[a-z0-9\.\-\_]{3,100}$/i"],
-	"config_mongo_password" 		=> ["t"=>"text", "v"=>"test", "encrypted"=>true, "label"=>"DB Password"],
-	"config_mongo_authSource" 		=> ["t"=>"text", "v"=>"admin", "label"=>"DB AuthSource","preg"=>"/^[a-z0-9\.\-\_]{3,100}$/i"], // default is always admin
+	"config_mongo_username" 		=> ["t"=>"text", "v"=>"test", "label"=>"DB Username","preg"=>"/^[a-z0-9\.\-\_]{3,100}$/i", "m"=>false],
+	"config_mongo_password" 		=> ["t"=>"text", "v"=>"test", "encrypted"=>true, "label"=>"DB Password", "m"=>false],
+	"config_mongo_authSource" 		=> ["t"=>"text", "v"=>"admin", "label"=>"DB AuthSource","preg"=>"/^[a-z0-9\.\-\_]{3,100}$/i", "m"=>false], // default is always admin
 	"config_mongo_tls" 				=> ["t"=>"boolean", "v"=>false, "label"=>"Use TLS"],  // used for aws services or mongodb atlas
 	"config_mongo_prefix"			=> ["t"=>"text", "v"=>"phpengine", "label"=>"DB Collection Prefix","preg"=>"/^[a-z][a-z0-9]{3,20}$/", "help"=>"Must be lowercase"], // [a-z] no special chars
 
@@ -137,7 +137,7 @@ $variables = [
 	"config_password_salt" 			=> ["t"=>"text", "v"=>"12345QEWER", "label"=>"Password Hash Salt", "help"=>"This salt is same for global login passowrd hashing. and user accounts<BR>Be very cautious when changing salt. it can make entire application irrecoverable."],
 
 	"config_login_username" 		=> ["t"=>"text", "v"=>"admin", "label"=>"Login Username", "preg"=>"/^[a-z][a-z0-9\-\.\_\@]{3,20}$/i", "help"=>"Username for initial user account" ], // initial username on first run
-	"config_login_password" 		=> ["t"=>"password", "v"=>"", "hashed"=>true, "label"=>"Login Password", "help"=>"Password is hashed with whirlpool"], // initial username on first run
+	"config_login_password" 		=> ["t"=>"password", "v"=>"Admin123!@#", "hashed"=>true, "label"=>"Login Password", "help"=>"Password is hashed with whirlpool. Default passowrd: Admin123!@#"], // initial username on first run
 	"config_login_whitelists" 		=> ["t"=>"list", "v"=>[
 			[ "t"=>"text", "v"=>"*", "validate"=>"ip"],
 		], 
@@ -573,7 +573,7 @@ if( $_POST['action'] == "saveconf" ){
 		$enginedata = [
 			"config_engine_key" 			=> $default_engine_key,
 			"config_engine_app_id" 			=> $default_app_id,
-			"config_apimaker_endpoint_url"	=> $defult_engine_url,
+			"config_apimaker_endpoint_url"	=> "http://". $_SERVER['HTTP_HOST'] . $config_apimaker_path,
 			"config_engine_path"			=> '/engine/',
 			"config_engine_cache_interval"	=>	60, // seconds
 			"config_engine_cache_refresh_action_query_string"	=>	["cache"=>"refresh"], // seconds
@@ -882,9 +882,13 @@ if( $_POST['action'] == "saveconf" ){
 					//console.log( vpr2 );
 					return new RegExp( "^"+vpr2[0]+'$', vpr2[1] );
 				},
-				is_it_ok: function(v){
+				is_it_ok: function( v ){
+					var m = false;
+					if( 'm' in v ){
+						if( v['m']=== true ){m = true;}
+					}else{m = true;}
 					if( v['t'] == "text" || v['t'] == "password" ){
-						if( v['v'] == "" || typeof(v['v']) != "string" ){
+						if( m && ( v['v'] == "" || typeof(v['v']) != "string" ) ){
 							return "Cannot be empty or Incorrect";
 						}else if( 'validate' in v ){
 							if( v['validate'] == "ip" ){
@@ -903,7 +907,7 @@ if( $_POST['action'] == "saveconf" ){
 							}
 						}
 					}else if( v['t'] == "number" ){
-						if( v['v'] == "" || v['v'] === 0 ){
+						if( m && ( v['v'] == "" || v['v'] === 0 ) ){
 							return "Cannot be empty";
 						}else if( 'preg' in v ){
 							var reg = this.get_regexp(v['preg'])

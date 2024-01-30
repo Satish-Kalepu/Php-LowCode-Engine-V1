@@ -38,11 +38,15 @@ if( $_POST['action'] == "save_app_settings" ){
 			json_response("fail", "Incorrect data. Domain settings missing.");
 		}
 		foreach( $settings['domains'] as $i=>$j ){
-			if( !preg_match("/^(https\:\/\/www\.|http\:\/\/www\.|https\:\/\/|http\:\/\/)([a-zA-Z0-9\-\.]+)(\.[a-zA-Z0-9]+)(\.[a-z]{2,5})\/[a-z][a-zA-Z0-9\.\-\_\.\/]+/i", $j['url']) ){
+			if( !preg_match("/^(https\:\/\/www\.|http\:\/\/www\.|https\:\/\/|http\:\/\/)[a-zA-Z0-9\-\.]{3,100}\.[a-z\.]{2,6}[\:0-9]*\/[a-z][a-zA-Z0-9\.\-\_\.\/]+/i", $j['url']) ){
 				json_response("fail", "Incorrect url " . $j['url'] );
 			}
 			$v = parse_url($settings['domains'][ $i ]['url']);
-			$settings['domains'][ $i ]['domain'] = $v['host'];
+			if( isset( $v['port'] ) ){
+				$settings['domains'][ $i ]['domain'] = $v['host'] . ":" . $v['port'];
+			}else{
+				$settings['domains'][ $i ]['domain'] = $v['host'];
+			}
 			$settings['domains'][ $i ]['path'] = $v['path'];
 		}
 		if( !isset($settings['keys']) ){
@@ -70,9 +74,6 @@ if( $_POST['action'] == "save_app_settings" ){
 					json_response("fail", "Incorrect Action: " . $ipv['action']);
 				}
 			}
-			$v = parse_url($settings['domains'][ $i ]['url']);
-			$settings['domains'][ $i ]['domain'] = $v['host'];
-			$settings['domains'][ $i ]['path'] = $v['path'];
 		}
 	}
 	if( !isset($settings['cloud']) ){
@@ -94,7 +95,7 @@ if( $_POST['action'] == "save_app_settings" ){
 			}
 		}
 	}
-	if( !isset($settings['alias']) ){
+	if(  !isset($settings['alias']) ){
 		json_response("fail", "Incorrect data. Alias settings missing.");
 	}
 	if( gettype($settings['alias']) != "boolean" ){

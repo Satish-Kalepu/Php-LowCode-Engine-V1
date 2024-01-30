@@ -37,7 +37,8 @@ if( isset($config_global_apimaker['config_session_redis']) ){
 }
 if( $config_global_apimaker['config_apimaker_domain'] != $_SERVER['HTTP_HOST'] ){
 	http_response_code("403");
-	echo "Incorrect Domain Settings";exit;
+	echo "Incorrect Domain Settings<BR>\n";
+	echo $config_global_apimaker['config_apimaker_domain'] . ": " .  $_SERVER['HTTP_HOST'];exit;
 }
 
 header( "Access-Control-Allow-Origin: *" );

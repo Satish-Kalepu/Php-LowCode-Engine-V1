@@ -31,7 +31,7 @@ if( is_array( $domains ) ){foreach( $domains as $i=>$j ){
 if( !$f ){
 	json_response([
 		"status"=>"fail",
-		"error"=>"Domain is not allowed"
+		"error"=>"Domain is not allowed " . $app_domain
 	]);
 }
 
