@@ -6,6 +6,15 @@ docker build -t apimaker .
 
 docker run -d -p 8888:80 --name=apimaker_app apimaker
 
-#Using docker compose llaunch the containers 
+#Using the below command the containers will be launched in interactive mode so stop them use ctrl+c
 
 docker compose up
+
+#If you want to run the compose in deamon mode use the below command
+
+docker compose up -d
+
+#To remove the container use below command
+
+docker compose down 
+
