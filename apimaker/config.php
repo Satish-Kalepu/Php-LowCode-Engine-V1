@@ -43,6 +43,9 @@ if( $config_global_apimaker['config_apimaker_domain'] != $_SERVER['HTTP_HOST'] )
 header( "Access-Control-Allow-Origin: *" );
 header( "Access-Control-Allow-Methods: *" );
 header( "Access-Control-Allow-Headers: Content-Type" );
+header( "Cache-Control: no-store, no-cache, must-revalidate, max-age=0" );
+header( "Cache-Control: post-check=0, pre-check=0", false );
+header( "Pragma: no-cache" );
 
 if( $_SERVER['HTTP_USER_AGENT'] == "" ){
 	header("http/1.1 400 Bad Request" );

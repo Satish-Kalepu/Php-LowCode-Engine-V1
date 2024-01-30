@@ -116,9 +116,9 @@
 
 						<div style="padding: 5px; background-color: #f0f0f0;" >Raw HTML</div>
 						<div style="padding:5px;">
-							<div id="raw_html_block" ></div>
-							<textarea class="form-control form-control-sm" style="min-height: 200px;" v-model="tag_settings_html"></textarea>
-							<div>----------</div>
+							<div id="raw_html_block" style="display: relative; width:100%; height:300px;" ></div>
+							<!-- <textarea class="form-control form-control-sm" style="min-height: 200px;" v-model="tag_settings_html"></textarea> -->
+							<!-- <div>----------</div> -->
 							<div><input type="button" class="btn btn-outline-dark btn-sm" value="Update" v-on:click="tag_settings_html_update" ></div>
 						</div>
 					</div>

@@ -1,4 +1,7 @@
 <script  src="<?=$config_global_apimaker_path ?>ace/src-noconflict/ace.js" ></script>
+<script  src="<?=$config_global_apimaker_path ?>js/beautify-html.js" ></script>
+<script  src="<?=$config_global_apimaker_path ?>js/beautify-css.js" ></script>
+<script  src="<?=$config_global_apimaker_path ?>js/beautify.js" ></script>
 <!-- 
 <script  src="<?=$config_global_apimaker_path ?>ace/src/ext-language_tools.js" ></script>
 <script  src="<?=$config_global_apimaker_path ?>ace/src/ext-beautify.js" ></script>
@@ -259,6 +262,7 @@ var app = s__({
 			link_suggest_style: "",
 			doc_error: "",
 			paste_shift: false,
+			ace_editor: false,
 
 			focused: false,
 			focused_selection: false,
@@ -280,19 +284,27 @@ var app = s__({
 		};
 	},
 	mounted(){
-		setTimeout(this.init_ace,100);
+		//setTimeout(this.init_ace,100);
 		document.addEventListener("mousedown", this.event_mousedown__);
 		document.addEventListener("mouseup", this.event_mouseup__);
 		document.addEventListener("mousemove", this.event_mousemove__);
 		this.frame = this.$refs.editor_iframe__.contentWindow;
+		
 		const new_style_element = document.createElement("style");
 		new_style_element.id = "editor_top_css__";
     	new_style_element.textContent = css_data;
     	this.frame.document.head.appendChild(new_style_element);
+    	
     	var css_link = document.createElement("link");
     	css_link.href=this.rootpath+'bootstrap/bootstrap.min.css';
     	css_link.setAttribute("rel", "stylesheet");
     	this.frame.document.head.appendChild(css_link);
+    	
+    	var css_link = document.createElement("link");
+    	css_link.href=this.rootpath+'page_apps_pages_page_editor_body_css.css';
+    	css_link.setAttribute("rel", "stylesheet");
+    	this.frame.document.head.appendChild(css_link);
+    	
     	var s1 = document.createElement("script");
     	s1.src=this.rootpath+'bootstrap/bootstrap.bundle.min.js';
     	this.frame.document.head.appendChild(s1);
@@ -329,10 +341,12 @@ var app = s__({
 			}catch(e){}
 			//console.log( this.vmtt_focus_c );
 		},
-		set_focus_to: function(vi){
+		set_focus_to: function( vi ){
 			this.set_focused2( this.focused_tree[ vi ]['v'] );
-			this.tag_settings_html = this.focused.outerHTML;
+			//this.tag_settings_html = this.focused.outerHTML;
+			this.tag_settings_html = html_beautify( this.focused.outerHTML+'' );
 			this.tag_settings_type = this.focused.nodeName;
+			this.ace_editor.setValue( this.tag_settings_html+'' );
 		},
 		is_token_ok(t){
 			if( t!= "OK" && t.match(/^[a-f0-9]{24}$/)==null ){
@@ -516,7 +530,10 @@ var app = s__({
 			edit_tag_initiate: function(){
 				this.tag_settings_popup_title = "Edit HTML";
 				this.tag_settings_type = this.focused_type;
-				this.tag_settings_html = this.focused.outerHTML+'';
+				this.tag_settings_html = html_beautify( this.focused.outerHTML+'' );
+				try{
+					if( this.ace_editor ){this.ace_editor.setValue( '' );}
+				}catch(e){}
 				this.tag_settings_popup_modal = new bootstrap.Modal(document.getElementById('tag_settings_popup'));
 				this.tag_settings_popup_modal.show();
 				setTimeout(this.init_ace,100);
@@ -524,8 +541,9 @@ var app = s__({
 			init_ace: function(){
 				console.log("Ace initialized");
 				//ace.config.setModuleLoader('ace/ext/beautify', () => import("<?=$config_global_apimaker_path ?>ace/src/ext-beautify.js"));
-				var editor = ace.edit("raw_html_block");
-				console.log( editor );
+				this.ace_editor = ace.edit("raw_html_block");
+				this.ace_editor.setValue( this.tag_settings_html+'' );
+				//console.log( this.ace_editor );
 		        // this.ce.setOptions({
 				// 	enableAutoIndent: true, behavioursEnabled: true,
 				// 	useSoftTabs: true, showPrintMargin: false, printMargin: false, 
@@ -551,7 +569,9 @@ var app = s__({
 			},
 			tag_settings_html_update: function(){
 				var vold = this.focused;
-				this.focused.insertAdjacentHTML( "afterend", this.tag_settings_html );
+				//var vnew = this.tag_settings_html;
+				var vnew = this.ace_editor.getValue();
+				this.focused.insertAdjacentHTML( "afterend", vnew );
 				this.tag_settings_popup_modal.hide();
 				var vnew = this.focused.nextElementSibling;
 				vold.outerHTML = "";
@@ -567,8 +587,7 @@ var app = s__({
 				}
 			},
 			insert_item_at_location: function( vtag ){
-				if( this.insert_tag )
-				{
+				if( this.insert_tag ){
 					this.tag_settings_popup_modal.hide();
 					//this.insert_tag = false;
 					var newel = document.createElement("div");
@@ -1347,7 +1366,7 @@ var app = s__({
 			make_link: function(){
 				if( this.focused_anchor ){
 					this.tag_settings_type = "A";
-					this.tag_settings_html = this.focused_anchor.outerHTML+'';
+					this.tag_settings_html = html_beautify( this.focused_anchor.outerHTML+'' );
 					this.tag_settings_popup_title = "Update Link";
 					this.tag_settings_popup_modal = new bootstrap.Modal(document.getElementById('tag_settings_popup'));
 					this.tag_settings_popup_modal.show();
@@ -2892,9 +2911,9 @@ var app = s__({
 						v = v.parentNode;
 					}
 				}
-				this.set_focused2(v,vfromkeydown);
+				this.set_focused2( v, vfromkeydown );
 			},
-			set_focused2: function(v,vfromkeydown=false){
+			set_focused2: function( v, vfromkeydown=false ){
 				var is_sel = false;
 				try{
 					var sr = this.frame.document.getSelection().getRangeAt(0);
@@ -2902,7 +2921,8 @@ var app = s__({
 				}catch(e){}
 				this.focused_selection = is_sel;
 				var cnt = 0;
-				while( 1 ){cnt++;if( cnt>3 ){console.error("focuselement + 3");break;}
+				while( 1 ){
+					cnt++;if( cnt>3 ){console.error("focuselement + 3");break;}
 					if( v.nodeName == "A" ){
 						this.focused_anchor = v;
 					}
@@ -2919,7 +2939,29 @@ var app = s__({
 				}
 				if( v.hasAttribute("data-id") ){
 					if( v.getAttribute("data-id") == "root" ){
-
+						console.log( "root element");
+						console.log( "testing..." );
+						console.log( v.childNodes );
+						for( var i=0;i<v.childNodes.length;i++ ){
+							console.log( v.childNodes[i].nodeName );
+							if( v.childNodes[i].nodeName == "#text" ){
+								var vl = this.frame.document.createElement("div");
+								vl.innerHTML = v.nodeValue;
+								v.innerHTML = "";
+								v.appendChild( vl );
+							}
+						}
+						var v = this.frame.document.getElementById("editor_div");
+						if( v.childNodes.length == 0 ){
+							var vl = this.frame.document.createElement("div");
+							vl.innerHTML = "Initial div tag";
+							v.appendChild( vl );
+							this.focused = vl;
+						}else{
+							this.focused = v.childNodes[0];
+						}
+						// this.select_range_with_element( v.childNodes[0] );
+						// this.selectionchange2();
 					}
 				}
 				{
@@ -3066,6 +3108,13 @@ var app = s__({
 
 			},
 			focused_block_set_bounds: function(){
+				console.log("focused set bounds");
+				if( this.focused.hasAttribute("data-id") ){
+					if( this.focused.getAttribute("data-id") == "root" ){
+						this.vmttt = "visibility:hidden;";
+						return false;
+					}
+				}
 				if( this.focused_block ){
 					var v = this.focused_block.getBoundingClientRect();
 				}else{

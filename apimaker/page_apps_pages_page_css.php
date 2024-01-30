@@ -87,5 +87,6 @@
 .editor_toolbar_group{ display: inline; margin-bottom: 5px; }
 .editor_toolbar2{ z-index: 402; position: fixed; bottom: 5px; left: 100px; min-width: 100px; background-color: white; border:1px solid #999; padding: 2px; box-shadow: -2px 2px 5px #333; }
 
+.table_settings *{ font-size:12px; }
 
 </style>

@@ -9,17 +9,12 @@
         overflow: hidden;
     }
 
-    #editor {
-        margin: 0;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
+    #editor { width:800px; height: 300px;   }
   </style>
 </head>
 <body>
+    <script src="../js/beautify-html.js" ></script>
+    <script src="../js/beautify.js" ></script>
 
 <pre id="editor">function foo(items) {
     var i;
@@ -27,12 +22,19 @@
         alert("Ace Rocks " + items[i]);
     }
 }</pre>
+<div> <input type="button" value="b" onclick="doit()" ></div>
 
 <script src="src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="esm-resolver.js" type="text/javascript" charset="utf-8"></script>
 <script>
-    var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/twilight");
-    editor.session.setMode("ace/mode/javascript");
+    editor = ace.edit("editor");
+    //editor.setTheme("ace/theme/twilight");
+    editor.session.setMode("ace/mode/html");
+    function doit(){
+        console.log( editor.getValue() );
+        editor.setValue( html_beautify( editor.getValue() ) );
+    }
+    console.log( doit );
 </script>
 
 </body>

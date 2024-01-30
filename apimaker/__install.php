@@ -362,7 +362,7 @@ if( $_POST['action'] == "saveconf" ){
 		$mongodb_con = new mongodb_connection( $data['config_mongo_host'], $data['config_mongo_port'], $data['config_mongo_db'] );
 	}
 
-	$defult_engine_url = "https://".$data['config_apimaker_domain'].$data['config_apimaker_path'];
+	$defult_engine_url = "https://".$_SERVER['HTTP_HOST'].'/engine/';
 	$default_engine_key = "65b3e2eb822fa7476b0576c2";
 	$default_app_id = "64f237a775a7be05200cedd0";
 
@@ -389,7 +389,7 @@ if( $_POST['action'] == "saveconf" ){
 				"_id": "'.$default_app_id.'","app": "MyFirstApp", "des": "A sample app ", 
 				"created": "2023-09-02 00:42:39", "updated": "2023-09-02 00:42:39", "active": true, "m_i": "2024-01-26 16:07:42",
 				"settings": {
-				 "domains": [{"domain": "'.$data['config_apimaker_domain'].'", "url": "'.$defult_engine_url.'", "path": "'.$data['config_apimaker_path'].'"}],
+				 "domains": [{"domain": "'.$_SERVER['HTTP_HOST'].'", "url": "'.$defult_engine_url.'", "path": "/engine/"}],
 				 "keys": [{"key": "'.$default_engine_key.'","ips_allowed": [{"ip": "0.0.0.0/0","action": "Allow"}]}],
 				 "cloud": false,"cloud-domain": "","cloud-subdomain": "","cloud-enginepath": "",
 				 "host": true,"alias": false,"alias-domain": "",

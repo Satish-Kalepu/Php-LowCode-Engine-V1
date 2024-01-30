@@ -261,10 +261,22 @@
 
 	require("vendor/autoload.php");
 	if( $page_type == "page" ){
-		header("AppCache: " . ($cache_refresh?"Miss":"Hit"));
+		header( "AppCache: " . ($cache_refresh?"Miss":"Hit") );
+		header( "Access-Control-Allow-Origin: *" );
+		header( "Access-Control-Allow-Methods: *" );
+		header( "Access-Control-Allow-Headers: Content-Type" );
+		header( "Cache-Control: no-store, no-cache, must-revalidate, max-age=0" );
+		header( "Cache-Control: post-check=0, pre-check=0", false );
+		header( "Pragma: no-cache" );
 		require("index_page.php");
 	}else if( $page_type == "api" ){
-		header("AppCache: " . ($cache_refresh?"Miss":"Hit"));
+		header( "AppCache: " . ($cache_refresh?"Miss":"Hit") );
+		header( "Access-Control-Allow-Origin: *" );
+		header( "Access-Control-Allow-Methods: *" );
+		header( "Access-Control-Allow-Headers: Content-Type" );
+		header( "Cache-Control: no-store, no-cache, must-revalidate, max-age=0" );
+		header( "Cache-Control: post-check=0, pre-check=0", false );
+		header( "Pragma: no-cache" );		
 		require("index_api.php");
 	}else if( $page_type == "file" ){
 		if( !isset($file_version['t']) ){
@@ -273,6 +285,9 @@
 			exit;
 		}
 		header("Content-Type: "  . $file_version['type']);
+		header( "Cache-Control: no-store, no-cache, must-revalidate, max-age=0" );
+		header( "Cache-Control: post-check=0, pre-check=0", false );
+		header( "Pragma: no-cache" );		
 		if( $file_version['t'] == "inline" ){
 			echo $file_version['data'];
 		}else if( $file_version['t'] == "base64" && preg_match("/^image/i", $file_version['type']) ){
