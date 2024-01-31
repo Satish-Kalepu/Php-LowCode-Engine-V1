@@ -40,7 +40,7 @@ git pull into desired htdocs folder
 curretly supported only for linux environment.
 
 USAGE
-_____
+-----
 http://localhost:8888/apimaker  (where you can design apis)
 
 http://localhost:8888/engine (where engine renders and serves)
