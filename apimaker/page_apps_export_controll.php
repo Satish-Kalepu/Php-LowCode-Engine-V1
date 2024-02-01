@@ -423,7 +423,7 @@ if( $_POST['action'] == "exports_restore_upload_confirm" ){
 		$mongodb_con->delete_many( $config_global_apimaker['config_mongo_prefix'] . "_functions", ['app_id'=>$app['_id']] );
 		$mongodb_con->delete_many( $config_global_apimaker['config_mongo_prefix'] . "_functions_versions", ['app_id'=>$app['_id']] );		
 		$mongodb_con->delete_many( $config_global_apimaker['config_mongo_prefix'] . "_files", ['app_id'=>$app['_id']] );
-		$res = $mongodb_con->find_many( $config_global_apimaker['config_mongo_prefix'] . "_tables_dynamic", ['app_id'=>$app['_id']] );
+		$res = $mongodb_con->find( $config_global_apimaker['config_mongo_prefix'] . "_tables_dynamic", ['app_id'=>$app['_id']] );
 		foreach( $res['data'] as $i=>$j ){
 			$mongodb_con->drop_collection( $config_global_apimaker['config_mongo_prefix'] . "_dt_" . $j['_id'] );
 		}

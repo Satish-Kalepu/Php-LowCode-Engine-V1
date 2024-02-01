@@ -134,7 +134,7 @@ var app = Vue.createApp({
 			path: "<?=$config_global_apimaker_path ?>apps/<?=$app['_id'] ?>/",
 			app_id: "<?=$app['_id'] ?>",
 			app__: <?=json_encode($app) ?>,
-			cd: <?=json_encode($config_global_apimaker['config_cloud_domains']) ?>,
+			cd: <?=isset($config_global_apimaker['config_cloud_domains'])?json_encode($config_global_apimaker['config_cloud_domains']):'[]' ?>,
 			msg: "",
 			err: "",
 			pages:[],

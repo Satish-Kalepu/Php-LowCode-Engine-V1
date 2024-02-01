@@ -86,8 +86,10 @@ if( $_POST['action'] == "save_app_settings" ){
 		if( !preg_match("/^[a-zA-Z0-9\-\.]{2,25}$/i", $settings['cloud-subdomain']) ){
 			json_response("fail", "Incorrect cloud subdomain " . $settings['cloud-subdomain'] );
 		}
-		if( !in_array( $settings['cloud-domain'], $config_global_apimaker['config_cloud_domains'] ) ){
-			json_response("fail", "Incorrect cloud domain " . $settings['cloud-domain'] );
+		if( isset($config_global_apimaker['config_cloud_domains']) ){
+			if( !in_array( $settings['cloud-domain'], $config_global_apimaker['config_cloud_domains'] ) ){
+				json_response("fail", "Incorrect cloud domain " . $settings['cloud-domain'] );
+			}
 		}
 		if( trim($settings['cloud-enginepath']) != "" ){
 			if( !preg_match("/^[a-z][a-zA-Z0-9\-\.\/\_\%]{2,250}$/i", $settings['cloud-enginepath']) ){
@@ -161,8 +163,8 @@ if( !$app['settings'] ){
 		"host"=>false,
 		"domains"=>[
 			[
-				"domain"=>"v2.backendmaker.com",
-				"url"=>"https://v2.backendmaker.com/engine/",
+				"domain"=>$_SERVER['HTTP_HOST'],
+				"url"=>"https://".$_SERVER['HTTP_HOST']."/engine/",
 				"path"=>"/engine/"
 			]
 		],
@@ -181,7 +183,7 @@ if( !$app['settings'] ){
 		"cloud"=>false,
 		"cloud-subdomain"=>$app['app'],
 		"cloud-enginepath"=>"",
-		"cloud-domain"=>$config_global_apimaker['config_cloud_default_domain'],
+		"cloud-domain"=>isset($config_global_apimaker['config_cloud_default_domain'])?$config_global_apimaker['config_cloud_default_domain']:"",
 		"alias"=>false,
 		"alias-domain"=>"www.example.com",
 	];
