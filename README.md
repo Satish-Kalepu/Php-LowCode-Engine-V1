@@ -40,8 +40,16 @@ git pull into desired htdocs folder
 curretly supported only for linux environment.
 
 USAGE
------
+_____
 http://localhost:8888/apimaker  (where you can design apis)
+
+on first run it redirects to: http://localhost:8888/apimaker/__install.php
 
 http://localhost:8888/engine (where engine renders and serves)
 
+on first run it redirects to: http://localhost:8888/engine/__install.php
+
+Make sure, apimaker service is reachable to engine service. Use https endpoints if hosted on public platforms. 
+
+It is recommended not to include apimaker module in your projects. Keep engine in any desired folders in your project. 
+In this way, your app will be light weight. 
