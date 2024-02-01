@@ -439,6 +439,7 @@ if( $_POST['action'] == "exports_restore_upload_confirm" ){
 		$v = $j['version_part'];
 		unset($j['version_part']);
 		$v['api_id'] = $j['_id'];
+		$v['app_id'] = $j['app_id'];
 		$mongodb_con->insert( $config_global_apimaker['config_mongo_prefix'] . "_apis", $j );
 		$mongodb_con->insert( $config_global_apimaker['config_mongo_prefix'] . "_apis_versions", $v );
 	}
@@ -446,6 +447,7 @@ if( $_POST['action'] == "exports_restore_upload_confirm" ){
 		$v = $j['version_part'];
 		unset($j['version_part']);
 		$v['page_id'] = $j['_id'];
+		$v['app_id'] = $j['app_id'];
 		$mongodb_con->insert( $config_global_apimaker['config_mongo_prefix'] . "_pages", $j );
 		$mongodb_con->insert( $config_global_apimaker['config_mongo_prefix'] . "_pages_versions", $v );
 	}
@@ -454,6 +456,7 @@ if( $_POST['action'] == "exports_restore_upload_confirm" ){
 		$v = $j['version_part'];
 		unset($j['version_part']);
 		$v['api_id'] = $j['_id'];
+		$v['app_id'] = $j['app_id'];
 		$mongodb_con->insert( $config_global_apimaker['config_mongo_prefix'] . "_functions", $j );
 		$mongodb_con->insert( $config_global_apimaker['config_mongo_prefix'] . "_functions_versions", $v );
 	}
