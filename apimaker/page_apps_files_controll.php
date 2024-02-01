@@ -27,6 +27,19 @@ if( $_POST['action'] == "delete_file" ){
 	if( !preg_match("/^[a-f0-9]{24}$/i", $_POST['file_id']) ){
 		json_response("fail", "ID incorrect");
 	}
+	$res = $mongodb_con->find_one( $config_global_apimaker['config_mongo_prefix'] . "_files", [
+		'_id'=>$_POST['file_id']
+	]);
+	if( $res['data'] ){
+		if( $res['data']['vt'] == "folder" ){
+			$res2 = $mongodb_con->find_one( $config_global_apimaker['config_mongo_prefix'] . "_files", [
+				'path'=>$res['data']['path'] . $res['data']['name'] . '/'
+			]);
+			if( $res2['data'] ){
+				json_response("fail", "Folder is not empty");
+			}
+		}
+	}
 	$res = $mongodb_con->delete_one( $config_global_apimaker['config_mongo_prefix'] . "_files", [
 		'_id'=>$_POST['file_id']
 	]);
@@ -82,6 +95,7 @@ if( $_POST['action'] == "create_file" ){
 		'data'=>$data,
 		"created"=>date("Y-m-d H:i:s"),
 		"updated"=>date("Y-m-d H:i:s"),
+		"sz"=>100
 	]);
 	update_app_pages( $config_param1 );
 	json_response($res);
@@ -128,7 +142,10 @@ if( $_POST['action'] == "apps_file_upload" ){
 			'name'=>$_POST['name']
 		]);
 		$fb = file_get_contents($_FILES['file']['tmp_name']);
-		$ext = explode(".",$_FILES['file']['name'])[-1];
+		//echo $_FILES['file']['name'];exit;
+		//print_r( explode(".",$_FILES['file']['name']) );
+		$ext = array_pop( explode(".",$_FILES['file']['name']) );
+		//echo $ext;exit;
 		$res = $mongodb_con->insert( $config_global_apimaker['config_mongo_prefix'] . "_files", [
 			"app_id"=>$config_param1,
 			"name"=>$_POST['name'],
@@ -137,6 +154,7 @@ if( $_POST['action'] == "apps_file_upload" ){
 			"path"=>$_POST['path'],
 			't'=>"base64",
 			"data"=>base64_encode($fb),
+			"sz"=>strlen($fb),
 			'ext'=>$ext,
 			"created"=>date("Y-m-d H:i:s"),
 			"updated"=>date("Y-m-d H:i:s"),
@@ -150,6 +168,7 @@ if( $_POST['action'] == "apps_file_upload" ){
 				'vt'=>"file",
 				"path"=>$_POST['path'],
 				't'=>"base64",
+				"sz"=>strlen($fb),
 				'ext'=>$ext,
 				"created"=>date("Y-m-d H:i:s"),
 				"updated"=>date("Y-m-d H:i:s"),
@@ -215,6 +234,7 @@ if( $config_param3 ){
 			"_id"=>$config_param3
 		],[
 			"data"=>$_POST['data'],
+			"sz"=>strlen($_POST['data']),
 			"updated"=>date("Y-m-d H:i:s"),
 		]);
 		if( $res["status"] == "fail" ){

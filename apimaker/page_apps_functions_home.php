@@ -1,3 +1,8 @@
+<style>
+	div.vid{ padding:0px 2px; cursor:pointer; }
+	div.vid pre.vid{display: none; position: absolute; background-color: white; padding: 3px; border: 1px solid #aaa;}
+	div.vid:hover pre.vid{display: block;}
+</style>
 <div id="app" >
 	<div class="leftbar" >
 		<?php require("page_apps_leftbar.php"); ?>
@@ -20,8 +25,8 @@
 					<td></td>
 				</tr>
 				<tr v-for="v,i in functions">
-					<td><pre class="id">{{v['_id']}}</pre></td>
-					<td width="70%">
+					<td><div class="vid">#<pre class="vid">{{v['_id']}}</pre></div></td>
+					<td width="90%">
 						<div><a v-bind:href="path+'functions/'+v['_id']+'/'+v['version_id']" >{{ v['name'] }}</a></div>
 						<div class="text-secondary">{{ v['des'] }}</div>
 					</td>

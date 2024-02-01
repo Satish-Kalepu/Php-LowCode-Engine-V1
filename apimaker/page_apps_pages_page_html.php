@@ -60,7 +60,7 @@
 	</div>
 
 	<div class="modal fade" id="tag_settings_popup" data-backdrop="static" data-keyboard="false">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog modal-xl">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h4 class="modal-title">{{ tag_settings_popup_title }}</h4>
@@ -77,10 +77,16 @@
 						<textarea class="form-control" id="raw_html_block" v-model="raw_html" style="height: 200px;resize:both;"></textarea>
 						<div><div class="btn btn-outline-dark btn-sm" v-on:click="insert_item_at_location('raw')"  >Insert</div></div>
 					</div>
-					<div v-if="tag_settings_type=='A'" >
+					<!-- <div v-else-if="tag_settings_type=='A'" >
+						<div>URL:</div>
+						<div><input type="text" class="form-control form-control-sm" v-model="anchor_href" placeholder="URL" ></div>
+						<div>Text:</div>
+						<div><input type="text" class="form-control form-control-sm" v-model="anchor_text" placeholder="Content" ></div>
+						<div>&nbsp;</div>
+						<div><input type="button" class="btn btn-outline-dark btn-sm" value="Update" v-on:click.prevent.stop="anchor_create" ></div>
 						<div><input type="button" class="btn btn-outline-danger btn-sm" value="Remove Link" v-on:click.prevent.stop="anchor_remove" ></div>
-					</div>
-					<div v-if="tag_settings_type=='MakeLink'"  >
+					</div> -->
+					<div v-else-if="tag_settings_type=='MakeLink'"  >
 						<div>URL:</div>
 						<div><input type="text" class="form-control form-control-sm" v-model="anchor_href" placeholder="URL" ></div>
 						<div>Text:</div>
@@ -103,8 +109,7 @@
 							<div><input type="button" class="btn btn-outline-dark btn-sm" value="Update" ></div>
 						</div>
 					</div> -->
-					<div v-if="tag_settings_type!='new'&&focused_type&&focused_selection==false" style="border: 1px solid #ccc; margin-bottom: 10px;">
-
+					<div v-else-if="tag_settings_type!='new'&&focused_type&&focused_selection==false" style="border: 1px solid #ccc; margin-bottom: 10px;">
 						<div v-if="focused_tree.length>0" >
 							<div v-if="focused_tree.length>5" class="tag_btn" v-on:click="set_focus_to(5)" >{{ focused_tree[5]['a'] }}</div>
 							<div v-if="focused_tree.length>4" class="tag_btn" v-on:click="set_focus_to(4)" >{{ focused_tree[4]['a'] }}</div>
@@ -113,7 +118,6 @@
 							<div v-if="focused_tree.length>1" class="tag_btn" v-on:click="set_focus_to(1)" >{{ focused_tree[1]['a'] }}</div>
 							<div v-if="focused_tree.length>0" class="tag_btn tag_btn_a" >{{ focused_tree[0]['a'] }}</div>
 						</div>
-
 						<div style="padding: 5px; background-color: #f0f0f0;" >Raw HTML</div>
 						<div style="padding:5px;">
 							<div id="raw_html_block" style="display: relative; width:100%; height:300px;" ></div>

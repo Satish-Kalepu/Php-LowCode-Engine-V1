@@ -346,7 +346,9 @@ var app = s__({
 			//this.tag_settings_html = this.focused.outerHTML;
 			this.tag_settings_html = html_beautify( this.focused.outerHTML+'' );
 			this.tag_settings_type = this.focused.nodeName;
-			this.ace_editor.setValue( this.tag_settings_html+'' );
+			if( this.ace_editor ){
+				this.ace_editor.setValue( this.tag_settings_html+'' );
+			}
 		},
 		is_token_ok(t){
 			if( t!= "OK" && t.match(/^[a-f0-9]{24}$/)==null ){
@@ -572,7 +574,9 @@ var app = s__({
 				//var vnew = this.tag_settings_html;
 				var vnew = this.ace_editor.getValue();
 				this.focused.insertAdjacentHTML( "afterend", vnew );
-				this.tag_settings_popup_modal.hide();
+				if( this.tag_settings_popup_modal ){
+					this.tag_settings_popup_modal.hide();
+				}
 				var vnew = this.focused.nextElementSibling;
 				vold.outerHTML = "";
 				this.set_focused2( vnew );
@@ -716,7 +720,9 @@ var app = s__({
 				}
 
 				if( e.buttons == 1 ){
-					this.selection_start = true;
+					if( this.td_sel_cnt == 0 ){
+						this.selection_start = true;
+					}
 					this.insert_tag = false;
 				}
 				return false;
@@ -821,7 +827,9 @@ var app = s__({
 				if( e.buttons == 1 && this.td_sel_start ){
 					this.td_sel_show = true;
 					if( this.td_sel_cnt > 1 ){
-						this.selection_collapse();
+						//this.selection_collapse();
+						var sr = this.frame.document.getSelection().getRangeAt(0);
+						sr.setEnd( sr.startContainer, 0 );
 					}else{
 					}
 					this.td_sel_end_tr=vtri;
@@ -915,6 +923,9 @@ var app = s__({
 				}
 				this.td_sel_cnt = cnt;
 				this.td_sel_cells = cells;
+				if( cnt > 1 ){
+					this.focused_tds_set_bounds();
+				}
 			},
 			td_sel_cells_unselect: function(){
 				while(this.td_sel_cells.length){
@@ -2568,6 +2579,7 @@ var app = s__({
 										}
 										this.focused_tr.insertAdjacentElement("afterend",vtr);
 										this.select_range_with_element( vtr.children[0] );
+										setTimeout(this.initialize_tables,100);
 									}
 								}
 							}
@@ -2886,32 +2898,38 @@ var app = s__({
 				this.vmttt= "visibility: hidden;";
 			},
 			set_focused: function( vtarget = false ){
-				var vfromkeydown = false;
-				if( vtarget == "fromkeydown" ){
-					vfromkeydown = true;
-					vtarget = false;
-				}
-				if( vtarget == false ){
-					if( this.frame.document.getSelection().rangeCount == 0 ){
-						this.show_toolbar = false;
-						this.hide_other_menus();
-						return false;
-					}
-					var sr = this.frame.document.getSelection().getRangeAt(0);
-					var v = false;
-					if( sr.startContainer.nodeName == "#text" ){
-						v = sr.startContainer.parentNode;
-					}else{
-						v = sr.startContainer;
-					}
+				if( this.td_sel_cnt > 1 ){
+					this.focused_tds_set_bounds();
 				}else{
-					console.log("set focused with target: " + vtarget.nodeName);
-					v = vtarget;
-					if( v.nodeName == "#text" ){
-						v = v.parentNode;
+					var vfromkeydown = false;
+					if( vtarget == "fromkeydown" ){
+						vfromkeydown = true;
+						vtarget = false;
+					}
+					if( vtarget == false ){
+						if( this.frame.document.getSelection().rangeCount == 0 ){
+							this.show_toolbar = false;
+							this.hide_other_menus();
+							return false;
+						}
+						var sr = this.frame.document.getSelection().getRangeAt(0);
+						var v = false;
+						if( sr.startContainer.nodeName == "#text" ){
+							v = sr.startContainer.parentNode;
+						}else{
+							v = sr.startContainer;
+						}
+					}else{
+						console.log("set focused with target: " + vtarget.nodeName);
+						v = vtarget;
+						if( v.nodeName == "#text" ){
+							v = v.parentNode;
+						}
+					}
+					if( this.td_sel_start == false && this.td_sel_cnt < 2 ){
+						this.set_focused2( v, vfromkeydown );
 					}
 				}
-				this.set_focused2( v, vfromkeydown );
 			},
 			set_focused2: function( v, vfromkeydown=false ){
 				var is_sel = false;
@@ -2919,6 +2937,7 @@ var app = s__({
 					var sr = this.frame.document.getSelection().getRangeAt(0);
 					is_sel = !sr.collapsed;
 				}catch(e){}
+				console.log( is_sel );
 				this.focused_selection = is_sel;
 				var cnt = 0;
 				while( 1 ){
@@ -3125,6 +3144,35 @@ var app = s__({
 				var l=Number(v.left);var t=Number(v.top); var w=Number(v.width); var h=Number(v.height); var b=Number(v.bottom); var r=Number(v.right);
 				this.vmttt = "top:"+(t+sy)+"px;left:"+(l+sx)+"px;width:"+(w)+"px;height:"+(h)+"px";
 			},
+			focused_tds_set_bounds: function(){
+				console.log("focused set bounds");
+				if( this.focused_table ){
+
+					if( this.td_sel_start_tr > this.td_sel_end_tr ){
+						var trsi = this.td_sel_end_tr;
+						var trei = this.td_sel_start_tr;
+					}else{
+						var trsi = this.td_sel_start_tr;
+						var trei = this.td_sel_end_tr;
+					}
+					if( this.td_sel_start_td > this.td_sel_end_td ){
+						var tdsi = this.td_sel_end_td;
+						var tdei = this.td_sel_start_td;
+					}else{
+						var tdsi = this.td_sel_start_td;
+						var tdei = this.td_sel_end_td;
+					}
+					var v1 = this.focused_table.childNodes[0].childNodes[trsi].childNodes[tdsi].getBoundingClientRect();
+					var v2 = this.focused_table.childNodes[0].childNodes[trei].childNodes[tdei].getBoundingClientRect();
+					var sy = Number(this.frame.scrollY);
+					var sx = Number(this.frame.scrollX);
+					var l=Number(v1.left);var t=Number(v1.top); 
+					var w=Number(v2.right-v1.left); var h=Number(v2.bottom-v1.top); 
+					this.vmttt = "top:"+(t+sy)+"px;left:"+(l+sx)+"px;width:"+(w)+"px;height:"+(h)+"px";
+				}else{
+					this.vmttt = "visibility:hidden;";
+				}
+			},
 			image_delete: function(){
 
 			},
@@ -3203,7 +3251,9 @@ var app = s__({
 			anchor_remove: function(){
 				this.focused_anchor.outerHTML = this.focused_anchor.innerHTML;
 				this.unset_focused();
-				this.tag_settings_popup_modal.hide();
+				if( this.tag_settings_popup_modal ){
+					this.tag_settings_popup_modal.hide();
+				}
 			},
 			close_pre_edit_popup: function(){
 				this.pre_edit_popup = false;
@@ -4018,7 +4068,7 @@ var app = s__({
 				var newel = this.frame.document.createElement("tr");
 				newel.innerHTML = "<td></td>".repeat(this.vm.children.length);
 				this.focused_tr.insertAdjacentElement(vpos, newel);
-				this.initialize_table( this.focused_table );
+				setTimeout(this.initialize_tables,100);
 			},
 
 			td_delete_column: function(){
@@ -4037,7 +4087,7 @@ var app = s__({
 			td_delete_row: function(){
 				this.focused_tr.remove();
 				this.hide_other_menus();
-				this.initialize_table(this.focused_table);
+				setTimeout(this.initialize_tables,100);
 			},
 			tr_copy: function(v){
 				this.hide_other_menus();
@@ -4048,7 +4098,7 @@ var app = s__({
 				var newel = this.frame.document.createElement("tr");
 				newel.innerHTML = this.focused_tr.innerHTML;
 				this.focused_tr.insertAdjacentElement(vpos, newel);
-				this.initialize_table(this.focused_table);
+				setTimeout(this.initialize_tables,100);
 			},
 			table_delete: function(){
 				if( this.focused_block_type == "TABLE" ){

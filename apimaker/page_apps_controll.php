@@ -30,6 +30,13 @@ if( $config_param2 == "pages" ){
 if( $config_param2 == "files" ){
 	require("page_apps_files_controll.php");
 }
+if( $config_param2 == "export" ){
+	require("page_apps_export_controll.php");
+}
+if( $config_param2 == "global_files" ){
+	require("page_apps_global_files_controll.php");
+}
+
 if( $config_param2 == "settings" ){
 	require("page_apps_settings_controll.php");
 }

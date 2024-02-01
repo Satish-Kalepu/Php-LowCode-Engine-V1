@@ -245,6 +245,17 @@
 		$decrypted =  openssl_decrypt(base64_decode($data), "aes256", $secret );
 		return $decrypted;
 	}
+	function pass_encrypt_static( $data, $key= "abcdefghijklmnop" ){
+		$encrypted = openssl_encrypt($data, "aes256", $key);
+		if( !$encrypted ){
+			return "";
+		}
+		return $encrypted;
+	}
+	function pass_decrypt_static( $data, $key= "abcdefghijklmnop" ){
+		$decrypted =  openssl_decrypt($data, "aes256", $key);
+		return $decrypted;
+	}
 	function session_encrypt( $pass ){
 		//$pass = strrev($pass);
 		// return "s2_" . $pass;

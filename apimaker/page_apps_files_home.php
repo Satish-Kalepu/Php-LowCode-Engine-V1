@@ -7,7 +7,12 @@
 	<div class="leftbar" >
 		<?php require("page_apps_leftbar.php"); ?>
 	</div>
-	<div style="position: fixed;left:150px; top:40px; height: calc( 100% - 40px ); width:calc( 100% - 150px ); background-color: white; " >
+	<div style="position: fixed;left:150px; top:40px; height: calc( 100% - 40px ); width:calc( 100% - 150px ); background-color: white; " data-id="draggable" v-on:drop.prevent="dropit" v-on:dragenter.prevent="dragenter" v-on:dragover.prevent="dragover" draggable   >
+		<div v-if="dropdiv" style="position:absolute; margin-top:-2px; margin-left:-2px; padding:10px; padding:40px; width: calc( 100% + 5px ); height: calc( 100% + 5px ); background-color: rgba(255, 255, 255, 0.5); " v-on:dragenter.prevent="" v-on:dragover.prevent=""   v-on:dragleave.prevent="dragleave" >
+			<div style="width: calc( 100% - 10px ); height: calc( 100% - 10px ); border:15px dashed #bbb; text-align: center; line-height: 300px; color:#bbb; font-size:5rem; " v-on:dragenter.prevent="" v-on:dragover.prevent="" >
+				Drop files here
+			</div>
+		</div>
 		<div style="padding: 10px;" >
 			<div style="float:right;" >
 				<div v-if="msg" class="alert alert-primary" >{{ msg }}</div>
@@ -23,7 +28,7 @@
 				<div style="min-width:5px; cursor: pointer; padding:0px 5px; border:1px solid #ccc;" v-on:click="change_path('/')" >/</div>
 				<div v-for="vv in paths" style="min-width:20px; cursor: pointer; padding:0px 5px; border:1px solid #ccc;" v-on:click="change_path(vv['tp'])" >{{ vv['p'] }}/</div>
 			</div>
-			<div style="height: calc( 100% - 130px ); overflow: auto;" v-on:drop.prevent="dropit" v-on:dragenter.prevent v-on:dragover.prevent draggable >
+			<div style="height: calc( 100% - 130px ); overflow: auto;"  >
 			<table class="table table-striped table-bordered table-sm" >
 				<tr>
 					<td>ID</td>
@@ -33,27 +38,31 @@
 				<template v-for="v,i in files">
 				<tr v-if="v['vt']=='folder'">
 					<td><div class="vid">#<pre class="vid">{{v['_id']}}</pre></div></td>
-					<td width="70%">
+					<td width="90%">
 						<div v-if="v['vt']=='folder'"><a v-bind:href="path+'files/?path='+v['name']" v-on:click.stop.prevent="enter_path(v['name'])" >{{ this.current_path + v['name'] }}/</a></div>
 						<div v-else><a v-bind:href="path+'files/'+v['_id']+'/edit'" >{{ this.current_path + v['name'] }}</a></div>
+						<div align="right" >
+							Folder
+						</div>
 					</td>
-					<td v-if="v['vt']=='folder'">Folder</td>
-					<td v-else >{{ v['type'] }}</td>
 					<td><input type="button" class="btn btn-outline-danger btn-sm" value="X" v-on:click="delete_file(i)" ></td>
 				</tr>
 				</template>
 				<template v-for="v,i in files">
 				<tr v-if="v['vt']!='folder'">
 					<td><div class="vid">#<pre class="vid">{{v['_id']}}</pre></div></td>
-					<td width="70%">
+					<td width="90%">
 						<div v-if="v['vt']=='folder'"><a v-bind:href="path+'files/?path='+v['name']" v-on:click.stop.prevent="enter_path(v['name'])" >{{ this.current_path + v['name'] }}/</a></div>
 						<div v-else><a v-bind:href="path+'files/'+v['_id']+'/edit'" >{{ this.current_path + v['name'] }}</a></div>
+						<div align="right" style="color:gray;">
+							<div v-if="'sz' in v" style="display: inline-block; width: 100px; overflow: hidden;">{{ getsz(v['sz']) }}</div>
+							<div style="display: inline-block; width:100px; overflow: hidden; ">{{ getc(v) }}</div>
+							<div style="display: inline-block; width: 100px; overflow: hidden;">{{ v['type'] }}</div>
+						</div>
 					</td>
-					<td v-if="v['vt']=='folder'">Folder</td>
-					<td v-else >{{ v['type'] }}</td>
 					<td><input type="button" class="btn btn-outline-danger btn-sm" value="X" v-on:click="delete_file(i)" ></td>
 				</tr>
-				</template>					
+				</template>
 			</table>
 			</div>
 		</div>
@@ -87,19 +96,24 @@
 		</div>
 
 		<div class="modal fade" id="upload_file_modal" tabindex="-1" >
-		  <div class="modal-dialog  modal-lg">
-		    <div class="modal-content">
+		  <div class="modal-dialog  modal-xl">
+		    <div class="modal-content" style="height: calc(100vh - 50px);overflow:auto;">
 		      <div class="modal-header">
 		        <h5 class="modal-title">Upload File</h5>
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
-		      <div class="modal-body" >
+		      <div class="modal-body" data-id="draggable" v-on:drop.prevent="dropit2"  data-id="draggable" v-on:dragenter.prevent="dragenter2" v-on:dragover.prevent="dragover2" draggable >
+				<div v-if="dropdiv2" style="position:absolute; margin-top:-5px; margin-left:-5px; padding:10px; padding:40px; width: calc( 100% + 5px ); height: calc( 100% + 5px ); background-color: rgba(255, 255, 255, 0.5); " v-on:dragenter.prevent="" v-on:dragover.prevent=""   v-on:dragleave.prevent="dragleave2" >
+					<div style="width: calc( 100% - 10px ); height: calc( 100% - 10px ); border:15px dashed #bbb; text-align: center; line-height: 300px; color:#bbb; font-size:3rem; " v-on:dragenter.prevent="" v-on:dragover.prevent="" >
+						Drop files here
+					</div>
+				</div>
 		      	<div>
 		      		<input type="file" id="input_upload" multiple v-on:change="file_select" style="display: none;">
 		      		<input type="button" value="Upload" v-on:click="filebrowse">
 		      	</div>
 				<div>&nbsp;</div>
-				<div v-for="fd,fi in upload_list" class="" style="margin-bottom:5px; border: 1px solid #ccc; padding: 5px; display: flex;" >
+				<div v-for="fd,fi in upload_list" class="" style="margin-bottom:5px; border-bottom: 1px solid #ccc; padding: 5px; display: flex; gap:5px;" >
 					<div style="width: 100px; overflow: hidden; " >
 						<div>{{ getext(fd['t']) }}</div>
 					</div>
@@ -179,16 +193,87 @@ var app = Vue.createApp({
 			upload_file_modal: false,
 			create_folder_modal: false,
 			token: "",
+			dropdiv: false,dropdiv2: false,
 		};
 	},
 	mounted(){
 		this.update_paths();
 		this.load_files();
 		setInterval(this.check_queue,1000);
-		document.addEventListener("drop", function(e){e.preventDefault();e.stopPropagation();app.dropit(e);}, true);
+		//document.addEventListener("drop", function(e){e.preventDefault();e.stopPropagation();app.dropit(e);}, true);
 	},
 	methods: {
+		getc: function(v){
+			if( 'm_i' in v ){
+				return v['m_i'].substr(0,10);
+			}return "";
+		},
+		getsz: function(v){
+			if( v < 1024 ){
+				return (v) + " b";
+			}else if( v/1024 < 1024 ){
+				return (v/1024).toFixed(2) + " kb";
+			}else if( v/1024/1024 < 1024 ){
+				return (v/1024/1024).toFixed(2) + " mb";
+			}else{
+				return v;
+			}
+		},
+		dragenter: function(e){
+			console.log("dragenter: " + e.target.nodeName );
+			var v = e.target;
+			for(var i=0;i<10;i++){
+				if( v.nodeName == "BODY" || v.nodeName == "#html" ){
+					break;
+				}
+				if( v.hasAttribute("data-id") ){
+					if( v.getAttribute("data-id") == "draggable" ){
+						console.log("OK");
+						this.dropdiv = true;
+						break;
+					}
+				}
+				v = v.parentNode;
+			}
+		},
+		dragenter2: function(e){
+			console.log("dragenter: " + e.target.nodeName );
+			var v = e.target;
+			for(var i=0;i<10;i++){
+				if( v.nodeName == "BODY" || v.nodeName == "#html" ){
+					break;
+				}
+				if( v.hasAttribute("data-id") ){
+					if( v.getAttribute("data-id") == "draggable" ){
+						console.log("OK");
+						this.dropdiv2 = true;
+						break;
+					}
+				}
+				v = v.parentNode;
+			}
+		},
+		dragover: function(e){
+			console.log("dragover: " + e.target.nodeName );
+		},
+		dragover2: function(e){
+			console.log("dragover: " + e.target.nodeName );
+		},
+		dragleave: function(e){
+			this.dropdiv = false;
+		},
+		dragleave2: function(e){
+			this.dropdiv2 = false;
+		},
 		dropit: function(e){
+			this.dropdiv = false;
+			this.dropitt(e);
+		},
+		dropit2: function(e){
+			this.dropdiv2 = false;
+			this.dropitt(e);
+		},
+		dropitt: function(e){
 			console.log( e.dataTransfer.files );
 			for(var i=0;i<e.dataTransfer.files.length;i++){
 				var vf = e.dataTransfer.files[i];
@@ -490,8 +575,7 @@ var app = Vue.createApp({
 														if( response.data['status'] == "success" ){
 															this.load_files();
 														}else{
-															alert("Token error: " + response.data['data']);
-															this.err = "Token Error: " + response.data['data'];
+															alert("Delete error: " + response.data['error']);
 														}
 													}else{
 														this.err = "Incorrect response";
@@ -581,7 +665,7 @@ var app = Vue.createApp({
 						}
 					}
 					if( this.upload_list[ i ]['st'] != "error" ){
-						if( this.upload_list[ i ]['s'] > (1024*1024*15) ){
+						if( this.upload_list[ i ]['s'] > (1024*1024*5) ){
 							this.upload_list[ i ]['er'] = "Too Big";
 							this.upload_list[ i ]['st'] = "error";
 						}else if( this.active_uploads < 1 ){

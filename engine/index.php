@@ -292,6 +292,8 @@
 			echo $file_version['data'];
 		}else if( $file_version['t'] == "base64" && preg_match("/^image/i", $file_version['type']) ){
 			echo base64_decode($file_version['data']);exit;
+		}else if( $file_version['t'] == "base64" ){
+			echo base64_decode($file_version['data']);exit;
 		}else{
 			http_response_code(500);
 			echo "Incorrect file type";

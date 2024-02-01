@@ -42,12 +42,20 @@ if( $config_param2 == "" ){
 	}else{
 		require("page_apps_files_home.php");
 	}
+}else if( $config_param2 == "global_files" ){
+	if( $config_param3 ){
+		require("page_apps_global_files_file.php");
+	}else{
+		require("page_apps_global_files_home.php");
+	}
 }else if( $config_param2 == "logs" ){
 	if( $config_param3 && $config_param4 ){
 		require("page_apps_logs_file.php");
 	}else{
 		require("page_apps_logs_home.php");
 	}
+}else if( $config_param2 == "export" ){
+	require("page_apps_export.php");
 
 }else if( $config_param1 ){
 	require("page_apps_home.php");

@@ -14,7 +14,9 @@
 		<div v-if="focused_tree.length>0" class="tag_btn tag_btn_a" >{{ focused_tree[0]['a'] }}</div>
 	</template>
 	<div v-if="focused_type" >
-		
+		<div v-if="focused_type=='A'" >
+			<input type="button" class="btn btn-outline-danger btn-sm" value="Remove Link" v-on:click.prevent.stop="anchor_remove" >
+		</div>
 	</div>
 		<div data-id="editor-popup" tabindex="0" class='editor_toolbar' >
 			<div v-if="sections_list.length>0" v-on:click.stop.prevent="" >

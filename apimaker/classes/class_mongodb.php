@@ -107,7 +107,6 @@ class mongodb_connection{
 				if( $insert_data["_id"] && is_string( $insert_data["_id"] ) ){
 					$insert_data["_id"] = $this->get_id( $insert_data["_id"] );
 				}
-				$insert_data["m_i"]=date("Y-m-d H:i:s");
 				$cur = $col->insertOne($insert_data);
 				$id =  (string)$cur->getInsertedId();
 				return ["status"=>"success","inserted_id"=>$id];
