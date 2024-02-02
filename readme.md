@@ -14,7 +14,7 @@ docker compose up
 
 docker compose up -d
 
-#To remove the container use below command
+#To remove the container use below command 
 
 docker compose down 
 
