@@ -120,9 +120,11 @@ if( $_POST['action'] == "app_backup" ){
 		fwrite($fp, json_encode($j) . "\n--\n");
 	}
 	fclose($fp);
+	chmod($tmfn, 0777);
 	//echo $tmfn;
 	exec("gzip " . $tmfn);
 	$tmfn .= ".gz";
+	chmod($tmfn, 0777);
 
 	json_response(['status'=>"success", "temp_fn"=>str_replace("/tmp/phpengine_backups/", "", $tmfn), "sz"=>filesize($tmfn)]);
 	exit;
@@ -235,6 +237,10 @@ if( $_POST['action'] == "exports_restore_upload" ){
 				$d.= $line;
 			}
 		}
+
+		fclose($fp);
+		fclose($fp2);
+		chmod($fn2, 0777);
 		
 		$tot = 0;
 		$datasets2 = [];

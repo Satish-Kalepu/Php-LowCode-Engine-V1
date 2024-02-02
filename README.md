@@ -22,17 +22,22 @@ Use Cases
 Apache 2.4,  PHP 8.2, MongoDB 5+
 
 ## Install 
-### Docker 
-Application: 
 
-```docker run -d -rm -p 8888:80 -v %{pwd}:/var/www/html/ satishkalepu/amazon-apache-php82```
-
-Database:
-
-```docker run -d -rm -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=stage -e MONGO_INITDB_ROOT_PASSWORD=stage mongo```
+```git clone https://github.com/Satish-Kalepu/backendmaker_library.git```
 
 ### Docker Compose
 ```docker compose up ```
+
+### Docker 
+Application: 
+
+```docker run -d --rm -p 8888:80 -v $(pwd):/var/www/html/ satishkalepu/amazon-apache-php82```
+
+for windows use %{pwd}% instead of $(pwd)
+
+Database:
+
+```docker run -d --rm -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=stage -e MONGO_INITDB_ROOT_PASSWORD=stage mongo```
 
 ### Lampp
 git pull into desired htdocs folder 
@@ -40,7 +45,7 @@ git pull into desired htdocs folder
 curretly supported only for linux environment.
 
 USAGE
-_____
+-----
 http://localhost:8888/apimaker  (where you can design apis)
 
 on first run it redirects to: http://localhost:8888/apimaker/__install.php

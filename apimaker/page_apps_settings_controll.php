@@ -38,7 +38,7 @@ if( $_POST['action'] == "save_app_settings" ){
 			json_response("fail", "Incorrect data. Domain settings missing.");
 		}
 		foreach( $settings['domains'] as $i=>$j ){
-			if( !preg_match("/^(https\:\/\/www\.|http\:\/\/www\.|https\:\/\/|http\:\/\/)[a-zA-Z0-9\-\.]{3,100}\.[a-z\.]{2,6}[\:0-9]*\/[a-z][a-zA-Z0-9\.\-\_\.\/]+/i", $j['url']) ){
+			if( !preg_match("/^(https\:\/\/www\.|http\:\/\/www\.|https\:\/\/|http\:\/\/)(localhost|[0-9\.]{7,15}|[a-z0-9\-\.]{3,200}\.[a-z\.]{2,10})[\:0-9]*\/[a-z0-9\.\-\_\.\/]*/i", $j['url']) ){
 				json_response("fail", "Incorrect url " . $j['url'] );
 			}
 			$v = parse_url($settings['domains'][ $i ]['url']);
@@ -164,7 +164,7 @@ if( !$app['settings'] ){
 		"domains"=>[
 			[
 				"domain"=>$_SERVER['HTTP_HOST'],
-				"url"=>"https://".$_SERVER['HTTP_HOST']."/engine/",
+				"url"=>"http://".$_SERVER['HTTP_HOST']."/engine/",
 				"path"=>"/engine/"
 			]
 		],
