@@ -25,7 +25,10 @@ Apache 2.4,  PHP 8.2, MongoDB 5+
 ### Docker 
 Application: 
 
-```docker run -d -rm -p 8888:80 -v %{pwd}:/var/www/html/ satishkalepu/amazon-apache-php82```
+Linux
+```docker run -d --rm -p 8888:80 -v %{pwd}:/var/www/html/ satishkalepu/amazon-apache-php82```
+Windows:
+```docker run -d --rm -p 8888:80 -v %cd%:/var/www/html/ satishkalepu/amazon-apache-php82```
 
 Database:
 
