@@ -544,6 +544,12 @@ var app = s__({
 				console.log("Ace initialized");
 				//ace.config.setModuleLoader('ace/ext/beautify', () => import("<?=$config_global_apimaker_path ?>ace/src/ext-beautify.js"));
 				this.ace_editor = ace.edit("raw_html_block");
+				this.ace_editor.session.setMode("ace/mode/html");
+				this.ace_editor.setOptions({
+					enableAutoIndent: true, behavioursEnabled: true,
+					showPrintMargin: false, printMargin: false, 
+					showFoldWidgets: false, 
+				});
 				this.ace_editor.setValue( this.tag_settings_html+'' );
 				//console.log( this.ace_editor );
 		        // this.ce.setOptions({
@@ -553,16 +559,6 @@ var app = s__({
 				// 	//fontSize: "12px", //fontFamily: "Arial", // theme: // mode:  // tabSize: number
 				// 	// wrap: "off"|"free"|"printmargin"|boolean|number //readOnly: false,
 		        // });
-		        // //ace.require("ext")
-				// this.ce.session.setMode("ace/mode/html");
-				// // var beautiful = ace.require("ace/ext/beautify");
-				// // beautiful.beautify(this.ce.session);
-		        // this.ce.commands.addCommands([{
-		        //   name: "showSettingsMenu",
-		        //   bindKey: {win: "Ctrl-q", mac: "Ctrl-q"},
-		        //   exec: function(editor){editor.showSettingsMenu();},
-		        //   readOnly: true
-		        // }]);
 		        ///this.ce.setValue( '<p>Ssdfsdfd sdf sdfsd</p>' );
 		        //editor.setReadOnly(true);
 			},
@@ -678,8 +674,20 @@ var app = s__({
 			this_mousemove: function(e){
 				if( this.insert_tag ){
 					var v = e.target;
+					if( v.hasAttribute("data-id") ){
+						if( v.getAttribute("data-id") == "root" ){
+							e.preventDefault();
+							e.stopPropagation();
+							return false;
+						}
+					}
 					var cnt = 0;
 					while( 1 ){cnt++;if( cnt>3 ){console.error("focuselement + 3");break;}
+						if( v.hasAttribute("data-id") ){
+							if( v.getAttribute("data-id") == "root" ){
+								break;
+							}
+						}
 						if( v.nodeName == "A" ){
 							this.focused_anchor = v;
 						}

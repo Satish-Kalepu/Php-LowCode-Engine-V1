@@ -4,9 +4,8 @@
 		<?php require("page_apps_leftbar.php"); ?>
 	</div>
 	<div style="position: fixed;left:150px; top:40px; height: 40px; width:calc( 100% - 150px ); background-color: white; border-bottom:1px solid #ccc; " >
-		<div style="padding: 5px;" >
+		<div style="padding: 5px 10px;" >
 			<div>
-				<div style="float:right;"><input type="button" value="Save Settings"  class="btn btn-outline-dark btn-sm" v-on:click="save_settings"></div>
 				<h5 class="d-inline">{{ app__['app'] }} <span class="text-secondary">Settings</span></h5>
 			</div>
 		</div>
@@ -20,12 +19,32 @@
 				<div>Configure app settings to continue</div>
 			</div>
 
-			<div v-if="msg" class="alert alert-primary" >{{ msg }}</div>
-			<div v-if="err" class="alert alert-danger" >{{ err }}</div>
+			<div style="border: 1px solid #ccc; margin-bottom: 20px; " >
+				<div style="background-color:#e8e8e8; padding: 10px;">Cloud Hosting</div>
+				<div style="padding:10px;">
+					<!-- <pre>{{ settings }}</pre> -->
+
+					<div class="mb-2" >
+						<label class="form-label">App name</label>
+						<div><input type="text" class="form-control form-control-sm" v-model="edit_app['app']" ></div>
+					</div>
+					<div class="mb-2" >
+						<label class="form-label">Description</label>
+						<div><textarea class="form-control form-control-sm" v-model="edit_app['des']" ></textarea></div>
+					</div>
+					<div class="mb-2" v-if="app__['app']!=edit_app['app']||app__['des']!=edit_app['des']" >
+						<div><input type="button" class="btn btn-outline-dark btn-sm" value="UPDATE" v-on:click="save_name" ></div>
+					</div>
+
+					<div v-if="msg1" class="alert alert-primary" >{{ msg1 }}</div>
+					<div v-if="err1" class="alert alert-danger" >{{ err1 }}</div>
+
+				</div>
+			</div>
 
 			<div style="border: 1px solid #ccc; margin-bottom: 20px; " >
-				<div style="background-color:#e8e8e8; padding: 5px;">Cloud Hosting</div>
-				<div style="padding:5px;">
+				<div style="background-color:#e8e8e8; padding: 5px 10px;">Cloud Hosting</div>
+				<div style="padding:10px;">
 
 					<div><label style="cursor: pointer;">Enable cloud hosting  <input type="checkbox" v-model="settings['cloud']" ></label></div>
 					<template v-if="'cloud' in settings" >
@@ -55,18 +74,25 @@
 
 					<!-- <pre>{{ settings }}</pre> -->
 
+					<div class="mb-2" >
+						<div><input type="button" class="btn btn-outline-dark btn-sm" value="UPDATE" v-on:click="app_save_cloud_settings" ></div>
+					</div>
+
+					<div v-if="msg2" class="alert alert-primary" >{{ msg2 }}</div>
+					<div v-if="err2" class="alert alert-danger" >{{ err2 }}</div>					
+
 				</div>
 			</div>
 
 			<div style="border: 1px solid #ccc; margin-bottom: 20px; " >
-				<div style="background-color:#e8e8e8; padding: 5px;">Custom Hosting</div>
-				<div style="padding:5px;">
+				<div style="background-color:#e8e8e8; padding: 5px 10px;">Custom Hosting</div>
+				<div style="padding:10px;">
 					<p><label style="cursor: pointer;">Enable custom hosting <input type="checkbox" v-model="settings['host']" ></label></p>
 
 					<template v-if="settings['host']" >
 					<div style="border: 1px solid #ccc; margin-bottom: 20px; " >
-						<div style="background-color:#e8e8e8; padding: 5px;">URLs Allowed</div>
-						<div style="padding:5px;">
+						<div style="background-color:#e8e8e8; padding: 5px 10px;">URLs Allowed</div>
+						<div style="padding:10px;">
 							<div class="small">Urls with path where engine is configured</div>
 							<table class="table table-sm" >
 							<tr v-for="dd,di in settings['domains']">
@@ -79,7 +105,7 @@
 					</div>
 
 					<div style="border: 1px solid #ccc; margin-bottom: 20px; " >
-						<div style="background-color:#e8e8e8; padding: 5px;">Access Keys</div>
+						<div style="background-color:#e8e8e8; padding: 5px 10px;">Access Keys</div>
 						<div style="padding:10px;">
 							<div v-for="dd,di in settings['keys']" style=" border:1px solid #ccc; margin-bottom:10px; " >
 								<div class="p-2" style="border-bottom:1px solid #ccc;" >
@@ -103,12 +129,19 @@
 					</div>
 					</template>
 
+					<div class="mb-2" >
+						<div><input type="button" class="btn btn-outline-dark btn-sm" value="UPDATE" v-on:click="app_save_custom_settings" ></div>
+					</div>
+
+					<div v-if="msg3" class="alert alert-primary" >{{ msg3 }}</div>
+					<div v-if="err3" class="alert alert-danger" >{{ err3 }}</div>					
+
 				</div>
 			</div>
 
 			<div style="border: 1px solid #ccc; margin-bottom: 20px; " >
-				<div style="background-color:#e8e8e8; padding: 5px;">Other Settings</div>
-				<div style="padding:5px;">
+				<div style="background-color:#e8e8e8; padding: 5px 10px;">Other Settings</div>
+				<div style="padding:10px;">
 					<p>Home page </p>
 					<p>Type: <select class="form-select form-select-sm w-auto d-inline" v-model="settings['homepage']['t']">
 						<option value="" >Select</option>
@@ -121,10 +154,40 @@
 						</select>
 					</template>
 					</p>
+					<div class="mb-2" >
+						<div><input type="button" class="btn btn-outline-dark btn-sm" value="UPDATE" v-on:click="app_save_other_settings" ></div>
+					</div>
+					<div v-if="msg4" class="alert alert-primary" >{{ msg4 }}</div>
+					<div v-if="err4" class="alert alert-danger" >{{ err4 }}</div>
+
 				</div>
 			</div>
+
+			<div style="border: 1px solid #ccc; margin-bottom: 20px; " >
+				<div style="background-color:#e8e8e8; padding: 5px 10px;">Engine</div>
+				<div style="padding:10px;">
+
+					<template v-if="enginep" >
+
+					<p>Engine configuration file:</p>
+					<div>{{ enginep }}</div>
+					<pre style="width:90%; height: 150px;overflow: auto; padding: 10px; border: 1px solid #ccc;">{{ engined[0] }}</pre>
+
+					<p v-if="is_it_default" >This app is the default app</p>
+					<p v-else>
+						<p style="color:red;">This app is not the default app</p>
+						<p>You can update the configuration file to make the current app default.</p>
+					</p>
+
+					</template>
+					<p v-else>Engine configuration file does not exist</p>
+
+				</div>
+			</div>
+
 		</div>
 	</div>
+
 
 </div>
 <script>
@@ -134,18 +197,32 @@ var app = Vue.createApp({
 			path: "<?=$config_global_apimaker_path ?>apps/<?=$app['_id'] ?>/",
 			app_id: "<?=$app['_id'] ?>",
 			app__: <?=json_encode($app) ?>,
+			edit_app: {"app":"", "des":""},
 			cd: <?=isset($config_global_apimaker['config_cloud_domains'])?json_encode($config_global_apimaker['config_cloud_domains']):'[]' ?>,
-			msg: "",
-			err: "",
+			msg1: "",err1: "",msg2: "",err2: "",msg3: "",err3: "",msg4: "",err4: "",
 			pages:[],
+			enginep: "<?=$enginep ?>", 
+			engined: <?=json_encode([$engined]) ?>,
 			settings: <?=json_encode($settings) ?>,
 			show_create_api: false,
 			new_api: { "name": "", "des": "" },
 			create_app_modal: false,
 			token: "",
+			custom_edited: false, cloud_edited: false, other_edited: false
 		};
 	},
+	watch: {
+		app__: {
+			handler: function(){
+				console.log("edited");
+			}, deep: true, immediate: true,
+		}
+	},
 	mounted(){
+		this.edit_app = {
+			"app": this.app__['app']+'',
+			"des": this.app__['des']+''
+		};
 		if( 'cloud' in this.settings == false ){
 			this.settings['cloud'] = false;
 			this.settings['cloud-domain'] = "backendmaker.com";
@@ -162,13 +239,20 @@ var app = Vue.createApp({
 		if( 'homepage' in this.settings == false ){
 			this.settings['homepage'] = {
 				"t":"page",
-				"v":"home",
+				"v":"",
 			};
 		}
 		this.load_pages();
 	},
 	methods: {
-
+		is_it_default: function(){
+			if( this.enginep != "" ){
+				if( this.engined.indexOf( this.app__['_id'] ) > 0 ){
+					return true;
+				}
+			}
+			return false;
+		},
 		load_pages: function(){
 			axios.post("?", {
 				"action":"get_token",
@@ -281,33 +365,253 @@ var app = Vue.createApp({
 				"ip": "0.0.0.0/0"
 			});
 		},
-		save_settings(){
-			this.err = "";
-			this.msg = "Saving...";
-			document.getElementById("content_div").scrollTo(0,0);
+		save_name: function(){
+			if( this.edit_app['app'].match(/^[a-z][a-z0-9\-]{3,25}$/) == null ){
+				this.err1 = "App name should be simple. no special chars";return false;
+			}
+			if( this.edit_app['app'].match(/^[A-Za-z0-9\.\,\-\ \_\(\)\[\]\ \@\#\!\&\r\n\t]{4,50}$/) == null ){
+				this.err1 = "Description min 5 chars, max 50";return false;
+			}
+			this.msg1 = "Loading...";
+			this.err1 = "";
 			axios.post("?", {
-				"action": "save_app_settings", 
-				"settings": this.settings
+				"action":"get_token",
+				"event":"app_update."+this.app_id,
+				"expire":2
 			}).then(response=>{
-				this.msg = "";
+				this.msg1 = "";
 				if( response.status == 200 ){
 					if( typeof(response.data) == "object" ){
 						if( 'status' in response.data ){
 							if( response.data['status'] == "success" ){
-								this.msg = "Saved Successfully";
-								this.app__['settings'] = this.settings;
-								setTimeout(function(v){v.msg= '';},5000,this);
+								this.token = response.data['token'];
+								if( this.is_token_ok(this.token) ){
+									this.save_name2();
+								}
 							}else{
-								this.err = response.data['error'];
+								alert("Token error: " + response.dat['data']);
+								this.err1 = "Token Error: " + response.data['data'];
 							}
 						}else{
-							this.err = "Incorrect response";
+							this.err1 = "Incorrect response";
 						}
 					}else{
-						this.err = "Incorrect response Type";
+						this.err1 = "Incorrect response Type";
 					}
 				}else{
-					this.err = "Response Error: " . response.status;
+					this.err1 = "Response Error: " . response.status;
+				}
+			});
+		},
+		save_name2: function(){
+			this.err1 = "";
+			this.msg1 = "Saving...";
+			axios.post("?", {
+				"action": "app_update_name", 
+				"app": this.edit_app,
+				"token": this.token
+			}).then(response=>{
+				this.msg1 = "";
+				if( response.status == 200 ){
+					if( typeof(response.data) == "object" ){
+						if( 'status' in response.data ){
+							if( response.data['status'] == "success" ){
+								this.msg1 = "Saved Successfully";
+								setTimeout(function(v){v.msg1= '';},5000,this);
+							}else{
+								this.err1 = response.data['error'];
+							}
+						}else{
+							this.err1 = "Incorrect response";
+						}
+					}else{
+						this.err1 = "Incorrect response Type";
+					}
+				}else{
+					this.err1 = "Response Error: " . response.status;
+				}
+			});
+		},
+		app_save_cloud_settings: function(){
+			this.msg2 = "Loading...";
+			this.err2 = "";
+			axios.post("?", {
+				"action":"get_token",
+				"event":"cloud_settings."+this.app_id,
+				"expire":2
+			}).then(response=>{
+				this.msg2 = "";
+				if( response.status == 200 ){
+					if( typeof(response.data) == "object" ){
+						if( 'status' in response.data ){
+							if( response.data['status'] == "success" ){
+								this.token = response.data['token'];
+								if( this.is_token_ok(this.token) ){
+									this.app_save_cloud_settings2();
+								}
+							}else{
+								alert("Token error: " + response.dat['data']);
+								this.err2 = "Token Error: " + response.data['data'];
+							}
+						}else{
+							this.err2 = "Incorrect response";
+						}
+					}else{
+						this.err2 = "Incorrect response Type";
+					}
+				}else{
+					this.err2 = "Response Error: " . response.status;
+				}
+			});
+		},
+		app_save_cloud_settings2: function(){
+			this.err2 = "";
+			this.msg2 = "Saving...";
+			axios.post("?", {
+				"action": "app_save_cloud_settings", 
+				"settings": this.settings,
+				"token": this.token
+			}).then(response=>{
+				this.msg2 = "";
+				if( response.status == 200 ){
+					if( typeof(response.data) == "object" ){
+						if( 'status' in response.data ){
+							if( response.data['status'] == "success" ){
+								this.msg2 = "Saved Successfully";
+								setTimeout(function(v){v.msg2= '';},5000,this);
+							}else{
+								this.err2 = response.data['error'];
+							}
+						}else{
+							this.err2 = "Incorrect response";
+						}
+					}else{
+						this.err2 = "Incorrect response Type";
+					}
+				}else{
+					this.err2 = "Response Error: " . response.status;
+				}
+			});
+		},
+		app_save_custom_settings: function(){
+			this.msg3 = "Loading...";
+			this.err3 = "";
+			axios.post("?", {
+				"action":"get_token",
+				"event":"cloud_settings."+this.app_id,
+				"expire":2
+			}).then(response=>{
+				this.msg3 = "";
+				if( response.status == 200 ){
+					if( typeof(response.data) == "object" ){
+						if( 'status' in response.data ){
+							if( response.data['status'] == "success" ){
+								this.token = response.data['token'];
+								if( this.is_token_ok(this.token) ){
+									this.app_save_custom_settings2();
+								}
+							}else{
+								alert("Token error: " + response.dat['data']);
+								this.err3 = "Token Error: " + response.data['data'];
+							}
+						}else{
+							this.err3 = "Incorrect response";
+						}
+					}else{
+						this.err3 = "Incorrect response Type";
+					}
+				}else{
+					this.err3 = "Response Error: " . response.status;
+				}
+			});
+		},
+		app_save_custom_settings2: function(){
+			this.err3 = "";
+			this.msg3 = "Saving...";
+			axios.post("?", {
+				"action": "app_save_custom_settings", 
+				"settings": this.settings,
+				"token": this.token
+			}).then(response=>{
+				this.msg3 = "";
+				if( response.status == 200 ){
+					if( typeof(response.data) == "object" ){
+						if( 'status' in response.data ){
+							if( response.data['status'] == "success" ){
+								this.msg3 = "Saved Successfully";
+								setTimeout(function(v){v.msg3= '';},5000,this);
+							}else{
+								this.err3 = response.data['error'];
+							}
+						}else{
+							this.err3 = "Incorrect response";
+						}
+					}else{
+						this.err3 = "Incorrect response Type";
+					}
+				}else{
+					this.err3 = "Response Error: " . response.status;
+				}
+			});
+		},
+		app_save_other_settings: function(){
+			this.msg4 = "Loading...";
+			this.err4 = "";
+			axios.post("?", {
+				"action":"get_token",
+				"event":"cloud_settings."+this.app_id,
+				"expire":2
+			}).then(response=>{
+				this.msg4 = "";
+				if( response.status == 200 ){
+					if( typeof(response.data) == "object" ){
+						if( 'status' in response.data ){
+							if( response.data['status'] == "success" ){
+								this.token = response.data['token'];
+								if( this.is_token_ok(this.token) ){
+									this.app_save_other_settings2();
+								}
+							}else{
+								alert("Token error: " + response.dat['data']);
+								this.err4 = "Token Error: " + response.data['data'];
+							}
+						}else{
+							this.err4 = "Incorrect response";
+						}
+					}else{
+						this.err4 = "Incorrect response Type";
+					}
+				}else{
+					this.err4 = "Response Error: " . response.status;
+				}
+			});
+		},
+		app_save_other_settings2: function(){
+			this.err4 = "";
+			this.msg4 = "Saving...";
+			axios.post("?", {
+				"action": "app_save_other_settings", 
+				"homepage": this.settings['homepage'],
+				"token": this.token
+			}).then(response=>{
+				this.msg4 = "";
+				if( response.status == 200 ){
+					if( typeof(response.data) == "object" ){
+						if( 'status' in response.data ){
+							if( response.data['status'] == "success" ){
+								this.msg4 = "Saved Successfully";
+								setTimeout(function(v){v.msg4= '';},5000,this);
+							}else{
+								this.err4 = response.data['error'];
+							}
+						}else{
+							this.err4 = "Incorrect response";
+						}
+					}else{
+						this.err4 = "Incorrect response Type";
+					}
+				}else{
+					this.err4 = "Response Error: " . response.status;
 				}
 			});
 		},

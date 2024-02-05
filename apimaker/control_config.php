@@ -1,10 +1,12 @@
 <?php
 
-/* Mongo DB connection 
+/*
+Mongo DB connection 
 require($_SERVER['DOCUMENT_ROOT']."admin/classes/class_mongodb.php");
 $mongodb_con = new mongodb_connection( $config_mongo_host.":".$config_mongo_port );
 $mongodb_con->debug = $config_mongo_debug;
-$mongodb_con->connect( $config_mongo_db );*/
+$mongodb_con->connect( $config_mongo_db );
+*/
 
 if( !$config_global_apimaker['config_mongo_host'] || !$config_global_apimaker['config_mongo_port'] || !$config_global_apimaker['config_mongo_db'] || !$config_global_apimaker['config_mongo_username'] || !$config_global_apimaker['config_mongo_password'] ){
 	header('HTTP/1.1 500 server error');
@@ -15,7 +17,7 @@ if( !$config_global_apimaker['config_mongo_host'] || !$config_global_apimaker['c
 //print_pre($config_global_apimaker);
 
 require( preg_replace("/[\/]{2,5}/", "/", $_SERVER['DOCUMENT_ROOT'] . "/" . $config_global_apimaker_path . "/classes/class_mongodb.php") );
-if( $config_global_apimaker['config_mongo_username'] ){
+if( isset($config_global_apimaker['config_mongo_username']) && $config_global_apimaker['config_mongo_username'] ){
 	$mongodb_con = new mongodb_connection( 
 		$config_global_apimaker['config_mongo_host'], 
 		$config_global_apimaker['config_mongo_port'], 

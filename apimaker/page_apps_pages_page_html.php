@@ -10,7 +10,8 @@
 
 	<div style="position: fixed;left:150px; top:40px; height: 40px; width:calc( 100% - 150px ); background-color: white; overflow: hidden; border-bottom:1px solid #ccc; " >
 		<div style="padding: 5px 10px;" >
-			<a v-bind:href="'/engine/'+page__['name']" target="_blank" ><img src="<?=$config_global_apimaker_path ?>edit.png" style="float:right;cursor: pointer; margin-right:50px;" title="Preview" ></a>
+			<div class="btn btn-outline-dark btn-sm" style="float:right; padding:4px 5px;"  v-on:click="save_page" >Save Page</div>
+			<a v-bind:href="'/engine/'+page__['name']" target="_blank" ><img src="<?=$config_global_apimaker_path ?>edit.png" style="float:right;cursor: pointer; margin-right:20px;" title="Preview" ></a>
 			<h5 class="d-inline">Page: /engine/{{ page__['name'] }}</h5>
 		</div>
 	</div>
@@ -31,7 +32,7 @@
 			</svg>
 		</div>
 		<div style="position: absolute; width: 10px;height: 10px; overflow: hidden;" >
-		<?php require("page_apps_pages_page_editor_template.html"); ?>
+			<?php require("page_apps_pages_page_editor_template.html"); ?>
 		</div>
 	</div>
 
@@ -39,8 +40,8 @@
 	<div class="save_block_a" >
 		<div style=" display: inline-block; padding: 3px; margin-left: 10px;margin-right: 10px;" ><div class="btn btn-outline-dark btn-sm"  v-on:click="save_page" >SAVE</div></div>
 		<div style=" display: inline-block; padding: 3px;" >
-			<div v-if="msg__" class="text-success px-3" >{{msg__}}</div>
-			<div v-if="err__" class="text-danger px-3" >{{err__}}</div>
+			<div v-if="msg__" class="text-success px-3" >{{ msg__ }}</div>
+			<div v-if="err__" class="text-danger px-3" >{{ err__ }}</div>
 		</div>
 	</div>
 	<div class="modal fade" id="ses_expired" data-backdrop="static" data-keyboard="false">
@@ -118,7 +119,6 @@
 							<div v-if="focused_tree.length>1" class="tag_btn" v-on:click="set_focus_to(1)" >{{ focused_tree[1]['a'] }}</div>
 							<div v-if="focused_tree.length>0" class="tag_btn tag_btn_a" >{{ focused_tree[0]['a'] }}</div>
 						</div>
-						<div style="padding: 5px; background-color: #f0f0f0;" >Raw HTML</div>
 						<div style="padding:5px;">
 							<div id="raw_html_block" style="display: relative; width:100%; height:300px;" ></div>
 							<!-- <textarea class="form-control form-control-sm" style="min-height: 200px;" v-model="tag_settings_html"></textarea> -->

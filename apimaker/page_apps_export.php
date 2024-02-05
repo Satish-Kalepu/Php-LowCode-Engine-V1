@@ -12,18 +12,18 @@
 				<!-- <button class="btn btn-outline-secondary btn-sm" v-on:click="api_show_create_form()" >Create API</button> -->
 			</div>
 			<div class="h3 mb-3">Manage APP Data</div>
-			<div style="height: calc( 100% - 100px ); overflow: auto;" >
+			<div style="height: calc( 100% - 100px ); overflow: auto; padding-right:10px;" >
 
 				<div style="border: 1px solid #ccc; margin-bottom: 20px; " >
-					<div style="background-color:#e8e8e8; padding: 5px;">Export to Hub</div>
-					<div style="padding:5px;">
+					<div style="background-color:#e8e8e8; padding: 5px 10px;">Export to Hub</div>
+					<div style="padding:10px;">
 							<p>Still cooking. Please check later</p>
 					</div>
 				</div>
 
 				<div style="border: 1px solid #ccc; margin-bottom: 20px; " >
-					<div style="background-color:#e8e8e8; padding: 5px;">Backup</div>
-					<div style="padding:5px;">
+					<div style="background-color:#e8e8e8; padding: 5px 10px;">Backup</div>
+					<div style="padding:10px;">
 						<p>You can download app data and all dependent media and databases. which you can use to restore or create new app.</p>
 						<p><label><input type="checkbox" v-model="backup_pwd" > Protect backup with a password</label></p>
 						<p v-if="backup_pwd"><input type="text" v-model="backup_pass" class="form-control form-select-sm w-auto" placeholder="Password" ></p>
@@ -38,8 +38,8 @@
 				</div>
 
 				<div v-if="snapshots.length>0" style="border: 1px solid #ccc; margin-bottom: 20px; " >
-					<div style="background-color:#e8e8e8; padding: 5px;">Backup Snapshots Available</div>
-					<div style="padding:5px;">
+					<div style="background-color:#e8e8e8; padding: 5px 10px;">Backup Snapshots Available</div>
+					<div style="padding:10px;">
 						<p>History of snapshots taken and available in this instance.</p>
 						<div v-for="v in snapshots" style="display: flex; gap:20px; margin-bottom: 5px; border-bottom:1px solid #ccc;" >
 							<div>{{ v.substr(25,15) }}</div>
@@ -50,8 +50,8 @@
 				</div>
 
 				<div style="border: 1px solid #ccc; margin-bottom: 20px;" >
-					<div style="background-color:#e8e8e8; padding: 5px;">Restore</div>
-					<div style="padding:5px;">
+					<div style="background-color:#e8e8e8; padding: 5px 10px;">Restore</div>
+					<div style="padding:10px;">
 						<p>You can restore any app which will delete all the settings of the current app. Or you can create a new app.</p>
 						<!-- <p><input type="button" class="btn btn-outline-dark btn-sm" value="Restore" v-on:click="restorenow" ></p> -->
 						<p><input type="file" class="form-control form-control-sm" id="restore_file" style="display:;" v-on:change="restore_fileselect"></p>

@@ -36,8 +36,8 @@
 	.leftbar_scroll::-webkit-scrollbar-thumb {background:#666;}
 	.leftbar_scroll::-webkit-scrollbar-thumb:hover {background:#551;}
 
-	.tag_btn{ display:inline-block; padding:0px 5px; margin-right:5px; border:1px solid #ccc; cursor:pointer; }
-	.tag_btn_a{ background-color:#f0f0f0; cursor:initial; }
+	.tag_btn{ display:inline-block; padding:0px 5px; margin-right:5px; border:1px solid #ccc; cursor:pointer; font-size:0.8rem;}
+	.tag_btn_a{ background-color:#f0f0f0; cursor:initial; font-size:0.8rem; }
 	.tag_btn:hover{ background-color:#f0e0d0; border:1px solid black; }
 	.tag_btn_a:hover{ background-color:#f0f0f0; border:1px solid #ccc; }
 	.tag_btn:before{ position: absolute; margin-left:-12px; content:'>'; }

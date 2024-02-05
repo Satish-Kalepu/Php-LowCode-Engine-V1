@@ -19,8 +19,8 @@ if( $_POST['action'] == "get_dynamic_tables" ){
 	exit;
 }
 
-if( $_POST['action'] == "delete_dynamic_table" ){
-	$t = validate_token("deletedynamic_table". $config_param1 . $_POST['dynamic_table_id'], $_POST['token']);
+if( $_POST['action'] == "tables_dynamic_delete" ){
+	$t = validate_token("tables_dynamic_delete". $config_param1 . $_POST['dynamic_table_id'], $_POST['token']);
 	if( $t != "OK" ){
 		json_response("fail", $t);
 	}
@@ -80,7 +80,143 @@ if( $_POST['action'] == "create_table_dynamic" ){
 	exit;
 }
 
-if( $config_param3 ){
+
+if( $config_param3 == "importfile" ){
+
+	if( $_POST['action'] == "tables_dynamic_importfile_create" ){
+		$t = validate_token( "tables_dynamic_importfile_batch.". $config_param1, $_POST['token'] );
+		if( $t != "OK" ){
+			json_response("fail", $t);
+		}
+
+		if( !preg_match("/^[a-z0-9\.\-\_\ ]{3,25}$/i", $_POST['table']['table']) ){
+			json_response("fail", "Name incorrect");
+		}
+		if( !preg_match("/^[a-z0-9\!\@\%\^\&\*\.\-\_\'\"\n\r\t\ ]{5,250}$/i", $_POST['table']['des']) ){
+			json_response("fail", "Description incorrect");
+		}
+		$res = $mongodb_con->find_one( $config_global_apimaker['config_mongo_prefix'] . "_tables_dynamic", [
+			'app_id'=>$config_param1,
+			'name'=>$_POST['table']['table']
+		]);
+		if( $res['data'] ){
+			json_response("fail", "Table with same name already exists");
+		}
+
+		if( $_POST['upload_type'] == "CSV" ){
+			$schema = [];
+			$cnt = 0;
+			foreach( $_POST['schema'] as $i=>$j ){
+				$schema[ $i ] = [
+			        "name"=> $i,
+			        "key"=> $i,
+			        "type"=> $j['type'],
+			        "m"=> $j['m'],
+			        "order"=> $cnt++,
+			        "sub"=> []
+				];
+			}
+			$res = $mongodb_con->insert( $config_global_apimaker['config_mongo_prefix'] . "_tables_dynamic", [
+				"app_id"=>$config_param1,
+				"table"=>$_POST['table']['table'],
+				"des"=>$_POST['table']['des'],
+				"created"=>date("Y-m-d H:i:s"),
+				"updated"=>date("Y-m-d H:i:s"),
+				"schema"=>[
+					'default'=>[
+						'name'=>"default",
+						"fields"=>$schema
+					]
+				],
+			]);
+
+		}else if( $_POST['upload_type'] == "JSON" ){
+			$res = $mongodb_con->insert( $config_global_apimaker['config_mongo_prefix'] . "_tables_dynamic", [
+				"app_id"=>$config_param1,
+				"table"=>$_POST['table']['table'],
+				"des"=>$_POST['table']['des'],
+				"created"=>date("Y-m-d H:i:s"),
+				"updated"=>date("Y-m-d H:i:s"),
+				"schema"=>[
+					'default'=>[
+						'name'=>"default",
+						"fields"=>$_POST['schema']
+					]
+				],
+			]);
+		}
+		if( $res['status'] == "success" && $res['inserted_id'] ){
+			$_SESSION['temp_import_table_id'] = $res['inserted_id'];
+			$resc = $mongodb_con->create_collection( $config_global_apimaker['config_mongo_prefix'] . "_dt_" . $res['inserted_id'] );
+			if( $resc['status'] != "success" ){
+				$resc['inserted_id'] = $res['inserted_id'];
+				json_response( $resc );
+			}
+			json_response( $res );
+		}else{
+			json_response( $res );
+		}
+		exit;
+	}
+
+
+	if( $_POST['action'] == "tables_dynamic_importfile_batch" ){
+
+		$t = validate_token("tables_dynamic_importfile_batch.". $config_param1, $_POST['token']);
+		if( $t != "OK" ){
+			json_response("fail", $t);
+		}
+
+		//print_r( $_POST );exit;
+		$new_table_id=$_SESSION['temp_import_table_id'];
+		if( $_POST['table_id'] != $new_table_id ){
+			json_response(['status'=>"fail", "error"=>"Incorrect table id" ]);
+		}
+
+		$res = $mongodb_con->count( $config_global_apimaker['config_mongo_prefix'] . "_dt_". $new_table_id );
+		if( $res['status'] != "success" ){
+			json_response(['status'=>"fail", "error"=>"Count check failed: " . $res['error']]);
+		}
+		if( $res['data'] > 20000 ){
+			json_response(['status'=>"fail", "error"=>"Table already has more than 20k records"]);
+		}
+
+		$success = 0;
+		$skipped = 0;
+		$error = "";
+		$skipped_items = [];
+
+		foreach( $_POST['data'] as $i=>$j ){
+			$res = $mongodb_con->insert( $config_global_apimaker['config_mongo_prefix'] . "_dt_". $new_table_id, $j );
+			if( $res['status'] != "success" ){
+				$error = $res['error'];
+				break;
+			}
+			$success++;
+		}
+
+		if( $error ){
+			json_response([
+				'status'=>"fail",
+				"success"=>$success,
+				"skipped"=>$skipped,
+				"skipped_items"=>$skipped_items,
+			]);
+		}else{
+			json_response([
+				'status'=>"success",
+				"success"=>$success,
+				"skipped"=>$skipped,
+				"skipped_items"=>$skipped_items,
+				"error"=>$error,
+			]);
+		}
+		exit;
+	}
+
+
+}else if( $config_param3 ){
+
 	if( !preg_match("/^[a-f0-9]{24}$/", $config_param3) ){
 		echo404("Incorrect Table ID");
 	}
@@ -584,116 +720,56 @@ if( $config_param3 ){
 			}
 		}
 		/*Import*/
-		if($_POST["action"] == "import_dynamic_data"){
-			$config_debug = false;
-			if($config_debug == false){ 
-				$token_status = validate_new_token($_POST['security_token'],"table_dynamic_import",$config_param1 );
-				if( $token_status != "ok" ){
-					if( $token_status == "Toomany Requests" ){
-						$token_status = "Too Many Requests.Please Try After Sometime";
-					}
-					json_response("fail",$token_status);
-				}
-			}
-			if( $config_param1 != $_POST['table_id'] ){
-				json_response("fail", ["error_type" =>"dulipcates","error"=>"Incorrect credentials"]);
+
+		if( $_POST['action'] == "tables_dynamic_import_batch" ){
+			$t = validate_token("tables_dynamic_import_batch.". $config_param1 . "." .$table['_id'], $_POST['token']);
+			if( $t != "OK" ){
+				json_response("fail", $t);
 			}
 
-			foreach( $_POST["fields"] as $i => $j ){
-				unset($j["new_field"] );
-				if( $j["insert"] == true || $j["key"] == "_id" ){
-			  		unset($j["insert"]);
-			  		$fields[ $i ] = $j;
-				}
-			};
-			//print_pre($fields);exit;
-			$errors  = $fields = $records = [];
-			while( 1 == 1){
-				for($rec=0;$rec<sizeof($_POST["data"]);$rec++){
-					if( $rec>=sizeof($_POST["data"]) ){break;}
-					$record = $_POST['data'][ $rec ];
-					$cnt = 0;
-					$d_r_1 = [];
-					foreach( $_POST["fields"] as $f => $field ){
-						if( $field["type"] == "number" ){
-							if( preg_match("/\./", $record[ $f ] ) ){
-								$val____ = (float)$record[ $f ];
-							}else{
-								$val____ = (int)$record[ $f ];
-							}
-						}else if( $field["type"] == "text" ){
-							$val____ = trim($record[ $f ]);
-						}else{
-							$val____ = ($record[ $f ]);
-						}
-						if( $f == "_id" && $record[$f] == "" ){
-							$val____ = new MongoDB\BSON\ObjectID();
-						}
-						$record[ $f ] = $val____;
-						if( $field["m"] == true && $field["insert"] == true){
-		  					$d_r_1[ $f ] = $record[ $f ];
-							if($val____ =='' ){
-								$errors[ $rec ][ $f ] = "required!";
-							}
-						}
-		  			}
-					$record['_status__'] = "done";
-					$du_r = $user_data_con->find_one($dynamic_table_name,$d_r_1);
-					if($du_r["status"] == "success" && sizeof( $du_r["data"] ) != 0 ){
-						$duplicate_records[] = $record;
-						if( $_POST["duplicate_check"] == "skip" ){
-							$record['_status__'] = "skip";
-						}	
-					}
-					$records[] = $record;
-				}
-				if( sizeof($errors) ){
-					json_response("fail",["error_type" =>"server_errors", "record_wise_errors"=>$errors]);
-				}
-				if( $_POST["duplicate_check"] == "check" && sizeof($duplicate_records) >0 ){
-					json_response("fail",["error_type" =>"dulipcates", "duplicate_records"=>$duplicate_records]);
-				}
-				foreach( $_POST["fields"] as $i => $j ){
-					unset($j["new_field"] );
-					if( $j["insert"] == true || $j["key"] == "_id" ){
-				  		unset($j["insert"]);
-				  		$fields[ $i ] = $j;
-					}
-				};
-				$errors = [];
-				$error_log_col = "error_log";	
-				
-				$update_rec = $mongodb_con->update_one( $config_table_name,["fields" => $fields], ["_id"=>$_POST['table_id'] ] );
-				if($update_rec["status"] == "fail" ||  ($update_rec["status"] == "success" && $update_rec["data"]["matched_count"] != $update_rec["data"]["modified_count"] ) ){
-					json_response("fail",$update_rec['error']);
-				}
-				foreach( $records as $field => $rec2 ){
-					unset( $rec2["_insert__"] );unset( $rec2["_main_cnt__"] );
-					if( $rec2["_status__"] != "skip" ){
-						unset( $rec2["_status__"] );
-						if( $rec2["duplicate_check"] == "check" ){
-							$new_insert_res = $user_data_con->insert( $dynamic_table_name, $rec2, "check" );
-						}else if( $rec2["duplicate_check"] == "replace" ){
-							$new_insert_res = $user_data_con->insert( $dynamic_table_name, $rec2, "update" );
-						}else{
-							$new_insert_res = $user_data_con->insert( $dynamic_table_name, $rec2 );
-						}	
-						if( $new_insert_res['status'] == "success" ){
-							$increment_rec = $mongodb_con->increment($config_table_name, $main_table['_id'], "count", 1);
-							if( $increment_rec['status'] == "fail" ){
-								$error_log = [ "tablename" => $dynamic_table_name , "page" => "Database MongoDb Import" ,"url" => $request_uri , "user_id" => $_SESSION["user_id"] ,"event" => "increment error" , "error" => $increment_rec['error'] , "action" =>"import_mongodb_data","data" => $rec2 , "date" => date("d-m-Y H:i:s") ];
-								$error_log_res = $user_data_con->insert($error_log_col, $error_log);
-							}
-							
-						}else{
-							$error_log = [ "tablename" => $dynamic_table_name ,"page" => "Database MongoDb Import" ,"url" => $request_uri , "user_id" => $_SESSION["user_id"] ,"event" => "Insert error" , "error" => $new_insert_res['error'] , "action" =>"import_mongodb_data","data" => $rec2 , "date" => date("d-m-Y H:i:s") ];
-							$error_log_res = $user_data_con->insert($error_log_col, $error_log);
-						}
-					}
-				}
-				json_response("success", "ok");
+			//print_r( $_POST );exit;
+
+			$res = $mongodb_con->count( $config_global_apimaker['config_mongo_prefix'] . "_dt_". $table['_id'] );
+			if( $res['status'] != "success" ){
+				json_response(['status'=>"fail", "error"=>"Count check failed: " . $res['error']]);
 			}
+			if( $res['data'] > 20000 ){
+				json_response(['status'=>"fail", "error"=>"Table already has more than 20k records"]);
+			}
+
+			$success = 0;
+			$skipped = 0;
+			$error = "";
+			$skipped_items = [];
+
+			foreach( $_POST['data'] as $i=>$j ){
+				$res = $mongodb_con->insert( $config_global_apimaker['config_mongo_prefix'] . "_dt_". $table['_id'], $j );
+				if( $res['status'] != "success" ){
+					$error = $res['error'];
+					break;
+				}
+				$success++;
+			}
+
+			if( $error ){
+				json_response([
+					'status'=>"fail",
+					"success"=>$success,
+					"skipped"=>$skipped,
+					"skipped_items"=>$skipped_items,
+				]);
+			}else{
+				json_response([
+					'status'=>"success",
+					"success"=>$success,
+					"skipped"=>$skipped,
+					"skipped_items"=>$skipped_items,
+					"error"=>$error,
+				]);
+			}
+			exit;
 		}
+
 	}
 }
 

@@ -7,9 +7,9 @@
 
 			<div style="float:right;"><a class="btn btn-outline-secondary btn-sm" v-bind:href="dbpath">Back</a></div>
 
-			<h4>Internal Table - <?=ucwords($table['table']) ?></h4>
+			<h4>Table - <?=ucwords($table['table']) ?></h4>
 
-			<ul class="nav nav-tabs mb-2" >
+			<ul v-if="is_first==false" class="nav nav-tabs mb-2" >
 				<li class="nav-item">
 					<a class="nav-link<?=$config_param4=='records'||$config_param4==''?" active":"" ?>" v-bind:href="dbpath+'records'">Records</a>
 				</li>
@@ -26,7 +26,6 @@
 
 			<div style="overflow: auto;height: calc( 100% - 130px );">
 
-				<div style="font-weight:500;padding:10px;">Table Settings</div>
 				<div style="border:1px solid #ccc; padding:10px; " >
 
 				<table class="table table-sm w-auto" >
@@ -50,7 +49,7 @@
 									</div>
 								</div>
 								<div style="padding: 10px;" >
-									<div style="float:right;"><input type="button" value="Import" class="btn btn-outline-dark btn-sm" v-on:click="show_import(si)" ></div>
+									<div align="right"><input type="button" value="Import" class="btn btn-outline-dark btn-sm" style="padding:0px 5px;" v-on:click="show_import(si)" ></div>
 									<table_dyanmic_object v-if="vshow" v-bind:level="1" v-bind:items="sd['fields']" v-on:edited="table_fields_edited(si,$event)" ></table_dyanmic_object>
 								</div>
 							</div>
@@ -73,72 +72,82 @@
 				</div>
 
 				<template v-if="is_first==false" >
-				<div style="font-weight:500;padding:10px;">Index Settings</div>
-				<div style="border:1px solid #ccc; padding:10px; " >
-					<template v-if="'keys_list' in table" >
-					<div v-if="table['keys_list'].length>0" style="margin-bottom:20px;" >
-						<table class="table table-bordered table-sm w-auto">
-							<tr class="bg-light">
-								<td>IndexName</td>
-								<td>Keys</td>
-								<td>Unique</td>
-								<td></td>
-							</tr>
-							<tr v-for="kd,ki in table['keys_list']" >
-								<td>{{ kd['name'] }}</td>
-								<td>
-									<div v-for="fd,fi in kd['keys']" >
-										{{ fd['name'] }} {{ fd['type'] }} {{ fd['sort'] }}
-									</div>
-								</td>
-								<td>
-									<div v-if="kd['unique']" >Yes</div>
-								</td>
-								<td>
-									<input type="button" class="btn btn-outline-danger btn-sm" value="X" style="padding:0px 2px;" v-on:click="delete_index(ki)" >
-								</td>
-							</tr>
-						</table>
+					<div style="font-weight:500;padding:10px;">Index Settings</div>
+					<div style="border:1px solid #ccc; padding:10px; " >
+						<template v-if="'keys_list' in table" >
+						<div v-if="table['keys_list'].length>0" style="margin-bottom:20px;" >
+							<table class="table table-bordered table-sm w-auto">
+								<tr class="bg-light">
+									<td>IndexName</td>
+									<td>Keys</td>
+									<td>Unique</td>
+									<td></td>
+								</tr>
+								<tr v-for="kd,ki in table['keys_list']" >
+									<td>{{ kd['name'] }}</td>
+									<td>
+										<div v-for="fd,fi in kd['keys']" >
+											{{ fd['name'] }} {{ fd['type'] }} {{ fd['sort'] }}
+										</div>
+									</td>
+									<td>
+										<div v-if="kd['unique']" >Yes</div>
+									</td>
+									<td>
+										<input type="button" class="btn btn-outline-danger btn-sm" value="X" style="padding:0px 2px;" v-on:click="delete_index(ki)" >
+									</td>
+								</tr>
+							</table>
+						</div>
+						</template>
+						<div v-else style="margin-bottom:20px;" >There are no indexes available</div>
+						<div style="padding:10px;border:1px solid #ccc;">
+							<table class="table table-bordered table-sm w-auto">
+								<tr class="bg-light">
+									<td>IndexName</td>
+									<td>Keys</td>
+									<td>Unique</td>
+								</tr>
+								<tr>
+									<td>
+										<input type="text" v-model="new_index['name']" title="Index Name" v-on:change="index_update" style="width:150px;" >
+									</td>
+									<td>
+										<div v-for="fd,fi in new_index['keys']" >
+											<input type="text" v-model="fd['name']" placeholder="Field name" v-on:change="index_update"  style="width:150px;" >
+											<select v-model="fd['type']" v-on:change="index_update" >
+												<option value='text'>Text</option>
+												<option value='number'>Number</option>
+												<option value='boolean'>Boolean</option>
+											</select>
+											<select v-model="fd['sort']" v-on:change="index_update" >
+												<option value="asc" >ASC</option>
+												<option value="dsc" >DSC</option>
+											</select>
+											<input v-if="fi>0" type="button" class="btn btn-outline-danger btn-sm" value="X" style="padding:0px 2px;" v-on:click="index_delete_key(fi)" >
+										</div>
+										<div><input type="button" class="btn btn-outline-dark btn-sm" value="+" style="padding:0px 2px;" v-on:click="index_add_key()" ></div>
+									</td>
+									<td>
+										<input type="checkbox" v-model="new_index['unique']" style="width:15px; height: 15px;" title="Unique Index">
+									</td>
+								</tr>
+							</table>
+							<p><input type="button" class="btn btn-outline-dark btn-sm" value="Add Index" v-on:click="add_index" v-if="not_busy" ></p>
+							<div v-if="indmsg" class="alert alert-secondary">{{ indmsg }}</div>
+						</div>
+							
 					</div>
-					</template>
-					<div v-else style="margin-bottom:20px;" >There are no indexes available</div>
-					<div style="padding:10px;border:1px solid #ccc;">
-						<table class="table table-bordered table-sm w-auto">
-							<tr class="bg-light">
-								<td>IndexName</td>
-								<td>Keys</td>
-								<td>Unique</td>
-							</tr>
-							<tr>
-								<td>
-									<input type="text" v-model="new_index['name']" title="Index Name" v-on:change="index_update" style="width:150px;" >
-								</td>
-								<td>
-									<div v-for="fd,fi in new_index['keys']" >
-										<input type="text" v-model="fd['name']" placeholder="Field name" v-on:change="index_update"  style="width:150px;" >
-										<select v-model="fd['type']" v-on:change="index_update" >
-											<option value='text'>Text</option>
-											<option value='number'>Number</option>
-											<option value='boolean'>Boolean</option>
-										</select>
-										<select v-model="fd['sort']" v-on:change="index_update" >
-											<option value="asc" >ASC</option>
-											<option value="dsc" >DSC</option>
-										</select>
-										<input v-if="fi>0" type="button" class="btn btn-outline-danger btn-sm" value="X" style="padding:0px 2px;" v-on:click="index_delete_key(fi)" >
-									</div>
-									<div><input type="button" class="btn btn-outline-dark btn-sm" value="+" style="padding:0px 2px;" v-on:click="index_add_key()" ></div>
-								</td>
-								<td>
-									<input type="checkbox" v-model="new_index['unique']" style="width:15px; height: 15px;" title="Unique Index">
-								</td>
-							</tr>
-						</table>
-						<p><input type="button" class="btn btn-outline-dark btn-sm" value="Add Index" v-on:click="add_index" v-if="not_busy" ></p>
-						<div v-if="indmsg" class="alert alert-secondary">{{ indmsg }}</div>
+				</template>
+
+				<template v-if="is_first==false" >
+					<div style="font-weight:500;padding:10px;">Table Settings</div>
+					<div style="border:1px solid #ccc; padding:10px; " >
+
+						<div class="mb-2"><div class="btn btn-outline-dark btn-sm" v-on:click="emptyit">Empty Table</div></div>
+						<div><div class="btn btn-outline-danger btn-sm" v-on:click="deleteit">Delete Table</div></div>
+
 					</div>
-						
-				</div>
 				</template>
 
 			</div>
@@ -147,14 +156,15 @@
 
 
 	<div class="modal fade" id="import_popup" tabindex="-1" >
-	  <div class="modal-dialog">
+	  <div class="modal-dialog modal-xl">
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <h5 class="modal-title">Import Schema</h5>
 	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	      </div>
 	      <div class="modal-body">
-				<textarea class="form-control form-control-sm" style="min-height:200px;resize:both;" v-model="importjson"></textarea>
+	      		<div>Paste JSON String or comma separated column names of a CSV</div>
+				<textarea spellcheck="false" class="form-control form-control-sm" style="min-height:200px;resize:both;" v-model="importjson"></textarea>
 				<div><span class='text-danger'>{{ importjson_msg }}</span><input type="button" value="IMPORT" style="float:right;" v-on:click="import_schema_json" ></div>
 	      </div>
 	    </div>
@@ -276,20 +286,42 @@ var app = Vue.createApp({
 		},
 		import_schema_json: function(){
 			this.importjson_msg = "";
-			var v = this.importjson +'';
-			v = v.replace(/\,\}/g, "}");
-			v = v.replace(/\,\]/g, "}");
-			try{
-				var j = JSON.parse( v );
-				var fv = this.make_fields_schema( j );
-				fv[ "_id" ] = {"name":"_id", "key":"_id","type":"text", "order":0,"m":true};
-				this.vshow = false;
-				this.table['schema'][ this.import_schema_id ][ 'fields' ] = fv;
-				setTimeout(function(v){v.vshow=true;},300,this);
-			}catch( e ){
-				this.importjson_msg = "Error in Import: "+ e;
+			var v = this.importjson.trim() +'';
+			if( v.match(/^\{/) || v.match(/^\}/) ){
+				v = v.replace(/\,\}/g, "}");
+				v = v.replace(/\,\]/g, "}");
+				try{
+					var j = JSON.parse( v );
+					var fv = this.make_fields_schema( j );
+					fv[ "_id" ] = {"name":"_id", "key":"_id","type":"text", "order":0,"m":true};
+					this.vshow = false;
+					this.table['schema'][ this.import_schema_id ][ 'fields' ] = fv;
+					setTimeout(function(v){v.vshow=true;},300,this);
+					this.hide_import_popup();
+				}catch( e ){
+					this.importjson_msg = "Error in Import: "+ e;
+				}
+			}else if( v.match(/^[a-z0-9\,\-\_\.\ ]+$/i) ){
+				var cols = v.split(/\,/g);
+				if( cols.length < 2 ){
+					this.importjson_msg = "Does not match to JSON or CSV format ";
+				}else{
+					var sch = {};
+					for(var i in cols){
+						var k = cols[i].replace(/\W/g, "");
+						sch[ k ] = {
+							"name": k, "key": k,
+							"type": "text", "m": true, "order": i+1,
+							"sub": {},
+						}
+					}
+					sch[ "_id" ] = {"name":"_id", "key":"_id","type":"text", "order":0,"m":true};
+					this.vshow = false;
+					this.table['schema'][ this.import_schema_id ][ 'fields' ] = sch;
+					setTimeout(function(v){v.vshow=true;},300,this);
+					this.hide_import_popup();
+				}
 			}
-			this.hide_import_popup();
 		},
 		make_fields_schema: function( j ){
 			var k = {};
@@ -485,7 +517,126 @@ var app = Vue.createApp({
 					}
 				});
 			}
-		}
+		},
+		is_token_ok(t){
+			if( t!= "OK" && t.match(/^[a-f0-9]{24}$/)==null ){
+				setTimeout(this.token_validate,100,t);
+				return false;
+			}else{
+				return true;
+			}
+		},
+		token_validate(t){
+			if( t.match(/^(SessionChanged|NetworkChanged)$/) ){
+				this.err = "Login Again";
+				alert("Need to Login Again");
+			}else{
+				this.err = "Token Error: " + t;
+			}
+		},
+		emptyit: function(){
+			if( confirm("Are you sure?\nDo you want delete all the records of the table?\nYou will not be able to recover") ){
+				axios.post("?", {"action":"get_token","event":"tables_dynamic_empty"+this.app_id+this.table['_id'],"expire":1}).then(response=>{
+					this.msg = "";
+					if( response.status == 200 ){
+						if( typeof(response.data) == "object" ){
+							if( 'status' in response.data ){
+								if( response.data['status'] == "success" ){
+									this.token = response.data['token'];
+									if( this.is_token_ok(this.token) ){
+										axios.post( "?", {
+											"action": "tables_dynamic_delete", 
+											"table_id": this.table['_id'],
+											"token": this.token,
+										}).then(response=>{
+											if( response.status == 200 ){
+												if( typeof(response.data) == "object" ){
+													if( 'status' in response.data ){
+														if( response.data['status'] == "success" ){
+															alert("Table is deleted successfully!");
+															document.location = this.path + "tables_dynamic?event=TableDeleted";
+														}else{
+															alert("There was an error: " + response.data['error'] );
+														}
+													}else{
+														this.err = "Incorrect response";
+													}
+												}else{
+													this.err = "Incorrect response Type";
+												}
+											}else{
+												this.err = "Response Error: " . response.status;
+											}
+										});
+									}else{
+										alert("Token error: " + response.dat['data']);
+										this.err = "Token Error: " + response.data['data'];
+									}
+								}else{
+									this.err = "Incorrect response";
+								}
+							}else{
+								this.err = "Incorrect response Type";
+							}
+						}else{
+							this.err = "Response Error: " . response.status;
+						}
+					}
+				});
+			}
+		},
+		deleteit: function(){
+			if( confirm("Are you sure?\nDo you want delete the table?\nYou will not be able to recover") ){
+				axios.post("?", {"action":"get_token","event":"tables_dynamic_delete"+this.app_id+this.table['_id'],"expire":1}).then(response=>{
+					this.msg = "";
+					if( response.status == 200 ){
+						if( typeof(response.data) == "object" ){
+							if( 'status' in response.data ){
+								if( response.data['status'] == "success" ){
+									this.token = response.data['token'];
+									if( this.is_token_ok(this.token) ){
+										axios.post( "?", {
+											"action": "tables_dynamic_delete", 
+											"dynamic_table_id": this.table['_id'],
+											"token": this.token,
+										}).then(response=>{
+											if( response.status == 200 ){
+												if( typeof(response.data) == "object" ){
+													if( 'status' in response.data ){
+														if( response.data['status'] == "success" ){
+															alert("Table is deleted successfully!");
+															document.location = this.path + "tables_dynamic?event=TableDeleted";
+														}else{
+															alert("There was an error: " + response.data['error'] );
+														}
+													}else{
+														this.err = "Incorrect response";
+													}
+												}else{
+													this.err = "Incorrect response Type";
+												}
+											}else{
+												this.err = "Response Error: " . response.status;
+											}
+										});
+									}else{
+										alert("Token error: " + response.dat['data']);
+										this.err = "Token Error: " + response.data['data'];
+									}
+								}else{
+									this.err = "Incorrect response";
+								}
+							}else{
+								this.err = "Incorrect response Type";
+							}
+						}else{
+							this.err = "Response Error: " . response.status;
+						}
+					}
+				});
+			}
+		},
+
 	}
 });
 app.component( "table_dyanmic_object", table_dyanmic_object );

@@ -1,4 +1,4 @@
-.satish_editor_v1{ margin-left:30px; margin-right:30px; padding: 10px 50px; position: relative; outline-color: #f0f0f0; outline-width: thin; outline-style: dashed; }
+.satish_editor_v1{ margin-left:30px; margin-right:30px; padding: 10px 50px; position: relative; outline-color: #f0f0f0; outline-width: thin; outline-style: dashed; min-height:200px; }
 .satish_editor_v1 *{ font-size: 0.9rem; color:#222; font-family: Arial,Helvetica,sans-serif; }
 .satish_editor_v1 a { color:#00005d; text-decoration: underline; }
 .satish_editor_v1 a:hover { color:blue; text-decoration: underline; background-color: #f0f0e0; }

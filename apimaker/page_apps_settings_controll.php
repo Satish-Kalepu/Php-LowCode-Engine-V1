@@ -8,6 +8,38 @@ if( $_POST['action'] == "get_new_key" ){
 	exit;
 }
 
+if( $_POST['action'] == "app_update_name" ){
+	$t = validate_token("app_update.". $config_param1, $_POST['token']);
+	if( $t != "OK" ){
+		json_response("fail", $t);
+	}
+	$name = strtolower(trim($_POST['app']['app']));
+	$des = trim($_POST['app']['des']);
+	if( !preg_match("/^[a-z][a-z0-9\-]{3,25}$/", $name) ){
+		json_response(['status'=>"fail", "error"=>"Name invalid"]);
+	}
+	if( !preg_match("/^[A-Za-z0-9\.\,\-\ \_\(\)\[\]\ \@\#\!\&\r\n\t]{4,50}$/", $des) ){
+		json_response(['status'=>"fail", "error"=>"Description invalid"]);
+	}
+	$res = $mongodb_con->find_one( $config_global_apimaker['config_mongo_prefix'] . "_apps", [
+		'app'=>$name,
+		'_id'=>['!=', $config_param1]
+	]);
+	if( $res['data'] ){
+		json_response(['status'=>"fail", "error"=>"An app already exists with same name"]);
+	}
+
+	$res = $mongodb_con->update_one( $config_global_apimaker['config_mongo_prefix'] . "_apps",[
+		'_id'=>$config_param1
+	],[
+		'app'=>$name,
+		'des'=>$des,
+	]);
+	json_response($res);
+
+	exit;
+}
+
 if( $_POST['action'] == "settings_load_pages" ){
 	$t = validate_token("getpages.". $config_param1, $_POST['token']);
 	if( $t != "OK" ){
@@ -23,7 +55,7 @@ if( $_POST['action'] == "settings_load_pages" ){
 	json_response($res);
 }
 
-if( $_POST['action'] == "save_app_settings" ){
+if( $_POST['action'] == "app_save_custom_settings" ){
 
 	$settings = $_POST['settings'];
 
@@ -76,6 +108,31 @@ if( $_POST['action'] == "save_app_settings" ){
 			}
 		}
 	}
+
+	$res = $mongodb_con->update_one( $config_global_apimaker['config_mongo_prefix'] . "_apps", [
+		'_id'=>$config_param1
+	], [
+		'settings.domains'=>$settings['domains'],
+		'settings.keys'=>$settings['keys'],
+		'settings.host'=>$settings['host'],
+		'last_updated'=>date("Y-m-d H:i:s")
+	]);
+	if( $res['status'] == "fail" ){
+		json_response( $res );
+	}
+
+	update_app_pages( $config_param1 );
+
+	json_response([
+		"status"=>"success",
+	]);
+	exit;
+}
+
+if( $_POST['action'] == "app_save_cloud_settings" ){
+
+	$settings = $_POST['settings'];
+
 	if( !isset($settings['cloud']) ){
 		json_response("fail", "Incorrect data. Cloud settings missing.");
 	}
@@ -97,37 +154,79 @@ if( $_POST['action'] == "save_app_settings" ){
 			}
 		}
 	}
-	if(  !isset($settings['alias']) ){
-		json_response("fail", "Incorrect data. Alias settings missing.");
-	}
-	if( gettype($settings['alias']) != "boolean" ){
-		json_response("fail", "Incorrect alias data");
-	}
-	if( $settings['alias'] ){
-		if( !preg_match("/^[a-zA-Z0-9\-\.\_]{2,150}(\.[a-z\.]{2,5})$/i", $settings['alias-domain']) ){
-			json_response("fail", "Incorrect alias domain name " . $settings['alias-domain'] );
-		}
-	}else{
-		$settings['alias-domain'] = "";
-	}
 
-	//echo $config_global_apimaker['config_mongo_prefix'] . "_apps";exit;
-	//print_pre( $settings );exit;
 	$res = $mongodb_con->update_one( $config_global_apimaker['config_mongo_prefix'] . "_apps", [
 		'_id'=>$config_param1
 	], [
-		'settings'=>$settings,
+		'settings.cloud'=>$settings['cloud'],
+		'settings.cloud-subdomain'=>$settings['cloud-subdomain'],
+		'settings.cloud-domain'=>$settings['cloud-domain'],
+		'settings.cloud-enginepath'=>$settings['cloud-enginepath'],
+		'settings.alias'=>$settings['alias'],
+		'settings.alias-domain'=>$settings['alias-domain'],
 		'last_updated'=>date("Y-m-d H:i:s")
 	]);
 	//update_app_last_change_date( $config_param1 );
 
+	if( $res['status'] != "success" ){
+		json_response( $res );
+	}
+
+	update_app_pages( $config_param1 );
+
+	json_response([
+		"status"=>"success",
+	]);
+	exit;
+}
+
+if( $_POST['action'] == "app_save_other_settings" ){
+
+	$homepage = $_POST['homepage'];
+
+	if( !isset($homepage) ){
+		json_response("fail", "Incorrect data. Page settings missing.");
+	}
+	if( !preg_match("/^([a-f0-9]{24})\:([a-f0-9]{24})$/", $homepage['v'], $m) ){
+		json_response("fail", "Incorrect data. Incorrect format.");
+	}
+	//print_r($m);exit;
+	$res = $mongodb_con->find_one( $config_global_apimaker['config_mongo_prefix'] . "_pages", [
+		'_id'=>$m[1]
+	]);
+	if( !$res['data'] ){
+		json_response("fail", "Page not found.");
+	}
+	$res = $mongodb_con->find_one( $config_global_apimaker['config_mongo_prefix'] . "_pages_versions", [
+		'_id'=>$m[2],
+		'page_id'=>$m[1]
+	]);
+	if( !$res['data'] ){
+		json_response("fail", "Page Version not found.");
+	}
+
+	$res = $mongodb_con->update_one( $config_global_apimaker['config_mongo_prefix'] . "_apps", [
+		'_id'=>$config_param1
+	], [
+		'settings.homepage'=>$homepage,
+		'last_updated'=>date("Y-m-d H:i:s")
+	]);
 	if( $res['status'] == "fail" ){
 		json_response( $res );
 	}
 
 	update_app_pages( $config_param1 );
 
-	$global_settings = [];
+	json_response([
+		"status"=>"success",
+	]);
+	exit;
+}
+
+
+
+function update_global_settings(){
+		$global_settings = [];
 	foreach( $settings['keys'] as $ki=>$kd ){
 		$global_settings[ $kd['key'] ] = [
 			'ips'=>[],
@@ -150,11 +249,6 @@ if( $_POST['action'] == "save_app_settings" ){
 			json_response( $res );
 		}
 	}
-
-	json_response([
-		"status"=>"success",
-	]);
-	exit;
 }
 
 //print_r( $res );
@@ -186,7 +280,25 @@ if( !$app['settings'] ){
 		"cloud-domain"=>isset($config_global_apimaker['config_cloud_default_domain'])?$config_global_apimaker['config_cloud_default_domain']:"",
 		"alias"=>false,
 		"alias-domain"=>"www.example.com",
+		"homepage"=> ['t'=>"page", 'v'=>""],
 	];
 }else{
 	$settings = $app['settings'];
+}
+
+$loc = [
+	"./config_global_engine.php",
+	"../config_global_engine.php",
+	"../../config_global_engine.php",
+	"/tmp/config_global_engine.php",
+];
+
+$engined = "";
+$enginep = "";
+foreach( $loc as $i=>$j ){
+	if( file_exists($j) ){
+		$enginep = $j;
+		$engined = file_get_contents($j);
+		break;
+	}
 }

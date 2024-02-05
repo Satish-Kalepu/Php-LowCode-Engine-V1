@@ -47,8 +47,8 @@ if( $_POST['action'] == "delete_app" ){
 		]);
 	}
 
-	if( !preg_match("/^[a-z0-9\-]{3,25}$/", $_POST['app_id']) ){
-		json_response("fail", "Name incorrect");
+	if( !preg_match("/^[a-f0-9]{24}$/", $_POST['app_id']) ){
+		json_response("fail", "ID Incorrect");
 	}
 
 	$res = $mongodb_con->find_one( $config_global_apimaker['config_mongo_prefix'] . "_apps", [

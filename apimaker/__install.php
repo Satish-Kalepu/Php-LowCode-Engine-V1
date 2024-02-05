@@ -666,7 +666,7 @@ if( $_POST['action'] == "saveconf" ){
 		</div>
 		<div v-if="step=='two'" >
 			<div v-if="msg" style="color:blue; padding: 10px; margin:10px 0px; border:1px solid #333;" v-html="msg" ></div>
-			<div style="padding: 10px; margin:10px 0px; " >
+			<div style="padding: 10px; margin:10px 0px; border:1px solid #333; " >
 				<div v-if="engine_setup">
 					<p>Engine is ready to use at the default path: https://<?=$_SERVER['HTTP_HOST'] ?>/engine/</p>
 					<p>You can rename or host /engine/ codebase on a different virtual instance(s).</p>
@@ -851,7 +851,7 @@ if( $_POST['action'] == "saveconf" ){
 								seterr( "Invalid Response: status tag missing" );
 							}else if( d['status'] == "success" ){
 								console.log("ok");
-								setmsg( "Successfully Updated.<BR>For security reasons, please delete __install.php<BR>start using application and you can manually tweak the config file as required." );
+								setmsg( "<p>Successfully Updated.</p><p>For security reasons, please delete __install.php</p><p>https://<?=$_SERVER['HTTP_HOST'] ?>/<?=$apimaker_folder ?></p><p>Start using application and you can manually tweak the config file as required.</p>" );
 								setstep("two", d['engine_setup']);
 							}else if( d['status'] == "dbinitialized" ){
 								setoption( 1 );

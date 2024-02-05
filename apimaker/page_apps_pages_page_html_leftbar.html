@@ -1,9 +1,10 @@
-<div class="leftbar_scroll" style="overflow: auto; height:calc( 100% - 40px ); padding:10px; ">
-	<div>
+<div class="leftbar_scroll" style="overflow: auto; height:calc( 100% - 40px ); padding:5px; ">
+
+	<div class="mb-1">
 		<!-- <div class="btn btn-outline-dark btn-sm" v-on:click="insert_tag_initiate" >+</div> -->
-		<div v-if="focused_type" class="btn btn-outline-dark btn-sm" v-on:click="edit_tag_initiate" >EDIT</div>
+		<div v-if="focused_type" class="btn btn-outline-dark btn-sm" v-on:click="edit_tag_initiate" >Edit Tag</div>
 	</div>
-	<template v-if="focused_tree.length>0" >
+	<div v-if="focused_tree.length>0" class="mb-1">
 		<!--
 		<div v-if="focused_tree.length>5" class="tag_btn" >{{ focused_tree[5]['a'] }}</div>
 		<div v-if="focused_tree.length>4" class="tag_btn" >{{ focused_tree[4]['a'] }}</div>
@@ -12,9 +13,9 @@
 		<div v-if="focused_tree.length>2" class="tag_btn" v-on:click="set_focus_to(2)" >{{ focused_tree[2]['a'] }}</div>
 		<div v-if="focused_tree.length>1" class="tag_btn" v-on:click="set_focus_to(1)" >{{ focused_tree[1]['a'] }}</div>
 		<div v-if="focused_tree.length>0" class="tag_btn tag_btn_a" >{{ focused_tree[0]['a'] }}</div>
-	</template>
-	<div v-if="focused_type" >
-		<div v-if="focused_type=='A'" >
+	</div>
+	<div v-if="focused_type"  >
+		<div v-if="focused_type=='A'" class="mb-1" >
 			<input type="button" class="btn btn-outline-danger btn-sm" value="Remove Link" v-on:click.prevent.stop="anchor_remove" >
 		</div>
 	</div>
@@ -88,7 +89,7 @@
 				{{ focused_type }} to text
 			</div>
 
-			<template v-if="focused_block_type=='NOTE'" >
+			<template v-if="focused_block_type=='NOTE'" class="mb-1">
 				<div style="">Note style:
 				<select v-model="notetype" v-on:change.prevent.stop="notetype_change" v-on:click.stop>
 					<option v-for="v,i in note_types" v-bind:value="i" >{{ v }}</option>

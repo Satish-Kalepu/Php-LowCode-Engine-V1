@@ -14,7 +14,7 @@
 		if( isset($v) ){return $v;}else{return $v2;}
 	}
 
-	function get_token( $event ="", $expire = 5 ){ // expire = minits
+	function get_token( $event ="", $expire = 5, $max_hits = 10 ){ // expire = minits
 		global $config_global_apimaker;
 		global $mongodb_con;
 		if( !$event ){ // event is a combinations of event and respective record id
@@ -40,6 +40,7 @@
 			'date'=>new MongoDB\BSON\UTCDateTime(),
 			'expire'=>new MongoDB\BSON\UTCDateTime( (time()+($expire*60))*1000 ),
 			'cnt'=>1,
+			'mh'=>$max_hits,
 		]);
 		return $res['inserted_id'];
 	}
@@ -80,7 +81,7 @@
 				return "TimeExpired";
 			}else if( $res['data']['t'] < ( time()-($res['data']['exp']*60) ) ){
 				return "TimeExpired";
-			}else if( $res['data']['cnt'] > 10 ){
+			}else if( $res['data']['cnt'] > $res['data']['mh'] ){
 				return "TooManyHits";
 			}else{
 				update_token_cnt($token, 'cnt', 1);

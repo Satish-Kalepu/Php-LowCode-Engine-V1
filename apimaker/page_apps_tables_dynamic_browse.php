@@ -1,3 +1,14 @@
+<style>
+table.zz td div{ max-width:250px; max-height:75px;overflow:auto; white-space:nowrap; }
+table.zz thead td { background-color:#666; color:white; }
+
+div.zz::-webkit-scrollbar {width: 6px;height: 6px;}
+div.zz::-webkit-scrollbar-track { background: #f1f1f1;}
+div.zz::-webkit-scrollbar-thumb { background: #888;}
+div.zz::-webkit-scrollbar-thumb:hover { background: #555;}
+
+	td pre{margin-bottom: 0px;}
+</style>
 <div id="app" >
 	<div class="leftbar" >
 		<?php require("page_apps_leftbar.php"); ?>
@@ -7,7 +18,7 @@
 
 			<div style="float:right;"><a class="btn btn-outline-secondary btn-sm" v-bind:href="dbpath">Back</a></div>
 
-			<h4>Internal Table - <?=ucwords($table['table']) ?></h4>
+			<h4>Table - <?=ucwords($table['table']) ?></h4>
 
 			<ul class="nav nav-tabs mb-2" >
 				<li class="nav-item">
@@ -110,8 +121,8 @@
 			</table>
 
 			<div style="overflow: auto;height: calc( 100% - 160px );">	
-				<table class="table table-hover table-striped table-sm w-auto"  >
-					<thead style="position: sticky;top:0px; background-color:white;box-shadow: inset 0 1px 0 #aaa, inset 0 -1px 0 #aaa;">
+				<table class="table table-hover table-bordered table-striped table-sm w-auto zz"  >
+					<thead style="position: sticky;top:0px; background-color:#666;color:white;box-shadow: inset 0 1px 0 #aaa, inset 0 -1px 0 #aaa;">
 						<tr>
 							<td>
 								<input type="checkbox" v-model="selected_all" v-on:click="Select_all">
@@ -134,7 +145,7 @@
 							<td>
 								<i class="fa fa-trash text-danger"  v-on:click="delete_record( di )" title="Delete"></i>
 							</td>
-							<td class="text-nowrap" v-for="ff,fi in table['schema'][selected_schema]['fields']" ><pre>{{dd[ fi ]}}</pre></td>
+							<td class="text-nowrap" v-for="ff,fi in table['schema'][selected_schema]['fields']" ><div class="zz">{{dd[ fi ]}}</div></td>
 						</tr>
 					</tbody>
 				</table>

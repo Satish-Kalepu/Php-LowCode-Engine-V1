@@ -1,3 +1,8 @@
+<style>
+	div.vid{ padding:0px 2px; cursor:pointer; }
+	div.vid pre.vid{display: none; position: absolute; background-color: white; padding: 3px; border: 1px solid #aaa;}
+	div.vid:hover pre.vid{display: block;}
+</style>
 <div id="app" >
 	<div class="leftbar" >
 		<?php require("page_apps_leftbar.php"); ?>
@@ -9,7 +14,8 @@
 				<div v-if="err" class="alert alert-danger" >{{ err }}</div>
 			</div>
 			<div style="float:right;" >
-				<button class="btn btn-outline-secondary btn-sm" v-on:click="function_show_create_form()" >Create Table</button>
+				<a class="btn btn-outline-dark btn-sm me-2" v-bind:href="path+'tables_dynamic/importfile'" >Import CSV/JSON/XLS</a>
+				<button class="btn btn-outline-dark btn-sm" v-on:click="function_show_create_form()" >Create Table</button>
 			</div>
 			<div class="h3 mb-3">Internal Tables</div>
 			<div style="height: calc( 100% - 100px ); overflow: auto;" >
@@ -20,9 +26,12 @@
 						<td></td>
 					</tr>
 					<tr v-for="v,i in dynamic_tables">
-						<td><pre class="id">{{v['_id']}}</pre></td>
+						<td><div class="vid">#<pre class="vid">{{v['_id']}}</pre></div></td>
 						<td>
-							<div style="min-width:200px;"><a v-bind:href="path+'tables_dynamic/'+v['_id']+'/manage'" >{{ v['table'] }}</a></div>
+							<div style="min-width:200px;">
+								<a v-if="'schema' in v" v-bind:href="path+'tables_dynamic/'+v['_id']+'/records'" >{{ v['table'] }}</a>
+								<a v-else v-bind:href="path+'tables_dynamic/'+v['_id']+'/manage'" >{{ v['table'] }}</a>
+							</div>
 							<div class="text-secondary">{{ v['des'] }}</div>
 						</td>
 						<td><input type="button" class="btn btn-outline-danger btn-sm" value="X" v-on:click="delete_dynamic_table(i)" ></td>
@@ -161,7 +170,7 @@ var app = Vue.createApp({
 			if( confirm("Are you sure?") ){
 				this.msg = "Deleting...";
 				this.err = "";
-				axios.post("?", {"action":"get_token","event":"deletedynamic_table"+this.app_id+this.dynamic_tables[vi]['_id'],"expire":1}).then(response=>{
+				axios.post("?", {"action":"get_token","event":"tables_dynamic_delete"+this.app_id+this.dynamic_tables[vi]['_id'],"expire":1}).then(response=>{
 					this.msg = "";
 					if( response.status == 200 ){
 						if( typeof(response.data) == "object" ){
@@ -170,7 +179,7 @@ var app = Vue.createApp({
 									this.token = response.data['token'];
 									if( this.is_token_ok(this.token) ){
 										axios.post("?", {
-											"action":"delete_dynamic_table",
+											"action":"tables_dynamic_delete",
 											"token":this.token,
 											"dynamic_table_id": this.dynamic_tables[ vi ]['_id']
 										}).then(response=>{
