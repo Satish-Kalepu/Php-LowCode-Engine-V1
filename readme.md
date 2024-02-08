@@ -2,9 +2,9 @@
 
 docker build -t apimaker .
 
-#To launch the container
+#To launch the container use below command from the directory where your code exists.
 
-docker run -d -p 8888:80 --name=apimaker_app apimaker
+docker run -d -p 8888:80 -v .:/var/www/html --name=apimaker_app apimaker:v1
 
 #Using the below command the containers will be launched in interactive mode so stop them use ctrl+c
 
