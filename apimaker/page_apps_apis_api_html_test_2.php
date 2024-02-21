@@ -23,7 +23,12 @@
 						<input_values v-else v-bind:v="s2_tttttttset['factors']['v']" datafor="s2_tttttttset" datavar="factors:v" viewas="payload" allowsub="no" v-on:edited="s2_detide_srotcaf_tset"></input_values>
 					</div>
 				</div>
-				<input type="button" style="float:right;" value="SAVE TEST" v-on:click.stop="s2_ttset_evas">
+				<div class="d-flex" style="float:right;">
+					<input type="button" style="margin-right: 5px;" value="SAVE TEST" v-on:click.stop="s2_ttset_evas">
+					<input type="button" style="margin-right: 5px;" value="Postman Export" v-on:click="s2_postman_export(btoa(s2_tttaen_lru(s2_lllru_tset)))">
+					<input type="button" style="margin-right: 5px;" value="Swagger Export" >
+					<input type="button" style="margin-right: 5px;" value="Code Snippet" v-on:click="show_code_snippet= true">
+				</div>
 				<div v-if="s2_desu_cnysa"><input type="checkbox" id="vskip_async" v-model="s2_piks_cnysa" value="yes" > <label style="cursor:pointer;" for="vskip_async" >Skip Async! Execute all stages.</label></div>
 				<div><input type="checkbox" id="test_debug" v-model="s2_gubed_tset" v-on:click="s2_tnemnorivne_tset_tceles" title="Note: it would fetch too much data!" value="yes" > <label style="cursor:pointer;" for="test_debug" title="Note: it would fetch too much data!" >Retrieve debugging log!</label></div>
 				<div><input class="btn btn-dark btn-sm" type="button" value="TEST" v-on:click.stop="s2_noitalumis_tset"></div>
@@ -51,4 +56,7 @@
 			</div>
 			<div v-else>Select environment</div>
 			<p>&nbsp;</p>
+			<div class="mt-2" v-if="show_code_snippet == true">
+				Code Snippet
+			</div>
 		</div>
