@@ -365,4 +365,56 @@ if( $config_param4 && $main_api ){
 
 	}
 
+	if(isset($_POST['action']) && $_POST['action'] == "get_code_snippt_lang") {
+		if(!isset($_POST['api_id'])) {
+			json_response("fail", "Page Id should not be empty");
+		}
+		if(!isset($_POST['version_id'])) {	
+			json_response("fail", "Version ID should not be empty");
+		}
+		if( !preg_match("/^[a-f0-9]{24}$/", $_POST['api_id'] ) ){
+			json_response("fail", "Error In Page Id");
+		}
+		if( !preg_match("/^[a-f0-9]{24}$/", $_POST['version_id'] ) ){
+			json_response("fail", "Error In Version Id");
+		}
+
+		$res = $mongodb_con->find_one( $config_global_apimaker['config_mongo_prefix'] . "_apis_versions", [
+			"_id"=>$_POST['version_id']
+		]);
+		if( $res["status"] == "fail" ){
+			json_response("fail","Error finding version: ".$res["error"]);
+		}else if( !$res['data'] ){
+			json_response("fail","Version record not found");
+		}
+		$version = $res['data'];
+
+		if( $version['api_id'] != $_POST['api_id'] ){
+			json_response("fail","Incorrect version ID mapping");
+		}
+
+		$res = $mongodb_con->find_one( $config_global_apimaker['config_mongo_prefix'] . "_apis", [
+			"_id"=>$_POST['api_id']
+		]);
+		if( $res["status"] == "fail" ){
+			json_response("fail","Error finding API: ".$res["error"]);
+		}else if( !$res['data'] ){
+			json_response("fail","API record not found");
+		}
+
+		$api = $res['data'];
+
+		if( $api['version_id'] == $version['_id'] ) {
+			require_once("classes/class_code_snippet.php");
+
+			$url = str_replace("\n", "", base64_decode($_POST['engine_url']));
+
+			$code = new code_snippet($_POST['version_id'],$url,$_POST['selected_lang']);
+
+			$generate_code = $code->code_snippet_convertor();
+
+			print_pre($generate_code);exit;
+		}
+	}
+
 }

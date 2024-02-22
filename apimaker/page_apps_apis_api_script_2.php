@@ -325,6 +325,7 @@ var app = s2_ssssssssss({
 			s2_marap_nf_nigulp_detceles: "",
 			s2_desu_sgniht: {},
 			show_code_snippet : false,
+			selected_lang : "php-curl",
 			s2_noitcnuf_cimanyd: function(){},
 		};
 	},
@@ -3381,6 +3382,47 @@ var app = s2_ssssssssss({
 								link.click();
 								document.body.removeChild(link);
 								window.URL.revokeObjectURL(link.href);
+							}else if( response.data['status'] == "TokenError" ){
+								alert("Error: TokenError: " + response.data['error'] + ". Reloading...");
+								setTimeout("document.location.reload()",2000);
+							}else{
+                                alert("Error: " + response.data['error']);
+							}
+						}else{
+							alert("Error: incorrect response");
+						}
+					}else{
+						alert("Error: unexpected response");
+					}
+				}else{
+					alert("Error: http: " . response.status);
+				}
+			}).catch(response=>{
+                alert( response.message );
+                document.location.reload();
+	        })
+		},
+		get_code_snippt_lang: function(url) {
+			if("<?=$config_param4 ?>" == "" || "<?=$config_param3 ?>" == "") {
+				alert("Invalid URL");
+				return false;
+			}
+			this.code_snippet_data = "";
+			this.show_code_snippet= false;
+			let post_data = {
+				"action" : "get_code_snippt_lang",
+				"version_id" : "<?=$config_param4 ?>",
+				"api_id" : "<?=$config_param3 ?>",
+				"engine_url" : url,
+				"selected_lang" : this.selected_lang
+			};
+			axios.post( "?", post_data).then(response=>{
+				if( response.status == 200 ){
+					if( typeof(response.data) == "object" ){
+						if( 'status' in response.data ){
+							if( response.data['status'] == "success" ){
+								this.show_code_snippet= true;
+								this.code_snippet_data = response.data['details'];
 							}else if( response.data['status'] == "TokenError" ){
 								alert("Error: TokenError: " + response.data['error'] + ". Reloading...");
 								setTimeout("document.location.reload()",2000);
