@@ -413,8 +413,11 @@ if( $config_param4 && $main_api ){
 
 			$generate_code = $code->code_snippet_convertor();
 
-			print_pre($generate_code);exit;
+			json_response("success",$generate_code);
+		}else {
+			json_response("fail","Invalid Post data");
 		}
+
 	}
 
 }

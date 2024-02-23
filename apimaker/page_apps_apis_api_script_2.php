@@ -326,6 +326,7 @@ var app = s2_ssssssssss({
 			s2_desu_sgniht: {},
 			show_code_snippet : false,
 			selected_lang : "php-curl",
+			code_snippet_lang : ['php-curl','Javascript-Fetch'],
 			s2_noitcnuf_cimanyd: function(){},
 		};
 	},
@@ -3422,7 +3423,7 @@ var app = s2_ssssssssss({
 						if( 'status' in response.data ){
 							if( response.data['status'] == "success" ){
 								this.show_code_snippet= true;
-								this.code_snippet_data = response.data['details'];
+								this.code_snippet_data = response.data['data'];
 							}else if( response.data['status'] == "TokenError" ){
 								alert("Error: TokenError: " + response.data['error'] + ". Reloading...");
 								setTimeout("document.location.reload()",2000);
@@ -3442,6 +3443,10 @@ var app = s2_ssssssssss({
                 alert( response.message );
                 document.location.reload();
 	        })
+		},
+		copy_code_snippet: function() {
+			navigator.clipboard.writeText(this.code_snippet_data);
+			alert("Copied to Clipboard");
 		}
 	}
 });

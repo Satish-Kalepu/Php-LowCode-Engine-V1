@@ -56,7 +56,20 @@
 			</div>
 			<div v-else>Select environment</div>
 			<p>&nbsp;</p>
-			<div class="mt-2" v-if="show_code_snippet == true">
-				{{code_snippet_data}}
+			<div class="mt-2" v-if="show_code_snippet == true" style="width: 99%">
+				<div class="row">
+					<div class="col-2">
+						<select v-model="selected_lang" class="form-select" v-on:change="get_code_snippt_lang(btoa(s2_tttaen_lru(s2_lllru_tset)))">
+							<option v-for="i in code_snippet_lang" :value="i">{{i}}</option>
+						</select>
+					</div>
+					<div class="col-8"></div>
+					<div class="col-2 d-flex justify-content-end">
+						<button class="btn btn-sm btn-primary" v-on:click="copy_code_snippet()">Click to Copy</button>
+					</div>
+				</div>
+				<div class="mt-2">
+					<pre>{{code_snippet_data}}</pre>
+				</div>
 			</div>
 		</div>

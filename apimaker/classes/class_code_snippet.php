@@ -7,6 +7,7 @@ class code_snippet{
 	public $headers = "";
 	public $postbody = "";
 	public $req_method = "";
+	public $options = [];
 
 	public function  __construct($version_id = "",$url = "",$selected_lang = "") {
 		$this->url = $url;
@@ -36,14 +37,92 @@ class code_snippet{
 		$this->headers = ['Content-Type' => $api_data['output-type']];
 
 		if($this->selected_lang == "php-curl") {
-			return $this->php_curl_code_snippet_convertor($this->url,$this->headers,$this->postbody,$this->req_method);
+			return $this->php_curl_code_snippet_convertor();
+		}else if($this->selected_lang == "Javascript-Fetch") {
+			return $this->js_fetch_code_snippet_convertor();
 		}
+		/*else if($this->selected_lang == "curl") {
+			return $this->curl_code_snippet_convertor();
+		}*/
+		else {
+			return "Comming soon... ";
+		}
+	}
+
+	function js_fetch_code_snippet_convertor() {
+		$identity = "\t";
+	    $indentation = str_repeat($identity, "1");
+
+	    $snippet = "";
+
+	    /*Request header condition start*/
+	    if(count($this->headers) > 0) {
+	    	$snippet .= "const myHeaders = new Headers();\n";
+	    	foreach($this->headers as $i => $j) {
+	    		$snippet .= "myHeaders.append('" . $i . "', '" . $j . "');\n"; 
+	    	}
+	    }
+	    /*Request header condition ends*/
+
+	    /*Request body formate condition start*/
+	    if(count($this->postbody) > 0) {
+	    	$snippet .= "const raw = ";
+	    	if($this->headers['Content-Type'] == "application/json") {
+	    		$snippet .= "JSON.stringify(" . json_encode($this->postbody, JSON_PRETTY_PRINT) . ");\n";
+	    	}else {
+	    		$snippet .= $this->postbody;
+	    	}
+	    } 
+	    /*Request body formate condition ends*/
+
+	    /*Request timeout condition start*/
+	    $snippet .= "const controller = new AbortController();\n";
+    	$snippet .= "const timerId = setTimeout(() => controller.abort(), 20);\n";
+	    /*Request timeout condition ends*/
+
+	    $snippet .= "const requestOptions = {\n";
+	    $snippet .= $indentation.'method: "' . $this->req_method . '",'."\n";
+	    if (count($this->headers) > 0) {
+	    	$snippet .= $indentation."headers: myHeaders,\n";
+	    }
+
+	    if(count($this->postbody) > 0) {
+	    	$snippet .= $indentation."body: raw,\n";
+	    }
+
+	    $snippet .= $indentation."signal: controller.signal,\n";
+	    $snippet .= $indentation."redirect: 'follow'\n";
+	    $snippet .= "};\n";
+
+	    /*Fetch request syntax start*/
+	    if ($this->options['asyncAwaitEnabled']) {
+	    	$snippet .= 'try {' . "\n";
+	    	$snippet .= 'const response = await fetch("' . $this->url . '", requestOptions);' . "\n";
+	    	$snippet .= 'const result = await response.text();' . "\n";
+	    	$snippet .= 'console.log(result)' . "\n";
+	    	$snippet .= '} catch (error) {' . "\n";
+	    	$snippet .= 'console.error(error);' . "\n";
+    		$snippet .= '} finally {' . "\n";
+    		$snippet .= 'clearTimeout(timerId);' . "\n";
+	    	$snippet .= '};';
+	    } else {
+	    	$snippet .= 'fetch("' . $this->url . '", requestOptions)' . "\n";
+	    	$snippet .= '.then((response) => response.text())' . "\n";
+	    	$snippet .= '.then((result) => console.log(result))' . "\n";
+	    	$snippet .= '.catch((error) => console.error(error))';
+	    	$snippet .= "\n" . '.finally(() => clearTimeout(timerId))';
+	    	$snippet .= ';';
+	    }
+	    /*Fetch request syntax ends*/
+
+	    return $snippet;
 	}
 
 	function php_curl_code_snippet_convertor() {
 
 	    $identity = "\t";
 	    $indentation = str_repeat($identity, "1");
+	    $snippet = "";
 	    $snippet = "<?php\n\n\$curl = curl_init();\n\n";
 	    $snippet .= "curl_setopt_array(\$curl, array(\n";
 	    $snippet .= $indentation . "CURLOPT_URL => '" . $this->url . "',\n";
@@ -55,11 +134,15 @@ class code_snippet{
 	    $snippet .= $indentation . "CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,\n";
 	    $snippet .= $indentation . "CURLOPT_CUSTOMREQUEST => '" . $this->req_method . "',\n";
 	    
-	    if(count($this->postbody) > 0) {
-	    	$snippet .= json_encode($this->postbody);
+	    $header_parts = [];
+	    foreach($this->headers as $i => $j) {
+	    	$header_parts[] = $i .":". $j;
 	    }
 
-	    $snippet .= json_encode($this->headers);
+	    if(count($this->postbody) > 0) {
+	    	$snippet .= $indentation . "CURLOPT_POSTFIELDS => '" .json_encode($this->postbody, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT). "',\n";
+	    	$snippet .= $indentation . "CURLOPT_HTTPHEADER => array(" .implode(",",$header_parts). "),\n";
+	    }
 
 	    $snippet .= "));\n\n";
 	    $snippet .= "\$response = curl_exec(\$curl);\n\n";
