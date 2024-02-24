@@ -40,11 +40,9 @@ class code_snippet{
 			return $this->php_curl_code_snippet_convertor();
 		}else if($this->selected_lang == "Javascript-Fetch") {
 			return $this->js_fetch_code_snippet_convertor();
-		}
-		/*else if($this->selected_lang == "curl") {
-			return $this->curl_code_snippet_convertor();
-		}*/
-		else {
+		}else if($this->selected_lang == "Javascript-jQuery") {
+			return $this->js_jquery_code_snippet_convertor();
+		}else {
 			return "Comming soon... ";
 		}
 	}
@@ -59,7 +57,7 @@ class code_snippet{
 	    if(count($this->headers) > 0) {
 	    	$snippet .= "const myHeaders = new Headers();\n";
 	    	foreach($this->headers as $i => $j) {
-	    		$snippet .= "myHeaders.append('" . $i . "', '" . $j . "');\n"; 
+	    		$snippet .= "myHeaders.append('" . $i . "', '" . $j . "');\n\n"; 
 	    	}
 	    }
 	    /*Request header condition ends*/
@@ -68,7 +66,7 @@ class code_snippet{
 	    if(count($this->postbody) > 0) {
 	    	$snippet .= "const raw = ";
 	    	if($this->headers['Content-Type'] == "application/json") {
-	    		$snippet .= "JSON.stringify(" . json_encode($this->postbody, JSON_PRETTY_PRINT) . ");\n";
+	    		$snippet .= "JSON.stringify(" . json_encode($this->postbody, JSON_PRETTY_PRINT) . ");\n\n";
 	    	}else {
 	    		$snippet .= $this->postbody;
 	    	}
@@ -77,7 +75,7 @@ class code_snippet{
 
 	    /*Request timeout condition start*/
 	    $snippet .= "const controller = new AbortController();\n";
-    	$snippet .= "const timerId = setTimeout(() => controller.abort(), 20);\n";
+    	$snippet .= "const timerId = setTimeout(() => controller.abort(), 20);\n\n";
 	    /*Request timeout condition ends*/
 
 	    $snippet .= "const requestOptions = {\n";
@@ -92,7 +90,7 @@ class code_snippet{
 
 	    $snippet .= $indentation."signal: controller.signal,\n";
 	    $snippet .= $indentation."redirect: 'follow'\n";
-	    $snippet .= "};\n";
+	    $snippet .= "};\n\n";
 
 	    /*Fetch request syntax start*/
 	    if ($this->options['asyncAwaitEnabled']) {
@@ -119,9 +117,9 @@ class code_snippet{
 	}
 
 	function php_curl_code_snippet_convertor() {
-
 	    $identity = "\t";
 	    $indentation = str_repeat($identity, "1");
+
 	    $snippet = "";
 	    $snippet = "<?php\n\n\$curl = curl_init();\n\n";
 	    $snippet .= "curl_setopt_array(\$curl, array(\n";
@@ -133,10 +131,10 @@ class code_snippet{
 	    $snippet .= $indentation . "CURLOPT_FOLLOWLOCATION => true,\n";
 	    $snippet .= $indentation . "CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,\n";
 	    $snippet .= $indentation . "CURLOPT_CUSTOMREQUEST => '" . $this->req_method . "',\n";
-	    
+
 	    $header_parts = [];
 	    foreach($this->headers as $i => $j) {
-	    	$header_parts[] = $i .":". $j;
+	    	$header_parts[] = "'".$i .":". $j."'";
 	    }
 
 	    if(count($this->postbody) > 0) {
@@ -149,6 +147,30 @@ class code_snippet{
 	    $snippet .= "curl_close(\$curl);\n";
 	    $snippet .= "echo \$response;\n";
 	    $snippet .= "?>";
+	    return $snippet;
+	}
+
+	function js_jquery_code_snippet_convertor() {
+		$identity = "\t";
+	    $indentation = str_repeat($identity, "1");
+
+	    $header_parts = [];
+	    foreach($this->headers as $i => $j) {
+	    	$header_parts[] = $i .":". $j;
+	    }
+
+	    $snippet = "";
+	    $snippet .= "var settings = {\n";
+	    $snippet .= $indentation. "'url': '" .$this->url. "',\n";
+	    $snippet .= $indentation. "'method': " .$this->req_method.",\n";
+	    $snippet .= $indentation. "'timeout': 20,\n";
+	    $snippet .= $indentation. "'headers': " .json_encode($header_parts, JSON_UNESCAPED_SLASHES).",\n";
+	    $snippet .= $indentation. "'data': JSON.stringify(" .json_encode($this->postbody, JSON_PRETTY_PRINT). "),\n";
+	    $snippet .= $indentation. "};\n\n";
+
+	    $snippet .= $indentation. "$.ajax(settings).done(function (response) {\n";
+	    $snippet .= $indentation. "console.log(response);\n});";
+
 	    return $snippet;
 	}
 }

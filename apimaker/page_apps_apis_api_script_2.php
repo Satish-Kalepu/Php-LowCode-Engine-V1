@@ -326,7 +326,7 @@ var app = s2_ssssssssss({
 			s2_desu_sgniht: {},
 			show_code_snippet : false,
 			selected_lang : "php-curl",
-			code_snippet_lang : ['php-curl','Javascript-Fetch'],
+			code_snippet_lang : ['php-curl','Javascript-Fetch','Javascript-jQuery'],
 			s2_noitcnuf_cimanyd: function(){},
 		};
 	},
