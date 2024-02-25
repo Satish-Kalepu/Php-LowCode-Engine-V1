@@ -324,6 +324,9 @@ var app = s2_ssssssssss({
 			s2_nf_nigulp_detceles: "",
 			s2_marap_nf_nigulp_detceles: "",
 			s2_desu_sgniht: {},
+			show_code_snippet : false,
+			selected_lang : "php-curl",
+			code_snippet_lang : ['php-curl','Javascript-Fetch','Javascript-jQuery'],
 			s2_noitcnuf_cimanyd: function(){},
 		};
 	},
@@ -3352,6 +3355,98 @@ var app = s2_ssssssssss({
 				console.log("s2_etalpmet_ot_nosj_nialp: "+ typeof(v) + " Incorrect data type");
 			}
 			return v;
+		},
+		btoa : function(v) {
+			return window.btoa(v);
+		},
+		s2_postman_export: function(url) {
+			if("<?=$config_param4 ?>" == "" || "<?=$config_param3 ?>" == "") {
+				alert("Invalid URL");
+				return false;
+			}
+			let post_data = {
+				"action" : "postman_collection_export",
+				"version_id" : "<?=$config_param4 ?>",
+				"api_id" : "<?=$config_param3 ?>",
+				"engine_url" : url
+			};
+			axios.post( "?", post_data).then(response=>{
+				if( response.status == 200 ){
+					if( typeof(response.data) == "object" ){
+						if( 'status' in response.data ){
+							if( response.data['status'] == "success" ){
+								const blob = new Blob([response.data['data']['json_data']], { type: 'application/json' });
+								const link = document.createElement('a');
+								link.href = window.URL.createObjectURL(blob);
+								link.download = response.data['data']['file'];
+								document.body.appendChild(link);
+								link.click();
+								document.body.removeChild(link);
+								window.URL.revokeObjectURL(link.href);
+							}else if( response.data['status'] == "TokenError" ){
+								alert("Error: TokenError: " + response.data['error'] + ". Reloading...");
+								setTimeout("document.location.reload()",2000);
+							}else{
+                                alert("Error: " + response.data['error']);
+							}
+						}else{
+							alert("Error: incorrect response");
+						}
+					}else{
+						alert("Error: unexpected response");
+					}
+				}else{
+					alert("Error: http: " . response.status);
+				}
+			}).catch(response=>{
+                alert( response.message );
+                document.location.reload();
+	        })
+		},
+		get_code_snippt_lang: function(url) {
+			if("<?=$config_param4 ?>" == "" || "<?=$config_param3 ?>" == "") {
+				alert("Invalid URL");
+				return false;
+			}
+			this.code_snippet_data = "";
+			this.show_code_snippet= false;
+			let post_data = {
+				"action" : "get_code_snippt_lang",
+				"version_id" : "<?=$config_param4 ?>",
+				"api_id" : "<?=$config_param3 ?>",
+				"engine_url" : url,
+				"selected_lang" : this.selected_lang
+			};
+			axios.post( "?", post_data).then(response=>{
+				if( response.status == 200 ){
+					if( typeof(response.data) == "object" ){
+						if( 'status' in response.data ){
+							if( response.data['status'] == "success" ){
+								this.show_code_snippet= true;
+								this.code_snippet_data = response.data['data'];
+							}else if( response.data['status'] == "TokenError" ){
+								alert("Error: TokenError: " + response.data['error'] + ". Reloading...");
+								setTimeout("document.location.reload()",2000);
+							}else{
+                                alert("Error: " + response.data['error']);
+							}
+						}else{
+							alert("Error: incorrect response");
+						}
+					}else{
+						alert("Error: unexpected response");
+					}
+				}else{
+					alert("Error: http: " . response.status);
+				}
+			}).catch(response=>{
+                alert( response.message );
+                document.location.reload();
+	        })
+		},
+		copy_code_snippet: function() {
+			navigator.clipboard.writeText(this.code_snippet_data);
+			alert("Copied to Clipboard");
 		}
 	}
 });
