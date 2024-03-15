@@ -72,6 +72,111 @@
 		$test['url_inputs_'] = $url_inputs;
 	}
 
+	//print_pre( $api_version );exit;
+
+	if( isset($api_version['auth-type']) ){
+		if( $api_version['auth-type'] == "Access-Key" ){
+			if( !isset($_SERVER['HTTP_ACCESS_KEY']) ){
+				http_response_code(403);
+				header("Content-Type: application/json");
+				echo json_encode(["status"=>"fail", "error"=>"Access-Key required" ]);exit;
+			}else if( !preg_match( "/^[0-9a-f]{24}$/", $_SERVER['HTTP_ACCESS_KEY']) ){
+				http_response_code(403);
+				header("Content-Type: application/json");
+				echo json_encode(["status"=>"fail", "error"=>"Access-Key Incorrect" ]);exit;
+			}else{
+				$res = $mongodb_con->find_one( $config_global_engine['config_mongo_prefix'] . "_user_keys", [
+					"app_id"=>$api_version['app_id'],
+					"_id"=>$_SERVER['HTTP_ACCESS_KEY']
+				] );
+				if( !$res['data'] ){
+					http_response_code(403);
+					header("Content-Type: application/json");
+					echo json_encode(["status"=>"fail", "error"=>"Access-Key not found" ]);exit;
+				}
+				// echo time();
+				// print_pre( $res['data'] );exit;
+				if( $res['data']['expire'] < time() || $res['data']['active'] != 'y' ){
+					http_response_code(403);
+					header("Content-Type: application/json");
+					echo json_encode(["status"=>"fail", "error"=>"Access-Key Expired/InActive" ]);exit;
+				}
+				$ipf = false;
+				$x = explode(".", $_SERVER['REMOTE_ADDR']);
+				$ip2 = implode(".",[$x[0],$x[1],$x[2]] );
+				$ip3 = implode(".",[$x[0],$x[1]] );
+				$ip4 = $x[0];
+				if( isset($res['data']['ips']) && is_array($res['data']['ips']) ){
+					foreach( $res['data']['ips'] as $ii=>$ip ){
+						$x = explode("/", $ip);
+						$x2 = explode(".",$x[0]);
+						if( $x[1] == "32" ){
+							if( $_SERVER['REMOTE_ADDR'] == $x[0] ){
+								$ipf = true;break;
+							}
+						}else if( $x[1] == "24" ){
+							if( $ip2 == implode(".",[ $x2[0],$x2[1],$x2[2] ] ) ){
+								$ipf = true;break;
+							}
+						}else if( $x[1] == "16" ){
+							if( $ip3 == implode(".",[ $x2[0],$x2[1] ] ) ){
+								$ipf = true;break;
+							}
+						}else if( $x[1] == "8" ){
+							if( $ip4 == $x2[0] ){
+								$ipf = true;break;
+							}
+						}
+					}
+				}
+				if( $ipf == false ){
+					http_response_code(403);
+					header("Content-Type: application/json");
+					echo json_encode(["status"=>"fail", "error"=>"Access Key IP rejected" ]);exit;
+				}
+				$allow_policy = false;
+				if( isset($res['data']['policies']) && is_array($res['data']['policies']) ){
+					foreach( $res['data']['policies'] as $ii=>$ip ){
+						$ad_allow = false;$td_allow = false;
+						if( isset($ip['service']) ){
+							if( $ip['service'] == "apis" ){
+								if( isset($ip['service']) && is_array($ip['actions']) ){
+									foreach( $ip['actions'] as $ad ){
+										if( $ad == "*" || $ad == "invoke" ){
+											$ad_allow = true;break;
+										}
+									}
+								}
+								if( isset($ip['things']) && is_array($ip['things']) ){
+									foreach( $ip['things'] as $td ){
+										if( $td['_id'] == "*" ){
+											$td_allow = true;break;
+										}else{
+											$x = explode(":", $td['_id']);
+											if( $x[0] == "api" ){
+												if( $x[1] == $api_version['api_id'] ){
+													$td_allow = true;break;
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+						if( $ad_allow && $td_allow ){
+							$allow_policy = true;break;
+						}
+					}
+				}
+				if( $allow_policy == false ){
+					http_response_code(403);
+					header("Content-Type: application/json");
+					echo json_encode(["status"=>"fail", "error"=>"Access Key Policy Rejected" ]);exit;
+				}
+			}
+		}
+	}
+
 	//print_pre( $test );exit;
 	$api_engine = new api_engine();
 	if( !$api_engine ){

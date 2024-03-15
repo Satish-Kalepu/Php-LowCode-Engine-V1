@@ -229,12 +229,20 @@ if( $config_param3 ){
 		if( $t != "OK" ){
 			json_response("fail", $t);
 		}
+
+		$vars_used = [];
+		preg_match_all("/\_\_[a-z\_\-]+\_\_/", $_POST['data'], $m);
+		foreach( $m[0] as $i=>$j ){
+			$vars_used[ $j ] = 1 ;
+		}
+
 		$res = $mongodb_con->update_one( $config_global_apimaker['config_mongo_prefix'] . "_files", [
 			"app_id"=> $config_param1,
 			"_id"=>$config_param3
 		],[
 			"data"=>$_POST['data'],
 			"sz"=>strlen($_POST['data']),
+			"vars_used"=>array_keys($vars_used),
 			"updated"=>date("Y-m-d H:i:s"),
 		]);
 		if( $res["status"] == "fail" ){

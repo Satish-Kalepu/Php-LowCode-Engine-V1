@@ -207,6 +207,15 @@ var s2_snoitcnuf_gifnoc = {
 			"p3": {"n": "If Matched", "t": "MatchReturn", "v": "true", "m": true, "types": ["MatchReturn"],},
 		}
 	},
+	"Validate Input": {
+		"t": "Text",
+		"self": false,
+		"return": "B",
+		"inputs": {
+			"p1": {"n": "Variable", "t": "V", "v": {"v":"","t":""}, "m": true, "types": ["V"]},
+			"p2": {"n": "Validation", "t": "Validation", "v": "Email", "m": true, "types": ["Validation"]},
+		}
+	},
 	"HTML Entity Decode": {
 		"t": "Text",
 		"self": false,
@@ -636,4 +645,6 @@ var s2_atad_snoitcnuf_gifnoc = {
 	"DFormat": ["yyyy-mm-dd","dd-mm-yyyy","dd/mm/yyyy","yyyy/mm/dd","mm/dd/yyyy", "yyyy/dd/mm", "yyyy-M-dd", "yyyy M dd", "dd-M-yyyy", "dd M yyyy", "yyyy-MM-dd", "yyyy MM dd", "dd-MM-yyyy", "dd MM yyyy", "dd DD MM yyyy", "yyyy DD dd MM"],
 	"ContentType": ["application/json","application/x-www-form-urlencoded","application/xml", "text/plain", "multipart/form-data"],
 	"mongooperator": ['$eq','$gt', '$gte', '$lt', '$lte', '$exists', '$ne', '$regex'],
+	"Validation": [ "Mobile", "Phone", "Email", "Domain", "URL", "Alpha", "Alpha with spaces", "Alpha with space - . _", "AlphaNumeric", "AlphaNumeric with spaces", "AlphaNumeric with space - . _", "Numeric", "PAN", "Aadhaar", "Credit Card", "dd/mm/yyyy", "yyyy/dd/mm", "yyyy-mm-dd", "dd-mm-yyyy", "MongoDBId", "HexCode" ],
+	"auth-type": ["None", "Access-Key", "Credentials", "Bearer"],
 };

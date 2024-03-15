@@ -52,13 +52,13 @@
 
 						<div class="input-group mb-3 mt-3">
 						  <span class="input-group-text">https://</span>
-						  <input type="text" class="form-control form-control-sm" placeholder="SubDomain"  v-model="settings['cloud-subdomain']" >
+						  <input type="text" class="form-control form-control-sm" placeholder="SubDomain"  v-model="settings['cloud-subdomain']"  style="max-width: 150px;" >
 						  <span class="input-group-text">.</span>
-						  <select class="form-select form-select-sm" placeholder="Server" v-model="settings['cloud-domain']" >
+						  <select class="form-select form-select-sm" placeholder="Server" v-model="settings['cloud-domain']"  style="max-width: 250px;" >
 							<option v-for="d in cd" v-bind:value="d" >{{ d }}</option>
 						  </select>
 						  <span class="input-group-text">/</span>
-						  <input type="text" class="form-control  form-control-sm" placeholder="Path" v-model="settings['cloud-enginepath']" >
+						  <input type="text" class="form-control  form-control-sm" placeholder="Path" v-model="settings['cloud-enginepath']"  style="max-width: 150px;" >
 						</div>
 						<div class="text-secondary">https://{{ settings['cloud-subdomain'] + '.' + settings['cloud-domain'] }}/{{ settings['cloud-enginepath'] }}</div>
 
@@ -66,7 +66,8 @@
 						<div><label style="cursor: pointer;">Use an alias name for above domain  <input type="checkbox" v-model="settings['alias']" ></label></div>
 						<div v-if="settings['alias']" class="input-group mb-3 mt-3">
 						  <span class="input-group-text">https://</span>
-						  <input type="text" class="form-control  form-control-sm" placeholder="Alias domain" v-model="settings['alias-domain']" >
+						  <input type="text" class="form-control form-control-sm" style="max-width: 250px;" placeholder="Alias domain" v-model="settings['alias-domain']" >
+						  <span class="input-group-text">/</span>
 						</div>
 
 						</template>
@@ -173,7 +174,7 @@
 					<div>{{ enginep }}</div>
 					<pre style="width:90%; height: 150px;overflow: auto; padding: 10px; border: 1px solid #ccc;">{{ engined[0] }}</pre>
 
-					<p v-if="is_it_default" >This app is the default app</p>
+					<p v-if="is_it_default()" >This app is the default app</p>
 					<p v-else>
 						<p style="color:red;">This app is not the default app</p>
 						<p>You can update the configuration file to make the current app default.</p>
@@ -433,6 +434,27 @@ var app = Vue.createApp({
 			});
 		},
 		app_save_cloud_settings: function(){
+
+			if( 'alias' in this.settings ){
+				if( this.settings['alias'] ){
+					if( this.settings['alias-domain'].match(/^[a-z0-9\-\_\.]{2,50}$/i) == null ){
+						alert("Cloud alias domain invalid");return false;
+					}
+				}
+			}
+			if( 'cloud' in this.settings ){
+				if( this.settings['cloud'] ){
+					if( this.settings['cloud-subdomain'].match(/^[a-z0-9\-\_\.]{2,50}$/i) == null ){
+						alert("Cloud sub domain invalid");return false;
+					}
+					if( this.settings['cloud-enginepath'] != "" ){
+					if( this.settings['cloud-enginepath'].match(/^[a-z0-9\-\_\.]{2,50}$/i) == null ){
+						alert("Cloud sub domain should be plain text without spaces\n\nEngine path is not mandatory");return false;
+					}
+					}
+				}
+			}
+
 			this.msg2 = "Loading...";
 			this.err2 = "";
 			axios.post("?", {

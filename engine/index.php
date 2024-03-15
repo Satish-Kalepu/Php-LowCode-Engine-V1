@@ -118,6 +118,11 @@
 		return "\\" . $m[0];
 	}
 	$url_parts = parse_url( $path );
+	if( isset($url_parts['path']) ){
+		$path_params = explode("/", $url_parts['path'] );
+	}else{
+		$path_params = [];
+	}
 
 	$url_inputs = [];
 	if( $_GET["version_id"] ){
@@ -213,8 +218,14 @@
 			// exit;
 		}
 
-		//	echo "<pre>";print_r( $config_app );exit;
-		//	echo $path; exit;
+		// echo "<pre>";print_r( $config_app );exit;
+		// echo $path; exit;
+		// print_r( $path_params );exits;
+
+		if( isset($path_params[0]) && $path_params[0] == "_api" ){
+			require("index_engine_api.php");
+			exit;
+		}
 
 		if( $path != "home" && !isset($config_app['pages'][ $path ]) ){
 			http_response_code(404);echo "Path not found! ..";exit;
@@ -284,11 +295,26 @@
 			echo "Incorrect file type";
 			exit;
 		}
-		header("Content-Type: "  . $file_version['type']);
+		header( "Content-Type: "  . $file_version['type']);
 		header( "Cache-Control: no-store, no-cache, must-revalidate, max-age=0" );
 		header( "Cache-Control: post-check=0, pre-check=0", false );
 		header( "Pragma: no-cache" );		
 		if( $file_version['t'] == "inline" ){
+
+			if( isset($file_version['vars_used']) ){
+				if( is_array($file_version['vars_used']) ){
+					$vars = [
+						"__engine_url__" =>"https://" . $_SERVER['HTTP_HOST'] . $config_global_apimaker_engine['config_engine_path'],
+						"__engine_path__"=>$config_global_apimaker_engine['config_engine_path'],
+					];
+					foreach( $file_version['vars_used'] as $var ){
+						if( isset($vars[$var]) ){
+							$file_version['data'] = str_replace( $var, $vars[$var], $file_version['data'] );
+						}
+					}
+				}
+			}
+
 			echo $file_version['data'];
 		}else if( $file_version['t'] == "base64" && preg_match("/^image/i", $file_version['type']) ){
 			echo base64_decode($file_version['data']);exit;

@@ -131,6 +131,15 @@ class mongodb_connection{
 			try{
 				if( $condition["_id"] && is_string( $condition["_id"] ) ){
 					$condition["_id"] = $this->get_id( $condition["_id"] );
+				}else if( $condition["_id"] && is_array( $condition["_id"] ) ){
+					//$q = array_keys();
+					foreach( $condition["_id"] as $ci=>$cd ){
+						if( preg_match("/^\W[a-z]+$/",$ci) && is_string($cd) ){
+							if( preg_match("/^[a-f0-9]{24}$/",$cd) ){
+								$condition["_id"][ $ci ] = $this->get_id($cd);
+							}
+						}
+					}
 				}
 				$cur = $col->find($condition, $option)->toArray();
 				foreach( $cur as $i=>$j ){
@@ -160,6 +169,15 @@ class mongodb_connection{
 			try{
 				if( $condition["_id"] && is_string( $condition["_id"] ) ){
 					$condition["_id"] = $this->get_id( $condition["_id"] );
+				}else if( $condition["_id"] && is_array( $condition["_id"] ) ){
+					//$q = array_keys();
+					foreach( $condition["_id"] as $ci=>$cd ){
+						if( preg_match("/^\W[a-z]+$/",$ci) && is_string($cd) ){
+							if( preg_match("/^[a-f0-9]{24}$/",$cd) ){
+								$condition["_id"][ $ci ] = $this->get_id($cd);
+							}
+						}
+					}
 				}
 				//$cur = bson_to_json($col->find($condition, $option));
 				$cur = $col->find($condition, $option)->toArray();
@@ -196,6 +214,15 @@ class mongodb_connection{
 			try{
 				if( $condition["_id"] && is_string( $condition["_id"] ) ){
 					$condition["_id"] = $this->get_id( $condition["_id"] );
+				}else if( $condition["_id"] && is_array( $condition["_id"] ) ){
+					//$q = array_keys();
+					foreach( $condition["_id"] as $ci=>$cd ){
+						if( preg_match("/^\W[a-z]+$/",$ci) && is_string($cd) ){
+							if( preg_match("/^[a-f0-9]{24}$/",$cd) ){
+								$condition["_id"][ $ci ] = $this->get_id($cd);
+							}
+						}
+					}
 				}
 				//$cur = bson_to_json($col->find($condition, $option));
 				$cur = $col->find($condition, $option)->toArray();
@@ -221,7 +248,18 @@ class mongodb_connection{
 			try{
 				if( $condition["_id"] && is_string( $condition["_id"] ) ){
 					$condition["_id"] = $this->get_id( $condition["_id"] );
+				}else if( $condition["_id"] && is_array( $condition["_id"] ) ){
+					//$q = array_keys();
+					foreach( $condition["_id"] as $ci=>$cd ){
+						//echo $ci . "=";
+						if( preg_match("/^\W[a-z]+$/",$ci) && is_string($cd) ){
+							if( preg_match("/^[a-f0-9]{24}$/",$cd) ){
+								$condition["_id"][ $ci ] = $this->get_id($cd);
+							}
+						}
+					}
 				}
+				//print_r( $condition );
 				$cur = (array)$col->findOne($condition,$option);
 				if($cur['_id']){
 					$cur['_id'] = (string)$cur['_id'];
@@ -258,6 +296,15 @@ class mongodb_connection{
 				}
 				if( $condition["_id"] && is_string( $condition["_id"] ) ){
 					$condition["_id"] = $this->get_id( $condition["_id"] );
+				}else if( $condition["_id"] && is_array( $condition["_id"] ) ){
+					//$q = array_keys();
+					foreach( $condition["_id"] as $ci=>$cd ){
+						if( preg_match("/^\W[a-z]+$/",$ci) && is_string($cd) ){
+							if( preg_match("/^[a-f0-9]{24}$/",$cd) ){
+								$condition["_id"][ $ci ] = $this->get_id($cd);
+							}
+						}
+					}
 				}
 				$res=$col->updateMany($condition, $data, $option);
 				return [
@@ -289,6 +336,15 @@ class mongodb_connection{
 			try{
 				if( $condition["_id"] && is_string( $condition["_id"] ) ){
 					$condition["_id"] = $this->get_id( $condition["_id"] );
+				}else if( $condition["_id"] && is_array( $condition["_id"] ) ){
+					//$q = array_keys();
+					foreach( $condition["_id"] as $ci=>$cd ){
+						if( preg_match("/^\W[a-z]+$/",$ci) && is_string($cd) ){
+							if( preg_match("/^[a-f0-9]{24}$/",$cd) ){
+								$condition["_id"][ $ci ] = $this->get_id($cd);
+							}
+						}
+					}
 				}
 				if( $data['$set'] || $data['$inc'] || $data['$rename'] || $data['$unset'] ){
 				}else{
@@ -418,6 +474,15 @@ class mongodb_connection{
 			try{
 				if( $condition["_id"] && is_string( $condition["_id"] ) ){
 					$condition["_id"] = $this->get_id( $condition["_id"] );
+				}else if( $condition["_id"] && is_array( $condition["_id"] ) ){
+					//$q = array_keys();
+					foreach( $condition["_id"] as $ci=>$cd ){
+						if( preg_match("/^\W[a-z]+$/",$ci) && is_string($cd) ){
+							if( preg_match("/^[a-f0-9]{24}$/",$cd) ){
+								$condition["_id"][ $ci ] = $this->get_id($cd);
+							}
+						}
+					}
 				}
 				$res = $col->deleteOne( $condition );
 				return [ "status"=>"success", "deleted_count"=>$res->getDeletedCount() ];
@@ -433,6 +498,15 @@ class mongodb_connection{
 			try{
 				if( $condition["_id"] && is_string( $condition["_id"] ) ){
 					$condition["_id"] = $this->get_id( $condition["_id"] );
+				}else if( $condition["_id"] && is_array( $condition["_id"] ) ){
+					//$q = array_keys();
+					foreach( $condition["_id"] as $ci=>$cd ){
+						if( preg_match("/^\W[a-z]+$/",$ci) && is_string($cd) ){
+							if( preg_match("/^[a-f0-9]{24}$/",$cd) ){
+								$condition["_id"][ $ci ] = $this->get_id($cd);
+							}
+						}
+					}
 				}
 				$res = $col->deletemany($condition);
 				return [ "status"=>"success", "deleted_count"=>$res->getDeletedCount() ];
@@ -447,6 +521,15 @@ class mongodb_connection{
 			try{
 				if( $condition["_id"] && is_string( $condition["_id"] ) ){
 					$condition["_id"] = $this->get_id( $condition["_id"] );
+				}else if( $condition["_id"] && is_array( $condition["_id"] ) ){
+					//$q = array_keys();
+					foreach( $condition["_id"] as $ci=>$cd ){
+						if( preg_match("/^\W[a-z]+$/",$ci) && is_string($cd) ){
+							if( preg_match("/^[a-f0-9]{24}$/",$cd) ){
+								$condition["_id"][ $ci ] = $this->get_id($cd);
+							}
+						}
+					}
 				}
 				$col->findOneAndDelete($condition);
 				return [ "status"=>"success", "deleted_count"=>$res->getDeletedCount() ];

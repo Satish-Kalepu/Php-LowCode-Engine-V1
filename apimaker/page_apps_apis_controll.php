@@ -119,6 +119,17 @@ if( $config_param4 && $main_api ){
 		echo404("Api version not found!");
 	}
 
+	if( !isset($api['auth-type']) ){
+		$api['auth-type'] = "None";
+	}
+	if( isset($api['test']) ){
+		if( !isset($api['test']['headers']['Access-Key']) ){
+			$api['test']['headers']['Access-Key'] = "None";
+		}
+	}
+
+	//print_pre( $api );exit;
+
 	if( $_POST['action'] == "load_engine_data" ){
 		json_response([
 			"status"=>"success", 
@@ -226,6 +237,7 @@ if( $config_param4 && $main_api ){
 			"input-method"	=> $_POST['input-method'],
 			"input-type"	=> $_POST['input-type'],
 			"output-type"	=> $_POST['output-type'],
+			"auth-type"	=> $_POST['auth-type'],
 			"engine"	=> $_POST['data'],
 			"updated"	=> date("Y-m-d H:i:s"),
 		]);
@@ -241,6 +253,7 @@ if( $config_param4 && $main_api ){
 				"input-method"	=> $_POST['input-method'],
 				"input-type"	=> $_POST['input-type'],
 				"output-type"	=> $_POST['output-type'],
+				"auth-type"	=> $_POST['auth-type'],
 				"engine"	=> $_POST['engine'],
 				"updated"	=> date("Y-m-d H:i:s"),
 			]);

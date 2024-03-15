@@ -1,22 +1,36 @@
 <?php
 
-if( $_POST['action'] == "get_global_files" ){
-	$t = validate_token("getglobalfiles.". $config_param1, $_POST['token']);
-	if( $t != "OK" ){
-		json_response("fail", $t);
-	}
-	$res = $mongodb_con->find( $config_global_apimaker['config_mongo_prefix'] . "_global_files", [
-		'app_id'=>$config_param1,
-		"path"=>$_POST['current_path'],
-	],[
-		'projection'=>[
-			'body'=>false,'data'=>false,
-		],
-		'sort'=>['name'=>1],
-		'limit'=>200,
-	]);
-	json_response($res);
-	exit;
+$config_global_files = [
+	["name"=>"bootstrap/5.2/css/bootstrap.min.css", "type"=>"text/css" ],
+	["name"=>"bootstrap/5.2/css/bootstrap-grid.min.css", "type"=>"text/css" ],
+	["name"=>"bootstrap/5.2/css/bootstrap-grid.rtl.min.css", "type"=>"text/css" ],
+	["name"=>"bootstrap/5.2/css/bootstrap-reboot.min.css", "type"=>"text/css" ],
+	["name"=>"bootstrap/5.2/css/bootstrap-reboot.rtl.min.css", "type"=>"text/css" ],
+	["name"=>"bootstrap/5.2/css/bootstrap.rtl.min.css", "type"=>"text/css" ],
+	["name"=>"bootstrap/5.2/css/bootstrap-utilities.min.css", "type"=>"text/css" ],
+	["name"=>"bootstrap/5.2/css/bootstrap-utilities.rtl.min.css", "type"=>"text/css" ],
+	["name"=>"bootstrap/5.2/js/bootstrap.bundle.min.js", "type"=>"text/javascript" ],
+	["name"=>"bootstrap/5.2/js/bootstrap.esm.min.js", "type"=>"text/javascript" ],
+	["name"=>"bootstrap/5.2/js/bootstrap.min.js", "type"=>"text/javascript" ],
+	["name"=>"www/axios.min.js", "type"=>"text/javascript" ],
+	["name"=>"www/beautify-css.js", "type"=>"text/javascript" ],
+	["name"=>"www/beautify-html.js", "type"=>"text/javascript" ],
+	["name"=>"www/beautify.js", "type"=>"text/javascript" ],
+	["name"=>"www/codemirror.js", "type"=>"text/javascript" ],
+	["name"=>"www/jszip.min.js", "type"=>"text/javascript" ],
+	["name"=>"www/vue3.min.js", "type"=>"text/javascript" ],
+	["name"=>"www/vue3.min.prod.js", "type"=>"text/javascript" ],
+	["name"=>"www/vue.router.min.js", "type"=>"text/javascript" ],
+	["name"=>"www/xlsx.core.min.js", "type"=>"text/javascript" ],
+	["name"=>"www/xlsx.full.min.js", "type"=>"text/javascript" ],
+];
+
+$test_url = "https://www.example.com/engine/";
+foreach( $app['settings']['domains'] as $d=>$dd ){
+	$path = $dd['path'];
+	$domain = $dd['domain'];
+	$test_url = $dd['url'];
+	break;
 }
 
 if( $config_param3 ){

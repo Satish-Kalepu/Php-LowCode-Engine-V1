@@ -164,6 +164,94 @@ if( $_POST['action'] == "context_load_things" ){
 				}
 			}
 		}
+	}else if( $_POST['thing'] == "PolicyThings" ){
+
+		if( $_POST['depend'] == "tables" ){
+
+			$things = [];
+			$things[] = ["l"=>["t"=>"T", "v"=>"*"],   "i"=>["t"=>"T", "v"=>"*"]];
+			$res = $mongodb_con->find( $config_global_apimaker['config_mongo_prefix'] . "_tables_dynamic", [
+				'app_id'=>$_POST['app_id']
+			],[
+				'sort'=>['table'=>1],
+				'limit'=>200,
+			]);
+			foreach( $res['data'] as $i=>$j ){
+				$things[] = ["l"=>["t"=>"T", "v"=>"internal:".$j['table'] ], "i"=>["t"=>"T", "v"=>"table_dynamic:".$j['_id']] ];
+			}
+
+			$res = $mongodb_con->find( $config_global_apimaker['config_mongo_prefix'] . "_databases", [
+				'app_id'=>$_POST['app_id']
+			],[
+				'sort'=>['des'=>1],
+				'limit'=>200,
+				'projection'=>['details'=>false, 'm_i'=>false, 'user_id'=>false]
+			]);
+			foreach( $res['data'] as $i=>$j ){
+				$res2 = $mongodb_con->find( $config_global_apimaker['config_mongo_prefix'] . "_tables", [
+					'app_id'=>$_POST['app_id'],
+					"db_id"=>$j['_id']
+				],[
+					'sort'=>['des'=>1],
+					'limit'=>200,
+					'projection'=>['f_n'=>false, 'source_schema'=>false, 'm_i'=>false, 'user_id'=>false ]
+				]);
+				foreach( $res2['data'] as $ii=>$jj ){
+					$things[] = ["l"=>["t"=>"T", "v"=>"external:".$j['des'] . ":" . $jj['des']], "i"=>["t"=>"T", "v"=>"table:".$jj['_id']] ];
+				}
+			}
+		}
+		if( $_POST['depend'] == "apis" ){
+			$res = $mongodb_con->find( $config_global_apimaker['config_mongo_prefix'] . "_apis", [
+				'app_id'=>$_POST['app_id']
+			],[
+				'sort'=>['name'=>1],
+				'limit'=>200,
+				'projection'=>[
+					'name'=>true, 'des'=>true
+				]
+			]);
+			//print_r( $res['data'] );exit;
+			foreach( $res['data'] as $i=>$j ){
+				$things[] = ["l"=>["t"=>"T", "v"=>"api:".$j['name'] ], "i"=>["t"=>"T", "v"=>"api:".$j['_id']] ];
+			}
+
+			$things[] = ["l"=>["t"=>"T", "v"=>"auth_api:generate_access_token"], "i"=>["t"=>"T", "v"=>"auth_api:10001"]];
+			$things[] = ["l"=>["t"=>"T", "v"=>"auth_api:user_authentication"],   "i"=>["t"=>"T", "v"=>"auth_api:10002"]];
+		}
+
+	}else if( $_POST['thing'] == "page_edit_tables_internal" ){
+		$things = [];
+		$res = $mongodb_con->find( $config_global_apimaker['config_mongo_prefix'] . "_tables_dynamic", [
+			'app_id'=>$_POST['app_id']
+		],[
+			'sort'=>['table'=>1],
+			'limit'=>200,
+		]);
+		foreach( $res['data'] as $i=>$j ){
+			$things[] = ["l"=>"internal:".$j['table'], "i"=>"table_dynamic:".$j['_id']];
+		}
+	}else if( $_POST['thing'] == "page_edit_tables_external" ){
+		$res = $mongodb_con->find( $config_global_apimaker['config_mongo_prefix'] . "_databases", [
+			'app_id'=>$_POST['app_id']
+		],[
+			'sort'=>['des'=>1],
+			'limit'=>200,
+			'projection'=>['details'=>false, 'm_i'=>false, 'user_id'=>false]
+		]);
+		foreach( $res['data'] as $i=>$j ){
+			$res2 = $mongodb_con->find( $config_global_apimaker['config_mongo_prefix'] . "_tables", [
+				'app_id'=>$_POST['app_id'],
+				"db_id"=>$j['_id']
+			],[
+				'sort'=>['des'=>1],
+				'limit'=>200,
+				'projection'=>['f_n'=>false, 'source_schema'=>false, 'm_i'=>false, 'user_id'=>false ]
+			]);
+			foreach( $res2['data'] as $ii=>$jj ){
+				$things[] = ["l"=>"external:".$j['des'] . ":" . $jj['des'], "i"=>"table:".$j['engine'].":".$jj['_id']];
+			}
+		}
 	}else{
 		$things = [];
 	}

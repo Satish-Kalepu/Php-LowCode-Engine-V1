@@ -76,13 +76,32 @@ class mongodb_connection{
 		function insert( $collection, $insert_data, $options = [] ){
 			$col = $this->database->{$collection};
 			try{
-				if( $insert_data["_id"] && is_string( $insert_data["_id"] ) ){
+				if( isset($insert_data["_id"]) && is_string( $insert_data["_id"] ) ){
 					$insert_data["_id"] = $this->get_id( $insert_data["_id"] );
 				}
-				$insert_data["m_i"]=date("Y-m-d H:i:s");
 				$cur = $col->insertOne($insert_data);
 				$id =  (string)$cur->getInsertedId();
 				return ["status"=>"success","inserted_id"=>$id];
+			}catch(Exception $ex){
+				$e = $ex->getMessage();
+				if( preg_match("/duplicate/i", $e ) ){
+					return ["status"=>"fail","error"=>"Duplicate key error", "e"=>$e];
+				}else{
+					return ["status"=>"fail","error"=>$e];
+				}
+			}
+			return false;
+		}
+		function insert_many( $collection, $insert_data, $options = [] ){
+			$col = $this->database->{$collection};
+			try{
+				foreach( $insert_data as $i=>$j ){
+					if( isset($insert_data[ $i ]["_id"]) && is_string( $insert_data[ $i ]["_id"] ) ){
+						$insert_data[ $i ]["_id"] = $this->get_id( $insert_data[ $i ]["_id"] );
+					}
+				}
+				$cur = $col->insertMany($insert_data);
+				return ["status"=>"success","inserted_ids"=>$cur->getInsertedIds(), "inserted_count"=>$cur->getInsertedCount() ];
 			}catch(Exception $ex){
 				return ["status"=>"fail","error"=>$ex->getMessage()];
 			}
@@ -207,6 +226,7 @@ class mongodb_connection{
 				if($cur['_id']){
 					$cur['_id'] = (string)$cur['_id'];
 				}
+				if( !$cur ){return ["status"=>"error","error"=>"notfound"];}
 				return ["status"=>"success","data"=>$cur];
 			}catch(Exception $ex){
 				return ["status"=>"fail","error"=>$ex->getMessage()];
@@ -388,7 +408,7 @@ class mongodb_connection{
 			return false;
 		}
 
-		function delete_one( $collection, $condition ){
+		function delete_one( $collection, $condition, $ops = [] ){
 			if( !is_string($collection) ){
 				return ["status"=>"fail","error"=>"collection name required"];
 			}
@@ -400,7 +420,7 @@ class mongodb_connection{
 				if( $condition["_id"] && is_string( $condition["_id"] ) ){
 					$condition["_id"] = $this->get_id( $condition["_id"] );
 				}
-				$res = $col->deleteOne( $condition );
+				$res = $col->deleteOne( $condition, $ops );
 				return [ "status"=>"success", "deleted_count"=>$res->getDeletedCount() ];
 			}catch(Exception $ex){
 				return ["status"=>"fail","error"=>$ex->getMessage()];
@@ -408,13 +428,13 @@ class mongodb_connection{
 			return true;
 		}
 
-		function delete_many( $collection, $condition ){
+		function delete_many( $collection, $condition, $ops = [] ){
 			$col = $this->database->{$collection};
 			try{
 				if( $condition["_id"] && is_string( $condition["_id"] ) ){
 					$condition["_id"] = $this->get_id( $condition["_id"] );
 				}
-				$res = $col->deletemany($condition);
+				$res = $col->deletemany($condition, $ops);
 				return [ "status"=>"success", "deleted_count"=>$res->getDeletedCount() ];
 			}catch(Exception $ex){
 				return ["status"=>"fail","error"=>$ex->getMessage()];

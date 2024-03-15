@@ -10,12 +10,13 @@
 	<div style="position: fixed;left:150px; top:40px; height: calc( 100% - 40px ); width:calc( 100% - 150px ); background-color: white; " >
 		<div style="padding: 10px;" >
 			<div style="float:right;" >
-				<div v-if="msg" class="alert alert-primary" >{{ msg }}</div>
-				<div v-if="err" class="alert alert-danger" >{{ err }}</div>
+				<button class="btn btn-outline-dark btn-sm" v-on:click="page_show_create_form()" >Create PAGE</button>
 			</div>
-			<div style="float:right;" >
-				<button class="btn btn-outline-secondary btn-sm" v-on:click="page_show_create_form()" >Create PAGE</button>
+			<div style="float:right; margin-right: 10px;" >
+				<div v-if="msg" class="alert alert-primary py-0" >{{ msg }}</div>
+				<div v-if="err" class="alert alert-danger py-0" >{{ err }}</div>
 			</div>
+			<div style="clear: both;"></div>
 			<div class="h3 mb-3">Pages</div>
 			<div style="height: calc( 100% - 100px ); overflow: auto;" >
 			<table class="table table-striped table-bordered table-sm" >

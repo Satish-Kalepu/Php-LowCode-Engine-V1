@@ -23,16 +23,14 @@
 	$tag_settings = file_get_contents("page_apps_pages_page_tag_config.js");
 
 	$components = [
+		"page_databasetable"
 	];
 
 	$plugins = [
 		//"Date"	
 	];
 	foreach( $components as $i=>$j ){
-		require("apps/" . $j . ".js");
-	}
-	foreach( $plugins as $i=>$j ){
-		require("plugins/plugin_" . $j . ".js");
+		require($apps_folder."/" . $j . ".js");
 	}
 
 	require("page_apps_pages_page_tag_config.js");
@@ -56,7 +54,7 @@ eval("s__ = " + atob("VnVlLmNyZWF0ZUFwcA=="));
 var app = s__({
 	data(){
 		return {
-			rootpath: '<?=$config_global_apimaker_path ?>/',
+			rootpath: '<?=$config_global_apimaker_path ?>',
 			path: '<?=$config_global_apimaker_path ?>apps/<?=$config_param1 ?>/',
 			global_data__: {"s":"sss"},
 			app_id: "<?=$config_param1 ?>",
@@ -117,6 +115,7 @@ var app = s__({
 			vmtt2_el: false,
 			vmtt2_tip: "",
 			vmtt2_pos: "top",
+			vmtt2_pos2: "outside",
 			vmtt_focus: false,
 			vmtt_focus_t: false,
 			vmtt_focus_c: 0,
@@ -125,8 +124,10 @@ var app = s__({
 			config_tags: {
 				"Blocks":	["DIV","P","H1","H2","H3","H4","BlockQuote","UL","OL","LI", "RichText"],
 				"Layout":	["Container","Grid","CSS Grid","Column","Table"],
-				"Forms":	["Static Form","Input","Select","TextArea","Label","FieldGroup"],
-				"Components":	["Definition List","Accordion","Alert","Badge","Breadcrumb","Button","Button group","Card","Carousel","Collapse","Dropdown","List group","Modal","Navbar","Navs","Offcanvas","Pagination","Placeholders","Popovers","Progress","Scrollspy","Spinners","Toasts","Tooltips"],
+				"Forms":	["Static Form", "Form", "Input","Select","TextArea","Label","FieldGroup"],
+				"Content":  ["IMG", "Figure", "Video", "Audio"],
+				"Components": ["Definition List","Accordion","Alert","Badge","Breadcrumb","Button","Button group","Card","Carousel","Collapse","Dropdown","List group","Modal","Navbar","Navs","Offcanvas","Pagination","Placeholders","Popovers","Progress","Scrollspy","Spinners","Toasts","Tooltips"],
+				"Apps": ["Authentication", "DatabaseTable"],
 			},
 			raw_html: `<div>Raw html content</div>`,
 			ce: false,
@@ -263,14 +264,17 @@ var app = s__({
 			doc_error: "",
 			paste_shift: false,
 			ace_editor: false,
+			ace_editor2: false,
 
 			focused: false,
 			focused_selection: false,
-			focused_className: "",
+			focused_classNames: "",
 			focused_styles: {},
 			focused_attributes: {},
 			focused_type: "",
 			focused_block_type: "",
+			focused_app: "",
+			focused_app_type: "",
 			focused_block: false,
 			focused_table: false,
 			focused_anchor: false,
@@ -280,6 +284,9 @@ var app = s__({
 			focused_ul: false,
 			focused_img: false,
 			focused_tree: [],
+
+			page_source: "",
+			edit_tab: "html",
 
 		};
 	},
@@ -327,6 +334,54 @@ var app = s__({
 		setInterval(this.vmtt_set,300);
 	},
 	methods: {
+		delete_tag: function(){
+			if( confirm("Are you sure to delete tag: " + this.focused.nodeName + "\n\n" + html_beautify( this.focused.outerHTML) ) ){
+				this.focused.remove();
+				this.unset_focused();
+			}
+		},
+		switch_tab: function(v){
+			console.log("Switching tab: " + v);
+			if( v == "source" ){
+				this.page__['html'] = this.frame.document.getElementById(this.target_editor_id).innerHTML;
+				this.init_ace2();
+			}
+			if( v == "html" ){
+				this.page__['html'] = this.ace_editor2.getValue();
+				this.frame.document.getElementById(this.target_editor_id).innerHTML = this.page__['html'];
+			}
+			this.edit_tab = v;
+		},
+		init_ace2: function(){
+			console.log("Ace initialized");
+			this.ace_editor2 = ace.edit("page_source_block");
+			this.ace_editor2.session.setMode("ace/mode/html");
+			this.ace_editor2.setOptions({
+				enableAutoIndent: true, behavioursEnabled: true,
+				showPrintMargin: false, printMargin: false, 
+				showFoldWidgets: false, 
+			});
+			this.ace_editor2.setValue( html_beautify(this.page__['html']) );
+		},
+		insert_above: function(){
+			this.vmtt2_el = this.focused;
+			this.vmtt2_pos = "top";
+			this.insert_item_form();
+		},
+		insert_below: function(){
+			this.vmtt2_el = this.focused;
+			this.vmtt2_pos = "bottom";
+			this.insert_item_form();
+		},
+		get_focused_tag_frame: function(){
+			var d = this.vmtt2_el.outerHTML;
+			var vl = document.createElement("div");
+			vl.innerHTML = d;
+			vl.childNodes[0].innerHTML = "";
+			var s = vl.childNodes[0].outerHTML;
+			vl.remove();
+			return s;
+		},
 		vmtt_set: function(){
 			try{
 				if( this.vmtt_focus_t ){
@@ -578,6 +633,25 @@ var app = s__({
 				this.set_focused2( vnew );
 			},
 			insert_item_form: function(){
+				if( this.vmtt2_el.nodeName == "LI" ){
+					if( this.vmtt2_pos == "top" ){
+						this.vmtt2_el.insertAdjacentHTML("beforebegin", this.vmtt2_el.outerHTML);
+					}else{
+						this.vmtt2_el.insertAdjacentHTML("afterend", this.vmtt2_el.outerHTML);
+					}
+					return;
+				}
+				if( this.vmtt2_el.nodeName == "TR" ){
+					if( this.vmtt2_pos == "top" ){
+						this.vmtt2_el.insertAdjacentHTML("beforebegin", this.vmtt2_el.outerHTML );
+					}else{
+						this.vmtt2_el.insertAdjacentHTML("afterend", this.vmtt2_el.outerHTML, );
+					}
+					return;
+				}
+				if( this.vmtt2_el.nodeName == "TD" ){alert("Please choose TR");return;}
+				if( this.vmtt2_el.nodeName == "TBODY" || this.vmtt2_el.nodeName == "THEAD" || this.vmtt2_el.nodeName == "TFOOT" ){alert("Please choose Table");return;}
+				if( this.vmtt2_el.className.match('/col\-/') ){ alert("Please choose Class=Row");return; }
 				if( this.insert_tag ){
 					this.tag_settings_popup_title = "Create new HTML Block";
 					this.tag_settings_type = "new";
@@ -2775,6 +2849,7 @@ var app = s__({
 			selection_to_delete: function(){
 				var sr = this.frame.document.getSelection().getRangeAt(0);
 				sr.deleteContents();
+				this.unset_focused();
 			},
 			find_root_sections_list: function(){
 				var sr = this.frame.document.getSelection().getRangeAt(0);
@@ -2864,6 +2939,7 @@ var app = s__({
 			clickit: function( e ){if( this.enabled ){
 				//this.insert_tag = false;
 				console.log("clickit:");
+				e.preventDefault();e.stopPropagation();
 				var sel = this.frame.document.getSelection();
 				if( sel.rangeCount ){
 					var sr = sel.getRangeAt(0);
@@ -2885,6 +2961,8 @@ var app = s__({
 				this.focused_type= "";
 				this.focused_block_type= "";
 				this.focused_block= false;
+				this.focused_app_type= "";
+				this.focused_app= false;
 				this.focused_table= false;
 				if( vanchor == false ){
 					this.focused_anchor= false;
@@ -2904,6 +2982,10 @@ var app = s__({
 				this.vmb="visibility: hidden;";
 				this.vmtip="visibility: hidden;";
 				this.vmttt= "visibility: hidden;";
+			},
+			set_focused_classNames__: function(){
+				var v = this.focused_classNames.split(/\ /i);
+				//this.focused_class
 			},
 			set_focused: function( vtarget = false ){
 				if( this.td_sel_cnt > 1 ){
@@ -2976,12 +3058,15 @@ var app = s__({
 								vl.innerHTML = v.nodeValue;
 								v.innerHTML = "";
 								v.appendChild( vl );
+							}else if( v.childNodes[i].nodeName == "BR" ){
+								v.childNodes[i].outerHTML = "<div class=\"container\"><div>Initial Div</div></div>";
 							}
 						}
 						var v = this.frame.document.getElementById("editor_div");
 						if( v.childNodes.length == 0 ){
 							var vl = this.frame.document.createElement("div");
-							vl.innerHTML = "Initial div tag";
+							vl.className = "container";
+							vl.innerHTML = "<div>Initial Div</div>";
 							v.appendChild( vl );
 							this.focused = vl;
 						}else{
@@ -3001,7 +3086,8 @@ var app = s__({
 					});
 					this.focused = v;
 					this.focused_type = this.focused.nodeName;
-					this.focused_className = (v.hasAttribute("data-block-type")?v.getAttribute("data-block-type"):v.className);
+					//this.set_focused_classNames__();
+					// = v.className;
 					var atr = v.getAttributeNames();
 					var atrs = {};
 					for( var ii=0;ii<atr.length;ii++){
@@ -3034,6 +3120,12 @@ var app = s__({
 						this.focused_block = this.focused.parentNode;
 						this.focused_block_type = "NOTE";
 					}}catch(e){}
+					this.focused_app = false;
+					this.focused_app_type = "";
+					if( this.focused.hasAttribute("data-app") ){
+						this.focused_app_type = this.focused.getAttribute("data-app");
+						this.focused_app = this.focused;
+					}
 					if( this.focused.hasAttribute("data-block-type") ){
 						if( this.focused.getAttribute("data-block-type") ){
 							this.focused_block = this.focused;
@@ -3142,11 +3234,13 @@ var app = s__({
 						return false;
 					}
 				}
-				if( this.focused_block ){
-					var v = this.focused_block.getBoundingClientRect();
-				}else{
-					var v = this.focused.getBoundingClientRect();
-				}
+				// if( this.focused_block ){
+				// 	console.log("Set bounds focused block: " + this.focused_block.nodeName );
+				// 	var v = this.focused_block.getBoundingClientRect();
+				// }else{
+				// 	var v = this.focused.getBoundingClientRect();
+				// }
+				var v = this.focused.getBoundingClientRect();
 				var sy = Number(this.frame.scrollY);
 				var sx = Number(this.frame.scrollX);
 				var l=Number(v.left);var t=Number(v.top); var w=Number(v.width); var h=Number(v.height); var b=Number(v.bottom); var r=Number(v.right);
@@ -3454,7 +3548,7 @@ var app = s__({
 							return false;
 						}
 						e.preventDefault();
-						this.echo__( vsections );
+						//this.echo__( vsections );
 						if( vsections.length==1 && vsections[0].substr(0,3).toLowerCase() == "<ul" ){
 							var vnew_ul = this.frame.document.createElement("div");
 							vnew_ul.innerHTML = vsections[0].replace(/[\r\n\t]+/g,"");;
@@ -4505,17 +4599,21 @@ var app = s__({
 				this.image_blob = vimg;
 			},
 			link_suggest_select: function( vd ){
+			},
+
+			edit_app_component_settings: function(){
+
+				this.tag_settings_popup_title = "APP Settings: " + this.focused_app_type;
+				this.tag_settings_type = this.focused_app_type;
+				this.tag_settings_popup_modal = new bootstrap.Modal(document.getElementById('tag_settings_popup'));
+				this.tag_settings_popup_modal.show();
 			}
-		
 
 
 	}
 });
 
 <?php foreach( $components as $i=>$j ){ ?>
-	app.component( "<?=$j ?>", <?=$j ?> );
-<?php } ?>
-<?php foreach( $plugins as $i=>$j ){ ?>
 	app.component( "<?=$j ?>", <?=$j ?> );
 <?php } ?>
 app.mount("#app");

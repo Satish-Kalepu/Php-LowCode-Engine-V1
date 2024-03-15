@@ -21,6 +21,13 @@ if( !isset($app['settings']) || !isset($app['settings']['domains']) ){
 if( $config_param2 == "apis" || $config_param2 == "" ){
 	require("page_apps_apis_controll.php");
 }
+if( $config_param2 == "apis_global" ){
+	require("page_apps_apis_global_controll.php");
+}
+if( $config_param2 == "auth" ){
+	require("page_apps_auth_controll.php");
+}
+
 if( $config_param2 == "functions" ){
 	require("page_apps_functions_controll.php");
 }

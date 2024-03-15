@@ -106,7 +106,13 @@ const s2_smarap_egats_gifnoc = {
 			"status": {"t":"T", "v": "success", "k":"status"},
 			"data": {"t":"T", "v": "All is well", "k":"data"},
 		}},
-		"tpl": [{"t":"i1", "m":"."}]
+	},
+	"RespondStatus": {
+		"p": {
+			"status": {"t":"T", "v":"success"},
+			"data": {"t":"T", "v":"Ok"},
+			"error": {"t":"T", "v":""},
+		}
 	},
 	"RespondJSON": {
 		"p": {
@@ -154,15 +160,12 @@ const s2_smarap_egats_gifnoc = {
 	},
 	"SetLabel": {
 		"p": {"t":"T", "v":""},
-		"tpl": [{"t":"T", "m":"v"}]
 	},
 	"JumpToLabel": {
 		"p": {"t":"T", "v":""},
-		"tpl": [{"t":"D", "list":"lable", "m":"v"}]
 	},
 	"Sleep": {
 		"p": {"t":"N", "v":"1"},
-		"tpl": [{"t":"N", "m":"v"}]
 	},
 	"Log": {
 		"p": {"t":"O", "v":{
@@ -203,5 +206,15 @@ const s2_smarap_egats_gifnoc = {
 		"p": {
 			"data": {"stage":"initiate"}
 		}
+	},
+	"Create-Access-Key": {
+		"p": {
+			"data": {"stage":"initiate"}
+		},
+	},
+	"Generate-Session-Key": {
+		"p": {
+			"data": {"stage":"initiate"}
+		},
 	}
 };

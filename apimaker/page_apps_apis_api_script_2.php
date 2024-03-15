@@ -1,3 +1,7 @@
+<script src="<?=$config_global_apimaker_path ?>ace/src-noconflict/ace.js" ></script>
+<script src="<?=$config_global_apimaker_path ?>js/beautify-html.js" ></script>
+<script src="<?=$config_global_apimaker_path ?>js/beautify-css.js" ></script>
+<script src="<?=$config_global_apimaker_path ?>js/beautify.js" ></script>
 <script>
 <?php 
 
@@ -18,7 +22,7 @@
 		"mongodbv1", "mongoq", "mongop", "mongop2", "mongod", "mongod2", "mongod3", "mongoq_field", "mongop_field",
 		"mysqldbv1", "mysqlq", "mysqlp", "mysqld", "mysqls", "mysql_field",
 		"internal_table",
-		"httprequest",
+		"httprequest", "akv1", "akgenv1"
 	];
 
 	foreach( $components as $i=>$j ){
@@ -41,6 +45,7 @@ eval("s2_ssssssssss = " + atob("VnVlLmNyZWF0ZUFwcA=="));
 var app = s2_ssssssssss({
 	data(){
 		return {
+			current_ip: '<?=$_SERVER['REMOTE_ADDR'] ?>',
 			path: '<?=$config_global_apimaker_path ?>apps/<?=$config_param1 ?>/',
 			s2_atad_labolg: {"s":"sss"},
 			s2_ggggggggsm: "",
@@ -84,7 +89,8 @@ var app = s2_ssssssssss({
 			"s2_tttttttset"				: {
 				"domain": "",
 				"path": "",
-				"factors": {"t":"O", "v": {}}
+				"factors": {"t":"O", "v": {}},
+				"headers": {"Access-Key": ""},
 			},
 			"s2_sutats_tset"			: "",
 			"s2_rorre_tset"			: "",
@@ -183,7 +189,8 @@ var app = s2_ssssssssss({
 						"Assign",
 						"Math",
 						"Expression",
-						"Function"
+						"Function",
+						"Validate",
 					]
 				},
 				{
@@ -204,6 +211,7 @@ var app = s2_ssssssssss({
 					"group": "Output",
 					"sub": [
 						"SetResponseStatus", "SetResponseHeader", "SetCookie",
+						"RespondStatus",
 						"RespondJSON", "RespondVar", "RespondXML", "AddHTML", "RenderHTML",
 						"Log",
 					]
@@ -215,7 +223,9 @@ var app = s2_ssssssssss({
 						"APICall",
 						"FunctionCall",
 						"Internal-Table",
-						"Elastic-Table"
+						"Elastic-Table",
+						"Create-Access-Key", 
+						"Generate-Session-Key"
 					]
 				},
 				{
@@ -299,8 +309,10 @@ var app = s2_ssssssssss({
 			s2_tsil_tseggus_pupop: [],
 			s2_ffer_pupop: "",
 			s2_ladom_pupop: false,
+			s2_ladom_lmth_pupop: false,
 			s2_tropmi_pupop: false,
 			s2_rts_tropmi_pupop: `{}`,
+			ace_editor2: false,
 			s2_ppupop_cod: false,
 			s2_cod_pupop_cod: "",
 			s2_txet_pupop_cod: "Loading...",
@@ -598,10 +610,27 @@ var app = s2_ssssssssss({
 					}else if( this.s2_epyt_pupop == "HT" ){
 						this.s2_eltit_pupop = "HTML Editor";
 					}
-					if( this.s2_ladom_pupop == false ){
-						this.s2_ladom_pupop = new bootstrap.Modal( document.getElementById('s2_ladom_pupop') );
+					if( this.s2_epyt_pupop == "HT" ){
+						if( this.s2_ladom_lmth_pupop == false ){
+							this.s2_ladom_lmth_pupop = new bootstrap.Modal( document.getElementById('s2_ladom_lmth_pupop') );
+						}
+						this.s2_ladom_lmth_pupop.show();
+
+						this.ace_editor2 = ace.edit("popup_html_editor");
+						this.ace_editor2.session.setMode("ace/mode/html");
+						this.ace_editor2.setOptions({
+							enableAutoIndent: true, behavioursEnabled: true,
+							showPrintMargin: false, printMargin: false, 
+							showFoldWidgets: false, 
+						});
+						this.ace_editor2.setValue( html_beautify(this.s2_atad_pupop) );
+
+					}else{
+						if( this.s2_ladom_pupop == false ){
+							this.s2_ladom_pupop = new bootstrap.Modal( document.getElementById('s2_ladom_pupop') );
+						}
+						this.s2_ladom_pupop.show();
 					}
-					this.s2_ladom_pupop.show();
 				}else if( t == "popupeditable" ){
 					this.s2_le_pupop_elpmis = el_data_type;
 					this.s2_di_egats_pupop_elpmis = stage_id;
@@ -679,6 +708,8 @@ var app = s2_ssssssssss({
 							this.s2_tsil_txetnoc = ["application/x-www-form-urlencoded", "application/json", "application/xml"];
 						}else if( ld == 'get-input-type' ){
 							this.s2_tsil_txetnoc = ["query_string"];
+						}else if( ld == 'auth-type' ){
+							this.s2_tsil_txetnoc = ["None", "Access-Key", "Credentials", "Bearer"];
 						}else if( ld == 'output-type' ){
 							if( this.s2_iiiiiiiipa['input-method'] == "GET" ){
 								this.s2_tsil_txetnoc = ["application/json", "application/xml", "text/html", "text/plain"];
@@ -713,7 +744,8 @@ var app = s2_ssssssssss({
 			if( this.s2_gniht_txetnoc in this.s2_tsil_gniht_txetnoc == false ){
 				this.s2_tsil_gniht_txetnoc[ this.s2_gniht_txetnoc ] = [];
 			}
-			if( this.s2_tsil_gniht_txetnoc[ this.s2_gniht_txetnoc ].length == 0 ){
+			//if( this.s2_tsil_gniht_txetnoc[ this.s2_gniht_txetnoc ].length == 0 )
+			{
 				this.s2_gsm_gniht_txetnoc = "Loading...";
 				this.s2_rre_gniht_txetnoc = "";
 				this.s2_tsil_gniht_txetnoc[ this.s2_gniht_txetnoc ] = [];
@@ -728,7 +760,11 @@ var app = s2_ssssssssss({
 						if( typeof(response.data) == "object" ){
 							if( 'status' in response.data ){
 								if( response.data['status'] == "success" ){
-									this.s2_tsil_gniht_txetnoc[ this.s2_gniht_txetnoc ] = response.data['things'];
+									if( response.data['things'] == null ){
+										alert("Error context list");
+									}else if( typeof(response.data['things']) == "object" ){
+										this.s2_tsil_gniht_txetnoc[ this.s2_gniht_txetnoc ] = response.data['things'];
+									}
 								}else{
 									this.s2_rre_gniht_txetnoc = "Token Error: " + response.data['data'];
 								}
@@ -1409,6 +1445,9 @@ var app = s2_ssssssssss({
 					}
 					if( typeof( response.data["test"] ) == "object" && 'length' in response.data["test"] == false ){
 						this.s2_tttttttset 		= response.data["test"];
+						// if( 'headers' in this.s2_tttttttset ){
+
+						// }
 					}
 					this.s2_2atad_laitini_daol();
 				}else{
@@ -2150,6 +2189,10 @@ var app = s2_ssssssssss({
 					var oo = s2_dddddegats['d']['data']['output']['v']+'';
 					o[ oo ] = {"t": "O", "_":s2_dddddegats['d']['data']['struct']};
 				}
+				if( s2_dddddegats['k']['v'] == "Create-Access-Key" || s2_dddddegats['k']['v'] == "Generate-Session-Key" ){
+					var oo = s2_dddddegats['d']['data']['output']['v']+'';
+					o[ oo ] = {"t": "O", "_":s2_dddddegats['d']['data']['struct']};
+				}
 				if( s2_dddddegats['k']['v'] == "RespondHTML" ){
 					if( this.s2_iiiiiiiipa['output-type'] != "text/html" ){
 						er = er + " incorrect page type and response format combination "+this.s2_iiiiiiiipa['output-type'];
@@ -2601,6 +2644,7 @@ var app = s2_ssssssssss({
 				"input-method"		: this.s2_iiiiiiiipa['input-method'],
 				"input-type"		: this.s2_iiiiiiiipa['input-type'],
 				"output-type"		: this.s2_iiiiiiiipa['output-type'],
+				"auth-type"		: this.s2_iiiiiiiipa['auth-type'],
 				"version_id"		: "<?=$config_param4 ?>",
 				"api_id"		: "<?=$config_param3 ?>",
 			};
@@ -2687,6 +2731,11 @@ var app = s2_ssssssssss({
 			this.s2_gnitiaw_tset=true;
 			var vpostdata = "";
 			var vops = {'headers':{}, 'crossDomain': true };
+			if( 'headers' in this.s2_tttttttset ){
+				if( 'Access-Key' in this.s2_tttttttset['headers'] ){
+					vops['headers']['Access-Key'] = this.s2_tttttttset['headers']['Access-Key'];
+				}
+			}
 			if( this.s2_iiiiiiiipa['input-method'] == "GET" ){
 				axios.get(this.s2_lllru_tset, vops).then(response=>{
 					this.s2_gnitiaw_tset=false;
@@ -2743,16 +2792,28 @@ var app = s2_ssssssssss({
 				}).catch(error=>{
 					this.s2_gnitiaw_tset=false;
 					console.log( "Error" );
+					console.log( error );
+					//if( typeof())
 					var h = {};
-					for( var d  in error.response.headers ){
-						h[ d ] = error.response.headers[ d ];
+					if( 'response' in error ){
+						if( 'headers' in error.response ){
+							for( var d  in error.response['headers'] ){
+								h[ d ] = error.response.headers[ d ];
+							}
+						}
+						console.log( h );
+						this.s2_esnopser_tset = {
+							"status": error.response.status,
+							"body": error.response.data,
+							"headers": h
+						};
+					}else{
+						this.s2_esnopser_tset = {
+							"status": error.code,
+							"body": error.name + ": " + error.message,
+							"headers": h
+						};
 					}
-					console.log( h );
-					this.s2_esnopser_tset = {
-						"status": error.response.status,
-						"body": error.response.data,
-						"headers": h
-					};
 				});
 			}
 		},
@@ -3130,6 +3191,7 @@ var app = s2_ssssssssss({
 			if( new_key['t'] == "c" ){
 				if( new_key['v'] in this.s2_smarap_egats ){
 					this.s2_eeeeenigne['stages'][ vid ]['d'] = this.s2_nnnnnnnosj( this.s2_smarap_egats[ new_key['v'] ]['p'] );
+					this.s2_ooooooohce( this.s2_eeeeenigne['stages'][ vid ]['d'] );
 					if( 'group' in this.s2_smarap_egats[ new_key['v'] ] ){
 						if( this.s2_smarap_egats[ new_key['v'] ]['group'] ){
 							var s2_ddddddnarv = "v_" + ( (Math.random()*10000000).toFixed() );
@@ -3276,6 +3338,25 @@ var app = s2_ssssssssss({
 		s2_noitidnoc_fi_eteled: function( vi, vfi ){
 			this.s2_eeeeenigne['stages'][ vi ]['d']['cond'].splice(vfi,1);
 			this.s2_ddeen_evas = true;
+		},
+		s2_TTTT_pupop: function(){
+			this.s2_rav_bus_egats_tes(this.s2_di_egats_pupop, this.s2_ravatad_pupop, this.s2_atad_pupop);
+			this.s2_noitpo_detadpu();
+		},
+		s2_etadpu_TT_pupop: function(){
+			this.s2_rav_bus_egats_tes(this.s2_di_egats_pupop, this.s2_ravatad_pupop, this.s2_atad_pupop);
+			this.s2_noitpo_detadpu();
+			if( this.s2_ladom_pupop ){
+				this.s2_ladom_pupop.hide();
+			}
+		},
+		s2_etadpu_TH_pupop: function(){
+			var v = this.ace_editor2.getValue();
+			this.s2_rav_bus_egats_tes(this.s2_di_egats_pupop, this.s2_ravatad_pupop, v);
+			this.s2_noitpo_detadpu();
+			if( this.s2_ladom_lmth_pupop ){
+				this.s2_ladom_lmth_pupop.hide();
+			}
 		},
 		s2_atad_nosj_tropmi_pupop: function(){
 			try{

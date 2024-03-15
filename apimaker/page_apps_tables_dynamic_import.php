@@ -3,13 +3,25 @@
 table.zz td div{ max-width:250px; max-height:75px;overflow:auto; white-space:nowrap; }
 table.zz thead td { background-color:#666; color:white; }
 
-div.zz::-webkit-scrollbar {width: 5px;height: 5px;}
+div.zz::-webkit-scrollbar {width: 6px;height: 6px;}
 div.zz::-webkit-scrollbar-track { background: #f1f1f1;}
 div.zz::-webkit-scrollbar-thumb { background: #888;}
 div.zz::-webkit-scrollbar-thumb:hover { background: #555;}
 
+pre.zzz{ max-height:150px; width:auto;overflow:auto; margin:20px 10px; padding:10px; border:1px solid #999; }
+pre.zzz::-webkit-scrollbar {width: 12px;height: 12px;}
+pre.zzz::-webkit-scrollbar-track { background: #f1f1f1;}
+pre.zzz::-webkit-scrollbar-thumb { background: #888;}
+pre.zzz::-webkit-scrollbar-thumb:hover { background: #555;}
+
+pre.fff{ max-height:300px; width:auto;overflow:auto; padding:10px; margin-right:20px; border:1px solid #999; }
+pre.fff::-webkit-scrollbar {width: 12px;height: 12px;}
+pre.fff::-webkit-scrollbar-track { background: #f1f1f1;}
+pre.fff::-webkit-scrollbar-thumb { background: #888;}
+pre.fff::-webkit-scrollbar-thumb:hover { background: #555;}
+
 pre.sample_data{ height:300px;overflow:auto; white-space:nowrap; border:1px solid #333; }
-pre.sample_data::-webkit-scrollbar {width: 5px;height: 5px;}
+pre.sample_data::-webkit-scrollbar {width: 6px;height: 6px;}
 pre.sample_data::-webkit-scrollbar-track { background: #f1f1f1;}
 pre.sample_data::-webkit-scrollbar-thumb { background: #888;}
 pre.sample_data::-webkit-scrollbar-thumb:hover { background: #555;}
@@ -59,7 +71,8 @@ pre.sample_data::-webkit-scrollbar-thumb:hover { background: #555;}
 				</div>
 				<div v-if="step==2" >
 					<input type="button" class="btn btn-outline-dark btn-sm" v-on:click="cancel_step2" value="Cancel" style="float:right;">
-					<input v-if="tot_cnt<=20000" type="button" class="btn btn-outline-dark btn-sm" v-on:click="doimport" value="Import" style="float:right; margin-right: 10px;">
+					<div v-if="analyzing" style="color:blue; float:right; margin-right: 20px;" >Analyzing file</div>
+					<input v-else-if="tot_cnt<=20000" type="button" class="btn btn-outline-dark btn-sm" v-on:click="doimport" value="Import" style="float:right; margin-right: 10px;">
 
 					<div style="display: flex; gap:20px;">
 						<div>
@@ -90,19 +103,26 @@ pre.sample_data::-webkit-scrollbar-thumb:hover { background: #555;}
 
 			<div style="overflow: auto;height: calc( 100% - 130px - 50px - 30px ); padding-right:10px;">
 				<div v-if="step==2" >
-					<template v-if="sample_records.length>0" >
-						<table class="table table-striped table-bordered table-sm w-auto zz" >
-							<thead v-if="head_record" style="position:sticky; top:0px; ">
-								<tr>
-									<td v-for="f in head_record" ><div class="zz">{{ f }}</div></td>
-								</tr>
-							</thead>
-							<tbody>
-								<tr v-for="d in sample_records" >
-									<td v-for="f in d" ><div class="zz">{{ f }}</div></td>
-								</tr>
-							</tbody>
-						</table>
+					<template v-if="upload_type=='CSV'" >
+						<template v-if="sample_records.length>0" >
+							<table class="table table-striped table-bordered table-sm w-auto zz" >
+								<thead v-if="head_record" style="position:sticky; top:0px; ">
+									<tr>
+										<td v-for="f in head_record" ><div class="zz">{{ f }}</div></td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="d in sample_records" >
+										<td v-for="f in d" ><div class="zz">{{ f }}</div></td>
+									</tr>
+								</tbody>
+							</table>
+						</template>
+					</template>
+					<template v-if="upload_type=='JSON'" >
+						<template v-if="sample_records.length>0" >
+							<pre class="zzz" v-for="v in sample_records">{{ v }}</pre>
+						</template>
 					</template>
 				</div>
 				<div v-if="step==3" >
@@ -133,6 +153,33 @@ pre.sample_data::-webkit-scrollbar-thumb:hover { background: #555;}
 											<option value="-1" >Not Mapped</option>
 											<option v-for="hidx,hd in fields_match" v-bind:value="hidx+''" >{{ hd }}</option>
 										</select>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+
+					</template>
+					<template v-else-if="upload_type=='JSON'" >
+
+						<div class="py-2">JSON Schema check</div>
+
+						<table class="table table-bordered table-sm w-auto">
+							<thead>
+								<tr class="text-bg-light">
+									<td>Table Field</td>
+									<td>Type</td>
+									<td>=</td>
+									<td>JSON Field</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="fd,f in sch_keys" >
+									<td>{{ f }}</td>
+									<td>{{ fd['type'] }}<span v-if="f=='_id'" > Key</span></td>
+									<td>=</td>
+									<td>
+										<span v-if="f in fields_match" >Found</span>
+										<span v-else>Not found</span>
 									</td>
 								</tr>
 							</tbody>
@@ -204,6 +251,13 @@ var app = Vue.createApp({
 			"upload_cnt": 0,"upload_success_cnt": 0,"upload_skipped_cnt": 0, "upload_batch_cnt": 0,
 			"upload_skipped_items": [],
 			"batch_limit": 500,
+			"csv_batch_limit": 500,
+			"json_batch_limit": 100,
+			"upload_create": false,
+			"new_table_id": "",
+			"schema_1": {},
+			"schema_2": {},
+			"analyzing": false,
 		};
 	},
 	mounted : function(){
@@ -264,27 +318,42 @@ var app = Vue.createApp({
 			if( this.fpos >= this.filedata.length ){
 				return "end";
 			}
-			var d = this.filedata.substr(this.fpos,1024);
+			var d = this.filedata.substr(this.fpos,2048);
 			if( d.trim() == "" ){
 				return "end";
 			}
 			var p = 0;
 			var r = [];
 			var cnt = 0;
-			while( p<d.length-1 ){cnt++;if( cnt > 100 ){break;}
-				// console.log("Pos:"+p);
-				// console.log( d.substr( p, 200 ) );
-				m1 = d.substr( p, 500 ).match( /^\"([\S\s]+?)\"([\,\n])/ );
-				//console.log( m1 );
+			while( p<d.length-1 ){cnt++;if( cnt > 500 ){break;}
+				//console.log("Pos:"+p);
+				var dd = d.substr( p, 200 );
+				//console.log( dd );
+				if( dd.trim() == "" ){
+					console.log(  (this.fpos +p) + " >= " + (this.filedata.length - 10) );
+					if( this.fpos +p >= this.filedata.length - 10 ){
+						r.push( "" );p++;this.fpos += p; return r;
+					}
+					break;
+				}
+				if( dd.substr(0,1) == "," ){
+					r.push( "" );p++;continue;
+				}
+				if( dd.substr(0,1) == "\n" ){
+					r.push( "" );p++;this.fpos += p; return r;
+				}
+				m1 = dd.match( /^\"([\S\s]+?)\"([\,\n])/ );
 				if( m1 != null ){
-					r.push( m1[1].replace(/[\r\n]/, "") );
+					//console.log( m1[0] );
+					var v = m1[1].replace(/[\r\n]/, " ").replace(/\"\"/g, "'");
+					r.push( v );
 					p+= m1[0].length;
 					if( m1[2] == "\n" ){ this.fpos += p; return r; }
 				}else{
-					m1 = d.substr( p, 500 ).match( /^([\S\s]+?)([\,\n])/ );
-					//console.log( m1 );
+					m1 = dd.match( /^([\S\s]+?)([\,\n])/ );
 					if( m1 != null ){
-						r.push( m1[1].replace(/[\r\n]/, "") );
+						var v = m1[1].replace(/[\r\n]/, " ").replace(/\"\"/g, "'");
+						r.push( v );
 						p+= m1[0].length;
 						if( m1[2] == "\n" ){ this.fpos += p; return r; }
 					}else{
@@ -293,7 +362,10 @@ var app = Vue.createApp({
 					}
 				}
 			}
-			console.log("Read line failed with max loops");
+			if( this.fpos +p >= this.filedata.length - 10 ){
+				r.push( "" );p++;this.fpos += p; return r;
+			}
+			console.log("Read line failed with max loops: " + cnt);
 			return "Failed";
 		},
 		cancel_step2: function(){
@@ -307,7 +379,7 @@ var app = Vue.createApp({
 			this.tot_cnt = 0;
 		},
 		checkfile: function(){
-
+			this.analyzing = true;
 			if( this.upload_type == "CSV" ){
 				var d = this.filedata.substr(this.fpos,1024);
 				var line = d.split("\n")[0];
@@ -315,13 +387,99 @@ var app = Vue.createApp({
 				if( fields.length < 3 ){
 					alert("File is not in CSV Format");
 					this.err = "File is not in CSV Format";
-					console.log( d );
+					//console.log( d );
 					this.sample_data = d;
 				}else{
 					this.checkfile_csv();
 				}
+			}else if( this.upload_type == "JSON" ){
+				this.checkfile_json();
 			}else{
+				alert("Unhandled file type");
+			}
+		},
+		checkfile_json: function(){
+			this.schema_1 = {};
+			if( this.filedata.substr(0,1) == "[" && this.filedata.substr( this.filedata.length-1, 1) == "]" ){
+				console.log("ys");
+				try{
+					this.sample_records = JSON.parse(this.filedata);
+				}catch(e){
+					alert("JSON file parsing failed");
+					return false;
+				}
+			}else{
+				var i = this.filedata.indexOf("}\r\n");
+				var i2 = this.filedata.indexOf("}\n");
+				if( i == -1 && i2 == -1 ){
+					alert("JSON file is not in required format.");
+					return false;
+				}
+				this.fpos = 0;
+				var recs = [];
+				this.tot_cnt = 0;
+				for(var i=0;i<20;i++){if( this.fpos < this.filedata.length-1 ){
+					var ipos = this.filedata.indexOf("\n", this.fpos+1);
+					//console.log( this.fpos +  " : " + ipos );
+					if( ipos == -1 ){
+						this.err = "File end may not reached";
+						break;
+					}else{
+						var l = ipos-this.fpos;
+						console.log( l );
+						var j = this.filedata.substr(this.fpos,l).trim();
+						var rec = {};
+						try{
+							var rec = JSON.parse(j);
+						}catch(e){
+							console.log( j );
+							console.log("File json parse failed: " + e);
+							return;
+						}
+						recs.push(rec);
+						this.tot_cnt++;
+						this.fpos=ipos;	
 
+						if( '_id' in this.fields_match == false ){
+							this.fields_match = rec;
+						}
+
+					}
+				}}
+				if( i == 20 ){
+					setTimeout(this.checkfile_json_continue,500);
+				}else{
+					this.analyzing = false;
+				}
+				this.echo__( this.schema_1 );
+				this.sample_records = recs;
+				this.step = 2;
+			}
+		},
+		checkfile_json_continue: function(){
+			while(1){
+				if( this.fpos >= this.filedata.length-1 ){this.analyzing = false;break;}
+				var ipos = this.filedata.indexOf("\n", this.fpos+1);
+				if( ipos == -1 ){
+					this.analyzing = false;
+					console.log("File end not found");
+					var j = this.filedata.substr(this.fpos,4096);
+					if( j.trim() != "" ){
+						try{
+							var rec = JSON.parse(j);
+							this.fpos+=j.length;
+							this.tot_cnt++;
+						}catch(e){
+							console.log( j );
+							console.log("last rec parse failed");
+							this.analyzing = false;
+						}
+					}
+					break;
+				}else{
+					this.fpos=ipos;
+					this.tot_cnt++;
+				}
 			}
 		},
 		checkfile_csv: function(){
@@ -372,7 +530,7 @@ var app = Vue.createApp({
 			}
 			if( i == 100 ){
 				setTimeout(this.checkfile_csv_continue,500);
-			}
+			}else{this.analyzing = false;}
 			console.log( i );
 			this.sample_records = recs;
 			this.step = 2;
@@ -392,7 +550,7 @@ var app = Vue.createApp({
 				var d = this.readcsvline();
 				if( typeof(d) == "object" ){
 					this.tot_cnt++;
-				}else if( d == "end" ){ break; }else{ this.err = d; break; }
+				}else if( d == "end" ){this.analyzing = false; break; }else{this.analyzing = false; this.err = d; break; }
 			}
 		},
 		openbrowse: function(){
@@ -476,13 +634,13 @@ var app = Vue.createApp({
 			}
 		},
 		start_importing: function(){
+
 			this.step = 4;
 			this.upload_progress = 0;
 			this.upload_cnt = 0;this.upload_success_cnt = 0;this.upload_skipped_cnt = 0;this.upload_skipped_items = [];
 			this.err3 = "";
 			this.msg3 = "Initiating...";
 			this.fpos =0;
-			var d = this.readcsvline();
 			axios.post("?", {
 				"action":"get_token",
 				"event":"tables_dynamic_import_batch."+this.app_id + "." + this.table['_id'],
@@ -496,7 +654,12 @@ var app = Vue.createApp({
 							if( response.data['status'] == "success" ){
 								this.token = response.data['token'];
 								if( this.is_token_ok(this.token) ){
-									this.start_importing_batch();
+									if( this.upload_type == "CSV" ){
+										var d = this.readcsvline();
+										this.start_importing_csv_batch();
+									}else if( this.upload_type == "JSON" ){
+										this.start_importing_json_batch();
+									}
 								}
 							}else{
 								alert("Token error: " + response.dat['data']);
@@ -513,9 +676,9 @@ var app = Vue.createApp({
 				}
 			});
 		},
-		start_importing_batch: function(){
+		start_importing_csv_batch: function(){
 			var recs = [];
-			for(var i=0;i<this.batch_limit;i++){
+			for(var i=0;i<this.csv_batch_limit;i++){
 				var d = this.readcsvline();
 				if( typeof(d) == "object" ){
 					var rec = {};
@@ -564,6 +727,82 @@ var app = Vue.createApp({
 										this.upload_skipped_items.push( response.data['skipped_items'][ i ] );
 									}
 									setTimeout(this.start_importing_batch,50);
+								}else{
+									this.err3 = "Import Error: " + response.data['error'];
+								}
+							}else{
+								this.err3 = "Incorrect response";
+							}
+						}else{
+							this.err3 = "Incorrect response Type";
+						}
+					}else{
+						this.err3 = "Response Error: " . response.status;
+					}
+				});
+			}
+		},
+		start_importing_json_batch: function(){
+			var recs = [];
+			for(var i=0;i<this.json_batch_limit;i++){
+				console.log(": " + this.fpos + " < " + (this.filedata.length-1) );
+				if( this.fpos < this.filedata.length-1 ){
+					var ipos = this.filedata.indexOf("\n", this.fpos+1);
+					if( ipos == -1 ){
+						console.log("File end not found");
+						var j = this.filedata.substr( this.fpos, 4096 );
+						if( j.trim() != "" ){
+							try{
+								var rec = JSON.parse(j);
+								recs.push(rec);
+								this.fpos+=j.length;
+							}catch(e){
+								console.log( "File end not foubd" );
+								console.log( j );console.log("File json parse failed: " + e);
+								this.err3 = "File json parse failed: " + e;
+							}
+						}
+						break;
+					}else{
+						var l = ipos-this.fpos;
+						var j = this.filedata.substr(this.fpos,l).trim();
+						console.log( j );
+						var rec = {};
+						try{var rec = JSON.parse(j);}
+						catch(e){
+							console.log( j );console.log("File json parse failed: " + e);
+							this.err3 = "File json parse failed: " + e;
+							return;
+						}
+						recs.push(rec);
+						this.fpos=ipos;
+					}
+				}else{
+					break;
+				}
+			}
+			if( recs.length ){
+				this.upload_batch_cnt = recs.length;
+				axios.post( "?", {
+					"action": "tables_dynamic_import_batch",
+					"table_id": this.new_table_id,
+					"data": recs,
+					"token": this.token,
+					"upload_type": this.upload_type,
+				}).then(response=>{
+					this.msg3 = "";
+					if( response.status == 200 ){
+						if( typeof(response.data) == "object" ){
+							if( 'status' in response.data ){
+								if( response.data['status'] == "success" ){
+									this.upload_cnt = Number(this.upload_cnt) + Number(this.upload_batch_cnt);
+									this.upload_progress = ((this.upload_cnt/this.tot_cnt)*100).toFixed(1);
+									this.upload_success_cnt += response.data['success'];
+									this.upload_skipped_cnt += response.data['skipped'];
+									for( var i in response.data['skipped_items'] ){
+										this.upload_skipped_items.push( response.data['skipped_items'][ i ] );
+									}
+									setTimeout(this.start_importing_json_batch,50);
 								}else{
 									this.err3 = "Import Error: " + response.data['error'];
 								}

@@ -5,10 +5,6 @@
 	<div style="position: fixed;left:150px; top:40px; height: calc( 100% - 40px ); width:calc( 100% - 150px ); background-color: white; " >
 		<div style="padding: 10px;" >
 			<div style="float:right;" >
-				<div v-if="msg" class="alert alert-primary" >{{ msg }}</div>
-				<div v-if="err" class="alert alert-danger" >{{ err }}</div>
-			</div>
-			<div style="float:right;" >
 				<!-- <button class="btn btn-outline-secondary btn-sm" v-on:click="api_show_create_form()" >Create API</button> -->
 			</div>
 			<div class="h3 mb-3">Manage APP Data</div>
@@ -30,6 +26,10 @@
 						<p><label><input type="checkbox" v-model="skip_files" > Skip files</label></p>
 						<p><label><input type="checkbox" v-model="skip_tables" > Skip internal table records</label></p>
 						<p><input type="button" class="btn btn-outline-dark btn-sm" value="Take Backup" v-on:click="backupnow" ></p>
+
+						<div v-if="msg" class="alert alert-primary" >{{ msg }}</div>
+						<div v-if="err" class="alert alert-danger" >{{ err }}</div>
+
 						<div v-if="snapshot_file" >
 							<p><a v-bind:href="geturl()" target="_blank" >Click here to download the snapshot file.</a></p>
 							<p>Size {{ snapshot_size }}</p>
@@ -93,8 +93,7 @@ var app = Vue.createApp({
 			path: "<?=$config_global_apimaker_path ?>apps/<?=$app['_id'] ?>/",
 			app_id: "<?=$app['_id'] ?>",
 			app__: <?=json_encode($app) ?>,
-			msg: "",
-			err: "",
+			msg: "", err: "", msg2: "", err2: "",
 			cmsg: "",
 			cerr: "",
 			apis: [],

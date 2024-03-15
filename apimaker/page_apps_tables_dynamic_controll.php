@@ -1,5 +1,26 @@
 <?php
 
+function enc_data( $data ){
+	global $pass;
+	if( $pass ){
+		$encrypted = openssl_encrypt($data, "aes256", "abcdef".$pass);
+	}else{
+		//$encrypted = openssl_encrypt($data, "aes256", "abcdef");
+		return $data;
+	}
+	return $encrypted;
+}
+function dec_data( $data ){
+	global $pass;
+	if( $pass ){
+		$encrypted = openssl_decrypt($data, "aes256", "abcdef".$pass);
+	}else{
+		$encrypted = openssl_decrypt($data, "aes256", "abcdef");
+	}
+	return $encrypted;
+}
+
+
 if( $_POST['action'] == "get_dynamic_tables" ){
 	$t = validate_token("get_dynamic_tables.". $config_param1, $_POST['token']);
 	if( $t != "OK" ){
@@ -12,9 +33,16 @@ if( $_POST['action'] == "get_dynamic_tables" ){
 		'limit'=>200,
 		'projection'=>[
 			'schema'=>false,
-			'keys'=>false
+			'keys'=>false,
+			'keys_list'=>false,
 		]
 	]);
+	foreach( $res['data'] as $i=>$j ){
+		$res2 = $mongodb_con->count( $config_global_apimaker['config_mongo_prefix'] . "_dt_" . $j['_id'] );
+		if( $res2['data'] ){
+			$res['data'][$i]['count'] = $res2['data'];
+		}
+	}
 	json_response($res);
 	exit;
 }
@@ -81,7 +109,216 @@ if( $_POST['action'] == "create_table_dynamic" ){
 }
 
 
-if( $config_param3 == "importfile" ){
+if( $config_param3 == "importdump" ){
+
+	if( $_POST['action'] == "tables_dynamic_importdump" ){
+		$t = validate_token( "tables_dynamic_importdump.". $config_param1, $_POST['token'] );
+		if( $t != "OK" ){
+			json_response("fail", $t);
+		}
+		if( !preg_match("/\.table_dynamic_dump\.gz$/", $_FILES['file']['name'] ) ){
+			json_response(['status'=>"fail", "error"=>"File extension is not allowed" ]);
+		}
+		if( !file_exists($_FILES['file']['tmp_name']) ){
+			json_response(['status'=>"fail", "error"=>"Upload step1 failed" ]);
+		}
+		$tmp = "/tmp/".time()."_".$_FILES['file']['name'];
+		move_uploaded_file($_FILES['file']['tmp_name'], $tmp);
+		if( !file_exists($tmp) ){
+			json_response(['status'=>"fail", "error"=>"Upload step2 failed" ]);
+		}
+		exec("gzip --uncompress " . $tmp);
+		$tmp = substr($tmp,0, strlen($tmp)-3);
+		if( !file_exists($tmp) ){
+			json_response(['status'=>"fail", "error"=>"Uncompress failed" ]);
+		}
+		$fp = fopen( $tmp, "r" );
+		$line = fgets($fp, 2048 );
+
+		$x = explode(";", $line );
+		$ds = [];
+		foreach($x as $i=>$j){
+			$xx = explode(":",$j);
+			$ds[ $xx[0] ] = $xx[1];
+		}
+
+		if( $ds['BackupType'] != "table_dynamic" ){
+			json_response(['status'=>"fail", "error"=>"Incorrect archive type" ]);
+		}
+		if( $ds['PasswordProtected'] == "true" ){
+			if( !$_POST['importpass'] ){
+				json_response(['status'=>"fail", "error"=>"Dump is password protected" ]);
+			}
+			$pass = $_POST['importpass'];
+		}
+
+		$line = trim(fgets($fp,4096));
+		if( $line != "--" ){
+			json_response(['status'=>"fail", "error"=>"Incorrect format" ]);
+		}
+		$line = trim(fgets($fp,4096));
+		if( $ds['PasswordProtected'] == "true" ){
+			$line = dec_data($line);
+			if( !$line ){
+				json_response(['status'=>"fail", "error"=>"Decryption Failed" ]);
+			}
+		}
+		$table_d = json_decode($line, true);
+		if( !$line || json_last_error() ){
+			json_response(['status'=>"fail", "error"=>"Failed parsing" ]);
+		}
+
+		//print_r( $table_d );
+
+		$current_table = [];
+		$name_exists = [];
+		$res = $mongodb_con->find_one( $config_global_apimaker['config_mongo_prefix'] . "_tables_dynamic", [
+			"app_id"=>$config_param1,
+			'_id'=>$table_d['_id']
+		], ['projection'=>[
+			'table'=>1, 'des'=>1,
+		]]);
+		if( $res['data'] ){
+			$current_table = $res['data'];
+		}else{
+			$res = $mongodb_con->find_one( $config_global_apimaker['config_mongo_prefix'] . "_tables_dynamic", [
+				"app_id"=>$config_param1,
+				'table'=>$table_d['table']
+			], ['projection'=>[
+				'table'=>1, 'des'=>1,
+			]]);
+			if( $res['data'] ){
+				$name_exists = $res['data'];
+			}
+		}
+		json_response([
+			"status"=>"success",
+			"table"=>[
+				"table" => $table_d['table'],
+				"des"   => $table_d['des'],
+				"_id"   => $table_d['_id'],
+			],
+			"current_table"=>$current_table,
+			"name_exists"=>$name_exists,
+			"tmpname"=>$tmp
+		]);
+		exit;
+	}
+	if( $_POST['action'] == "tables_dynamic_importdump2" ){
+		$tmp = $_POST['tmp'];
+		if( !file_exists($tmp) ){
+			json_response(['status'=>"fail", "error"=>"Upload step3 failed. file not found" ]);
+		}
+		$fp = fopen( $tmp, "r" );
+		$line = fgets($fp, 2048 );
+
+		$x = explode(";", $line );
+		$ds = [];
+		foreach($x as $i=>$j){ $xx = explode(":",$j); $ds[ $xx[0] ] = $xx[1]; }
+
+		if( $ds['BackupType'] != "table_dynamic" ){
+			json_response(['status'=>"fail", "error"=>"Incorrect archive type" ]);
+		}
+		if( $ds['PasswordProtected'] == "true" ){
+			if( !$_POST['importpass'] ){
+				json_response(['status'=>"fail", "error"=>"Require password" ]);
+			}
+			$pass = $_POST['importpass'];
+		}
+
+		$line = trim(fgets($fp,4096));
+		if( $line != "--" ){
+			json_response(['status'=>"fail", "error"=>"Incorrect format" ]);
+		}
+		$line = trim(fgets($fp,4096));
+		if( $ds['PasswordProtected'] == "true" ){
+			$line = dec_data($line);
+			if( !$line ){
+				json_response(['status'=>"fail", "error"=>"Decryption Failed" ]);
+			}
+		}
+		$table_d = json_decode($line, true);
+		if( !$table_d || json_last_error() ){
+			json_response(['status'=>"fail", "error"=>"Failed parsing" ]);
+		}
+
+		//print_r( $table_d );
+
+		if( $_POST['vreplace'] == "new" ){
+			$res = $mongodb_con->find_one( $config_global_apimaker['config_mongo_prefix'] . "_tables_dynamic", [
+				"app_id"=>$config_param1,
+				'table'=>$_POST['table']['table']
+			], ['projection'=>[
+				'table'=>1, 'des'=>1,
+			]]);
+			if( $res['data'] ){
+				json_response(['status'=>"fail", "error"=>"A table already exists with same name" ]);
+			}
+			$table_d['_id'] = $mongodb_con->generate_id();
+			$table_d['app_id'] = $config_param1;
+			$table_d['table'] = $_POST['table']['table'];
+			$table_d['des'] = $_POST['table']['des'];
+
+		}else{
+
+			$res = $mongodb_con->delete_one( $config_global_apimaker['config_mongo_prefix'] . "_tables_dynamic", [
+				'app_id'=>$config_param1,
+				'_id'=>$table_d['_id']
+			]);
+			$res = $mongodb_con->drop_collection( $config_global_apimaker['config_mongo_prefix'] . "_dt_" . $table_d['_id'], [
+				'_id'=>$table_d['_id']
+			]);
+
+			$table_d['app_id'] = $config_param1;
+			$table_d['table'] = $_POST['table']['table'];
+			$table_d['des'] = $_POST['table']['des'];
+
+		}
+
+		$res = $mongodb_con->insert( $config_global_apimaker['config_mongo_prefix'] . "_tables_dynamic", $table_d );
+		if( $res['status'] != "success" ){
+			json_response(['status'=>"fail", "error"=>"Table creation failed" . $res['error']]);
+		}
+
+		if( isset($table_d['keys']) ){
+			foreach( $table_d['keys'] as $idx=>$idd ){
+				$ops = [
+					'sparse'=>true,
+					'name'=>$idx,
+				];
+				if( $idd['unique'] ){
+					$ops['unique'] = true;
+				}
+				$res = $mongodb_con->create_index( $config_global_apimaker['config_mongo_prefix'] . "_dt_" . $table_d['_id'], $idd['keys'], $ops );
+			}
+		}
+
+		$line = trim(fgets($fp,4096));
+		if( $line != "--" ){
+			json_response(['status'=>"fail", "error"=>"Incorrect format" ]);
+		}
+
+		while( 1 ){
+			$line = trim(fgets($fp,4096));
+			if( trim($line) == "" || trim($line) == "end"  ){break;}
+			if( $ds['PasswordProtected'] == "true" ){
+				$line = dec_data($line);
+				if( !$line ){
+					json_response(['status'=>"fail", "error"=>"Decryption Failed" ]);
+				}
+			}
+			$record = json_decode($line, true);
+			if( !$record || json_last_error() ){
+				json_response(['status'=>"fail", "error"=>"Failed parsing", "line"=>$line ]);
+			}
+			$res = $mongodb_con->insert( $config_global_apimaker['config_mongo_prefix'] . "_dt_" . $table_d['_id'], $record );
+		}
+
+		json_response(['status'=>"success", "new_table_id"=>$table_d['_id'] ]);
+		exit;
+	}
+
+}else if( $config_param3 == "importfile" ){
 
 	if( $_POST['action'] == "tables_dynamic_importfile_create" ){
 		$t = validate_token( "tables_dynamic_importfile_batch.". $config_param1, $_POST['token'] );
@@ -106,7 +343,7 @@ if( $config_param3 == "importfile" ){
 		if( $_POST['upload_type'] == "CSV" ){
 			$schema = [];
 			$cnt = 0;
-			foreach( $_POST['schema'] as $i=>$j ){
+			foreach( $_POST['schema'] as $i=>$j ){if( $j['use'] ){
 				$schema[ $i ] = [
 			        "name"=> $i,
 			        "key"=> $i,
@@ -115,7 +352,7 @@ if( $config_param3 == "importfile" ){
 			        "order"=> $cnt++,
 			        "sub"=> []
 				];
-			}
+			}}
 			$res = $mongodb_con->insert( $config_global_apimaker['config_mongo_prefix'] . "_tables_dynamic", [
 				"app_id"=>$config_param1,
 				"table"=>$_POST['table']['table'],
@@ -722,12 +959,11 @@ if( $config_param3 == "importfile" ){
 		/*Import*/
 
 		if( $_POST['action'] == "tables_dynamic_import_batch" ){
+
 			$t = validate_token("tables_dynamic_import_batch.". $config_param1 . "." .$table['_id'], $_POST['token']);
 			if( $t != "OK" ){
 				json_response("fail", $t);
 			}
-
-			//print_r( $_POST );exit;
 
 			$res = $mongodb_con->count( $config_global_apimaker['config_mongo_prefix'] . "_dt_". $table['_id'] );
 			if( $res['status'] != "success" ){
@@ -767,6 +1003,128 @@ if( $config_param3 == "importfile" ){
 					"error"=>$error,
 				]);
 			}
+			exit;
+		}
+
+		if( $_POST['action'] == "tables_dynamic_export_data" ){
+
+			if( !preg_match("/^(JSON|CSV)$/", $_POST['export_type'] ) ){
+				json_response(['status'=>"fail", "error"=>"Unhandled export type"]);
+			}
+
+			@mkdir("/tmp/phpengine_backups/", 0777);
+			$tmfn = "/tmp/phpengine_backups/". preg_replace("/\W/", "", $table['table']) . "_" . date("Ymd_His") . "." . strtolower($_POST['export_type']);
+			$fp = fopen($tmfn, "w");
+
+			if( $_POST['export_type'] == "CSV" ){
+				$res = $mongodb_con->find( $config_global_apimaker['config_mongo_prefix'] . "_dt_". $table['_id'], [], ['limit'=>10, 'sort'=>['_id'=>1] ]);
+				$fields = [];
+				foreach( $res['data'] as $i=>$j ){
+					foreach( $j as $fn=>$fd ){
+						$fields[ $fn ]+=1;
+					}
+				}
+				if( sizeof( $fields ) == 0 ){
+					json_response(['status'=>"fail", "error"=>"Table already has more than 20k records"]);
+				}
+				fputcsv($fp, array_keys($fields) );
+			}
+
+			$last_id = "";
+			while( 1 ){
+				$cond = [];
+				if( $last_id ){
+					$cond['_id'] = ['$gt'=>$last_id];
+				}
+				$res = $mongodb_con->find( $config_global_apimaker['config_mongo_prefix'] . "_dt_". $table['_id'], $cond, ['limit'=>$_POST['limit'], 'sort'=>['_id'=>1] ]);
+				if( !$res['data'] ){break;}
+				foreach( $res['data'] as $i=>$j ){
+
+					if( $_POST['export_type'] == "JSON" ){
+						fwrite($fp, json_encode($j) . "\n" );
+					}else if( $_POST['export_type'] == "CSV" ){
+						$rec = [];
+						foreach( $fields as $fn=>$f ){
+							if( isset($j[ $fn ]) ){
+								if( gettype($j[ $fn ]) == "array" ){
+									$rec[]= "Array";
+								}else{
+									$rec[]= $j[ $fn ];
+								}
+							}else{
+								$rec[]="";
+							}
+						}
+						fputcsv($fp, $rec);
+					}
+					$last_id = $j['_id'];
+				}
+			}
+			fclose($fp);
+			chmod($tmfn, 0777);
+			json_response(['status'=>"success", "temp_fn"=>str_replace("/tmp/phpengine_backups/", "", $tmfn), "sz"=>filesize($tmfn)]);
+			exit;
+		}
+		if( $_POST['action'] == "tables_dynamic_export_dump" ){
+
+			@mkdir("/tmp/phpengine_backups/", 0777);
+			$tmfn = "/tmp/phpengine_backups/". preg_replace("/\W/", "", $table['table']) . "_" . date("Ymd_His") . ".table_dynamic_dump";
+			$fp = fopen($tmfn, "w");
+
+			if( $_POST['exportpwd'] ){
+				$pass = $_POST['exportpass'];
+				$line = "BackupVersion:1;BackupType:table_dynamic;PasswordProtected:true;Hash:" . pass_hash2( $pass, "version1" );
+			}else{
+				$pass = "";
+				$line = "BackupVersion:1;BackupType:table_dynamic;PasswordProtected:false";
+			}
+
+			fwrite($fp, $line . "\n--\n" );
+
+			fwrite($fp, enc_data( json_encode($table) ) . "\n--\n" );
+
+			$last_id = "";
+			while( 1 ){
+				$cond = [];
+				if( $last_id ){
+					$cond['_id'] = ['$gt'=>$last_id];
+				}
+				$res = $mongodb_con->find( $config_global_apimaker['config_mongo_prefix'] . "_dt_". $table['_id'], $cond, [
+					'limit'=>$_POST['limit'], 
+					'sort'=>['_id'=>1]
+				]);
+				if( !$res['data'] ){break;}
+				foreach( $res['data'] as $i=>$j ){
+					fwrite( $fp, enc_data( json_encode($j) )  . "\n" );
+					$last_id = $j['_id'];
+				}
+			}
+			fwrite($fp, "end" );
+			fclose($fp);
+			chmod($tmfn, 0777);
+			exec("gzip " . $tmfn);
+			$tmfn .= ".gz";
+			chmod($tmfn, 0777);
+
+			json_response([
+				'status'=>"success", 
+				"temp_fn"=>str_replace("/tmp/phpengine_backups/", "", $tmfn), 
+				"sz"=>filesize($tmfn)
+			]);
+			exit;
+		}
+
+		if( $_GET['action'] == "download_snapshot" ){
+			$fn = $_GET['snapshot_file'];
+			$tmfn = "/tmp/phpengine_backups/". $fn;
+			//ini_set('zlib.output_compression','On');
+			header('Content-Type: application/x-download');
+			header('Transfer-Encoding: gzip'); #
+			header('Content-Length: '.filesize($tmfn)); #
+			header('Content-Disposition: attachment; filename="'.$fn.'"');
+			ob_start("ob_gzhandler");
+			readfile($tmfn);
+			ob_end_flush();
 			exit;
 		}
 

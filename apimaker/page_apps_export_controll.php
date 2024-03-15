@@ -1,12 +1,14 @@
 <?php
 
 if( $_POST['action'] == "exports_get_snapshots" ){
-	$fp = dir("/tmp/phpengine_backups/");
 	$f = [];
-	while($fn = $fp->read() ){if( preg_match("/^[a-f0-9]+\_[a-f0-9]{24}\_[0-9]+\_[0-9]+\.gz$/", $fn) ){
-		$f[] = $fn;
-	}}
-	sort($f);
+	if( is_dir("/tmp/phpengine_backups/") ){
+		$fp = dir("/tmp/phpengine_backups/");
+		while( $fn = $fp->read() ){if( preg_match("/^[a-f0-9]+\_[a-f0-9]{24}\_[0-9]+\_[0-9]+\.gz$/", $fn) ){
+			$f[] = $fn;
+		}}
+		sort($f);
+	}
 	json_response(['status'=>'success', 'snapshots'=>$f]);
 }
 
@@ -147,7 +149,7 @@ if( $_POST['action'] == "exports_restore_upload" ){
 		if( !preg_match("/^(([A-Za-z0-9]+)\_([a-f0-9]{24})\_([0-9]{8})\_([0-9]{6}))\.gz$/", $_FILES['file']['name'], $file_match) ){
 			json_response(['status'=>"fail","error"=>"Filename format mismatch"]);
 		}
-		@mkdir("/tmp/phpengine_snapshots_uploaded/",0777);
+		@mkdir( "/tmp/phpengine_snapshots_uploaded/", 0777 );
 		$fn = "/tmp/phpengine_snapshots_uploaded/" . $file_match[1] . ".gz";
 		move_uploaded_file( $_FILES['file']['tmp_name'], $fn );
 		if( !file_exists($fn) ){
@@ -176,7 +178,7 @@ if( $_POST['action'] == "exports_restore_upload" ){
 		}}
 		// $bst['BackupVersion'] = 1
 		// $bst['AppVersion'] = 1
-		// $bst['PasswordProtected'] = true/false		
+		// $bst['PasswordProtected'] = true/false
 		if( $bst['PasswordProtected'] == "true" ){
 			if( !$_POST['pwd'] || !$_POST['pass'] ){
 				json_response(['status'=>"fail","error"=>"Archive is password protected. Please provide password"]);
@@ -241,7 +243,7 @@ if( $_POST['action'] == "exports_restore_upload" ){
 		fclose($fp);
 		fclose($fp2);
 		chmod($fn2, 0777);
-		
+
 		$tot = 0;
 		$datasets2 = [];
 		foreach( $datasets as $i=>$j ){

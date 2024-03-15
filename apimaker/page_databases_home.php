@@ -29,9 +29,11 @@
 						<td>{{v['engine']}}</td>
 						<td>
 							<table>
-								<tr v-for="dv,dp in v['details']" >
-									<td>{{ dp }}</td><td>{{ isenc(dv) }}</td>
+								<template v-for="dv,dp in v['details']" >
+								<tr v-if="isenc(dv)==false" >
+									<td>{{ dp }}</td><td>{{ dv }}</td>
 								</tr>
+								</template>
 							</table>
 						</td>
 						<td>
@@ -139,9 +141,9 @@ var app = Vue.createApp({
 			isenc: function(v){
 				if( typeof(v) =="string" ){
 				if( v.match(/^k[0-9]+/) ){
-					return "Encrypted!";
-				}else{ return v; }
-				}else{return v;}
+					return true;
+				}else{ return false; }
+				}else{return false; }
 			},
 	        delete_database:function(vid){
 	        	if(confirm("Are You Sure to Delete Database") ){

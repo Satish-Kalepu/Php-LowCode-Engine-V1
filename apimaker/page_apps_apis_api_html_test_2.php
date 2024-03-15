@@ -12,6 +12,14 @@
 				<div v-if="s2_iiiiiiiipa['input-method']=='GET'" >Engine EndPoint: GET: <a target='_blank' v-bind:href="s2_lllru_tset" ><pre>{{ s2_tttaen_lru(s2_lllru_tset) }}</pre></a></div>
 				<div v-else>Engine EndPoint: POST: {{ s2_tttaen_lru(s2_lllru_tset) }}</div>
 				<!-- <pre>{{ s2_tttttttset['factors']['v'] }}</pre> -->
+				<template v-if="'auth-type' in s2_iiiiiiiipa">
+					<div style="display: flex; column-gap: 10px;">
+						<div>Access-Key</div>
+						<div class="code_row code_line">
+							<div v-if="s2_iiiiiiiipa['auth-type']=='Access-Key'"  title="Text" class="editable" data-for="s2_tttttttset" data-var="headers:Access-Key" ><div contenteditable spellcheck="false" data-type="editable" data-for="s2_tttttttset" data-var="headers:Access-Key" data-allow="T" >{{ s2_tttttttset['headers']['Access-Key'] }}</div></div>
+						</div>
+					</div>
+				</template>
 				<div v-if="s2_iiiiiiiipa['input-method']=='GET'">
 					<div>Query String:  <button class='btn btn-link btn-sm' v-on:click="s2_selbairav_tset_etaerc">Create Test Form</button></div>
 					<input_values v-bind:v="s2_tttttttset['factors']['v']" datafor="s2_tttttttset" datavar="factors:v" viewas="payload" allowsub="no" v-on:edited="s2_detide_srotcaf_tset"></input_values>

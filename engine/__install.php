@@ -182,7 +182,7 @@ if( $_POST['action'] == "saveconf" ){
 			td{ border:0.5px solid #ccc; }
 			body{ margin:50px; }
 		</style>
-		<script src="vue3.min.prod.js" ></script>
+		<script src="www/vue3.min.prod.js" ></script>
 		<p><b>Php LowCode Engine Processor Installation Step 1 </b></p>
 		<div id="app" >
 

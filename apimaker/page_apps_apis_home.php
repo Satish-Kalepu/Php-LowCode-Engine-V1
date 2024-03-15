@@ -10,13 +10,15 @@
 	<div style="position: fixed;left:150px; top:40px; height: calc( 100% - 40px ); width:calc( 100% - 150px ); background-color: white; " >
 		<div style="padding: 10px;" >
 			<div style="float:right;" >
-				<div v-if="msg" class="alert alert-primary" >{{ msg }}</div>
-				<div v-if="err" class="alert alert-danger" >{{ err }}</div>
+				<button class="btn btn-outline-dark btn-sm" v-on:click="api_show_create_form()" >Create API</button>
 			</div>
 			<div style="float:right;" >
-				<button class="btn btn-outline-secondary btn-sm" v-on:click="api_show_create_form()" >Create API</button>
+				<div v-if="msg" class="alert alert-primary py-0" >{{ msg }}</div>
+				<div v-if="err" class="alert alert-danger py-0" >{{ err }}</div>
 			</div>
+
 			<div class="h3 mb-3">APIs</div>
+			<div style="clear:both;"></div>
 			<div style="height: calc( 100% - 100px ); overflow: auto;" >
 			<table class="table table-striped table-bordered table-sm" >
 				<tr>
@@ -27,7 +29,7 @@
 				<tr v-for="v,i in apis">
 					<td><div class="vid">#<pre class="vid">{{v['_id']}}</pre></div></td>
 					<td width="90%">
-						<div><a v-bind:href="path+'apis/'+v['_id']+'/'+v['version_id']" >/{{ v['name'] }}</a></div>
+						<div style="display: inline-block; padding: 0px 5px; border: 1px solid #ccc; width:55px; margin-right:0px;">{{ v['input-method'] }}</div>&nbsp;<div style="display:inline-block;"><a v-bind:href="path+'apis/'+v['_id']+'/'+v['version_id']" >/{{ v['name'] }}</a></div>
 						<div class="text-secondary">{{ v['des'] }}</div>
 					</td>
 					<td><input type="button" class="btn btn-outline-danger btn-sm" value="X" v-on:click="delete_api(i)" ></td>

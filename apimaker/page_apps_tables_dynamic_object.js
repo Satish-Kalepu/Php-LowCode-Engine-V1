@@ -82,7 +82,7 @@ const table_dyanmic_object = {
 			v = v.replace(/\W+/g, "");
 			v = v.replace(/XXXXXX/g, "-");
 			v = v.replace(/YYYYYY/g, "_");
-			v = v.toLowerCase();
+			//v = v.toLowerCase();
 			if( v.match( /^(pk|sk|pk2|sk2|pk2n|sk2n|pk3|sk3|pk3n|sk3n|pk4|sk4|pk4n|sk4n|pk5|sk5|pk5n|sk5n)/ ) ){
 				v = v + "aa";
 			}

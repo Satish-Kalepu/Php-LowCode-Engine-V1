@@ -120,7 +120,7 @@ div.zz::-webkit-scrollbar-thumb:hover { background: #555;}
 				</tr>
 			</table>
 
-			<div style="overflow: auto;height: calc( 100% - 160px );">	
+			<div style="overflow: auto;height: calc( 100% - 170px );">	
 				<table class="table table-hover table-bordered table-striped table-sm w-auto zz"  >
 					<thead style="position: sticky;top:0px; background-color:#666;color:white;box-shadow: inset 0 1px 0 #aaa, inset 0 -1px 0 #aaa;">
 						<tr>
@@ -145,14 +145,15 @@ div.zz::-webkit-scrollbar-thumb:hover { background: #555;}
 							<td>
 								<i class="fa fa-trash text-danger"  v-on:click="delete_record( di )" title="Delete"></i>
 							</td>
-							<td class="text-nowrap" v-for="ff,fi in table['schema'][selected_schema]['fields']" ><div class="zz">{{dd[ fi ]}}</div></td>
+							<td class="text-nowrap" v-for="ff,fi in table['schema'][selected_schema]['fields']" v-on:dblclick="edit_record(di)" ><div class="zz">{{dd[ fi ]}}</div></td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
-			<button v-if="found_more" class="btn btn-outline-secondary btn-sm float-end" v-on:click="load_more" >Load More</button>
-			<div>Records: {{ total_cnt }} </div>
-			
+			<div style="padding:5px 10px;">
+				<button v-if="found_more" class="btn btn-outline-dark btn-sm float-end" v-on:click="load_more" >Load More</button>
+				<div>Records: {{ total_cnt }} </div>
+			</div>
 
 
 
@@ -161,7 +162,7 @@ div.zz::-webkit-scrollbar-thumb:hover { background: #555;}
 
 
 	<div class="modal fade" id="edit_record_popup" tabindex="-1" >
-	  <div class="modal-dialog">
+	  <div class="modal-dialog modal-xl modal-lg">
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <h5 class="modal-title">{{edit_mode == "new"?"Add Data":"Edit Data"}}</h5>
@@ -169,7 +170,7 @@ div.zz::-webkit-scrollbar-thumb:hover { background: #555;}
 	      </div>
 	      <div class="modal-body">
 	      	<div style="overflow: auto; resize:both;" >
-				<textarea spellcheck="false" class="form-control form-control-sm" v-model="edit_record_json" style="height: 300px;resize:both; font-size:1.2rem;"></textarea>
+				<textarea spellcheck="false" class="form-control form-control-sm" v-model="edit_record_json" style="height: 300px;resize:both; font-size:1.1rem;"></textarea>
 			</div>
 	      </div>
 	      <div class="modal-footer">
@@ -208,7 +209,7 @@ var app = Vue.createApp({
 			"av2"			: false,
 			"bv"			: false,
 			"bv2"			: false,
-			"limit"			: 1000,
+			"limit"			: 200,
 			"error"			: "",
 			"show_add"		: false,
 			"add_record"		: {},

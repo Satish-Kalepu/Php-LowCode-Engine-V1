@@ -1,21 +1,35 @@
 	<div class="code_line" style="display: flex; gap:20px; margin-bottom: 10px;" >
-			<div>
-				<div>Method</div>
-				<div data-type="dropdown" data-for='api' data-list="list" data-var="input-method" data-list-values="input-method" >{{ s2_iiiiiiiipa['input-method'] }}</div>
-			</div>
-			<div v-if="s2_iiiiiiiipa['input-method']=='POST'">
-				<div>Input</div>
-				<div data-type="dropdown" data-for='api' data-list="list" data-var="input-type" data-list-values="post-input-type" >{{ s2_iiiiiiiipa['input-type'] }}</div>
-			</div>
-			<div v-if="s2_iiiiiiiipa['input-method']=='GET'" v-on:change="s2_ddeen_evas=true" >
-				<div>Input</div>
-				<div data-type="dropdown" data-for='api' data-list="list" data-var="input-type" data-list-values="get-input-type" >{{ s2_iiiiiiiipa['input-type'] }}</div>
-			</div>
-			<div>
-				<div>Output</div>
-				<div data-type="dropdown" data-for='api' data-list="list" data-var="output-type" data-list-values="output-type" >{{ s2_iiiiiiiipa['output-type'] }}</div>
-			</div>
+		<div>
+			<div>Method</div>
+			<div data-type="dropdown" data-for='api' data-list="list" data-var="input-method" data-list-values="input-method" >{{ s2_iiiiiiiipa['input-method'] }}</div>
+		</div>
+		<div v-if="s2_iiiiiiiipa['input-method']=='POST'">
+			<div>Input</div>
+			<div data-type="dropdown" data-for='api' data-list="list" data-var="input-type" data-list-values="post-input-type" >{{ s2_iiiiiiiipa['input-type'] }}</div>
+		</div>
+		<div v-if="s2_iiiiiiiipa['input-method']=='GET'" v-on:change="s2_ddeen_evas=true" >
+			<div>Input</div>
+			<div data-type="dropdown" data-for='api' data-list="list" data-var="input-type" data-list-values="get-input-type" >{{ s2_iiiiiiiipa['input-type'] }}</div>
+		</div>
+		<div>
+			<div>Output</div>
+			<div data-type="dropdown" data-for='api' data-list="list" data-var="output-type" data-list-values="output-type" >{{ s2_iiiiiiiipa['output-type'] }}</div>
+		</div>
+		<div>
+			<div>Authentication</div>
+			<div data-type="dropdown" data-for='api' data-list="list" data-var="auth-type" data-list-values="auth-type" >{{ s2_iiiiiiiipa['auth-type'] }}</div>
+		</div>
 	</div>
+	<!-- <div class="code_line" style="display: flex; gap:20px; margin-bottom: 10px;" >
+		<div>
+			<div>Authentication</div>
+			<div data-type="dropdown" data-for='api' data-list="list" data-var="auth-type" data-list-values="auth-type" >{{ s2_iiiiiiiipa['auth-type'] }}</div>
+		</div>
+		<div v-if="s2_iiiiiiiipa['auto-type']=='access-key'">
+			<div>AccessKey</div>
+			<div data-type="dropdown" data-for='api' data-list="list" data-var="auth-type" data-list-values="auth-type" >{{ s2_iiiiiiiipa['auth-type'] }}</div>
+		</div>
+	</div> -->
 	<div class="code_line" style="border-bottom:1px solid #bbcccc; margin-bottom:10px;" >
 		<div v-if="s2_iiiiiiiipa['input-type']=='application/json'">
 			<div style="font-size:14px; ">Input JSON: </div>
@@ -239,6 +253,23 @@
 								<div>End Execution</div>
 							</div>
 						</template>
+						<template v-if="s2_dddddegats['k']['v']=='RespondStatus'" >
+							<div>
+								<div style="display:flex; column-gap:5px;">
+									<div style="width:50px; text-align: right;">status</div>
+									<div><inputtextbox2 datafor="stages" v-bind:v="s2_dddddegats['d']['status']" types="T" datavar="d:status" v-bind:vars="s2_esiw_egats_srotcaf_lla[s2_iiiiiegats]"></inputtextbox2></div>
+								</div>
+								<div style="display:flex; column-gap:5px;">
+									<div style="width:50px; text-align: right;">data</div>
+									<div><inputtextbox2 datafor="stages" v-bind:v="s2_dddddegats['d']['data']" types="T,V" datavar="d:data" v-bind:vars="s2_esiw_egats_srotcaf_lla[s2_iiiiiegats]"></inputtextbox2></div>
+								</div>
+								<div style="display:flex; column-gap:5px;">
+									<div style="width:50px; text-align: right;">error</div>
+									<div><inputtextbox2 datafor="stages" v-bind:v="s2_dddddegats['d']['error']" types="T,V" datavar="d:error" v-bind:vars="s2_esiw_egats_srotcaf_lla[s2_iiiiiegats]"></inputtextbox2></div>
+								</div>
+								<div>End Execution</div>
+							</div>
+						</template>
 						<template v-if="s2_dddddegats['k']['v']=='RespondJSON'" >
 							<div>
 								<div style="display:flex; column-gap:5px;">
@@ -280,7 +311,9 @@
 							</div>
 						</template>
 						<template v-if="s2_dddddegats['k']['v']=='RenderHTML'" >
-							<pre title="HTML Text" data-type="objecteditable" editable-type="HT" data-for="stages" data-var="d:html:v" style="margin-bottom:5px;" >{{ s2_dddddegats['d']['html']['v'] }}</pre>
+							<div>
+								<pre title="HTML Text" data-type="objecteditable" editable-type="HT" data-for="stages" data-var="d:html:v" style="margin-bottom:5px;" >{{ s2_dddddegats['d']['html']['v'] }}</pre>
+							</div>
 						</template>
 						<template v-if="s2_dddddegats['k']['v']=='RespondError'" >
 							<div>
@@ -311,6 +344,12 @@
 						</template>
 						<template v-if="s2_dddddegats['k']['v']=='Internal-Table'" >
 							<internal_table v-bind:ref="'stage_'+s2_iiiiiegats+'_comp'"  v-bind:refname="'stage_'+s2_iiiiiegats+'_comp'"  datafor="stages" v-bind:v="s2_dddddegats['d']" datavar="d"  v-bind:vars="s2_esiw_egats_srotcaf_lla[ s2_iiiiiegats ]" v-on:updated="s2_noitpo_detadpu"  ></internal_table>
+						</template>
+						<template v-if="s2_dddddegats['k']['v']=='Create-Access-Key'" >
+							<akv1 v-bind:ref="'stage_'+s2_iiiiiegats+'_comp'"  v-bind:refname="'stage_'+s2_iiiiiegats+'_comp'"  datafor="stages" v-bind:v="s2_dddddegats['d']" datavar="d"  v-bind:vars="s2_esiw_egats_srotcaf_lla[ s2_iiiiiegats ]" v-on:updated="s2_noitpo_detadpu"  ></akv1>
+						</template>
+						<template v-if="s2_dddddegats['k']['v']=='Generate-Session-Key'" >
+							<akgenv1 v-bind:ref="'stage_'+s2_iiiiiegats+'_comp'"  v-bind:refname="'stage_'+s2_iiiiiegats+'_comp'"  datafor="stages" v-bind:v="s2_dddddegats['d']" datavar="d"  v-bind:vars="s2_esiw_egats_srotcaf_lla[ s2_iiiiiegats ]" v-on:updated="s2_noitpo_detadpu"  ></akgenv1>
 						</template>
 						<div v-if="s2_dddddegats['k']['v']=='Dynamic-Table'" >Yet to Implement</div>
 						<div v-if="s2_dddddegats['k']['v']=='Elastic-Tabl'" >Yet to Implement</div>						
@@ -365,6 +404,7 @@
 			<p>Engine:</p>
 			<pre v-text="s2_eeeeenigne"></pre>
 			<pre v-text="s2_iiiiiiiipa"></pre>
+			<pre v-text="s2_tttttttset"></pre>
 			<pre v-text="s2_esiw_egats_srotcaf_lla"></pre>
 			<p>Test:</p>
 			<pre v-if="s2_wweiv_nosj" v-text="s2_tttttttset"></pre>

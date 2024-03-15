@@ -94,6 +94,23 @@
 	</div>
 	</div>
 
+
+	<div class="modal fade" id="s2_ladom_lmth_pupop" tabindex="-1" >
+	  <div class="modal-dialog modal-xl">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <div class="modal-title" ><h5 class="d-inline">HTML Editor</h5></div>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" v-on:click="s2_etadpu_TH_pupop()"></button>
+	      </div>
+	      <div class="modal-body" v-bind:data-stagei="s2_di_egats_pupop" style="position: relative;">
+	      	<div id="popup_html_editor" style="width:100%; height:350px; position: relative;" ></div>
+	      	<div align="center"><div class="btn btn-outline-dark btn-sm" v-on:click="s2_etadpu_TH_pupop()">Update</div></div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+
 	<div class="modal fade" id="s2_ladom_pupop" tabindex="-1" >
 	  <div class="modal-dialog modal-xl">
 	    <div class="modal-content">
@@ -220,10 +237,11 @@
 	        		</div>
 	        	</template>
 	        	<div v-else-if="s2_epyt_pupop=='TT'" >
-					<textarea spellcheck="false" style="width:100%; height:100%; white-space: nowrap; min-height: 200px; max-width:750px;max-height: 400px;" v-model="s2_atad_pupop" v-on:keydown.tab.prevent.stop  v-on:blur="s2_noitpo_detadpu" ></textarea>
+					<textarea spellcheck="false" style="width:100%; height:100%; white-space: nowrap; min-height: 200px; max-width:750px;max-height: 400px;outline:0px;" v-model="s2_atad_pupop" v-on:keydown.tab.prevent.stop v-on:blur="s2_TTTT_pupop()" ></textarea>
+					<div align="center"><div class="btn btn-outline-dark btn-sm" v-on:click="s2_etadpu_TT_pupop()">Update</div></div>
 	        	</div>
 	        	<div v-else-if="s2_epyt_pupop=='HT'" >
-					<div>HTML Editor coming sooon!</div>
+					<div id="popup_html_editor">HTML Editor coming sooon!</div>
 	        	</div>
 	        	<div v-else >Unhandled popup type {{ s2_epyt_pupop }}</div>
 	      </div>

@@ -1,10 +1,10 @@
 var tag_settings_configs = {
 	"DIV": {"html":`<div>Div content</div>`},
-	"P": {"html":`<p>Div content</p>`},
-	"H1": {"html":`<h1>Div content</h1>`},
-	"H2": {"html":`<h2>Div content</h2>`},
-	"H3": {"html":`<h3>Div content</h3>`},
-	"H4": {"html":`<h4>Div content</h4>`},
+	"P": {"html":`<p>Paragraph content</p>`},
+	"H1": {"html":`<h1>Heading 1</h1>`},
+	"H2": {"html":`<h2>Heading 2</h2>`},
+	"H3": {"html":`<h3>Heading 3</h3>`},
+	"H4": {"html":`<h4>Heading 4</h4>`},
 	"BlockQuote": {"html":`<blockquote>quote content</blockquote>`},
 	"UL": {"html":`<ul data-block-type="UL"><li>Item 1</li><li>Item 2</li></ul>`},
 	"OL": {"html":`<ol data-block-type="UL"><li>Item 1</li><li>Item 2</li></ol>`},
@@ -17,6 +17,12 @@ var tag_settings_configs = {
 			  <div class="g-col-6">.g-col-6</div>
 			</div>`},
 	"Table": {"html":`<table class="table table-bordered table-striped table-sm" ><tbody><tr><td>Col 1</td><td>Col 2</td><td>Col 3</td></tr><tr><td>Col 1</td><td>Col 2</td><td>Col 3</td></tr></tbody></table>`},
+
+	"IMG": {"html":`<img src="" title="Image" />`},
+	"Figure": {"html":`<figure class="figure">
+		  <img src="..." class="figure-img img-fluid rounded" alt="...">
+		  <figcaption class="figure-caption">A caption for the above image.</figcaption>
+		</figure>`},
 
 	"Static Form": {"html":`<form data-block-type="Static Form" class="needs-validation" novalidate="">
           <div class="row g-3">
@@ -111,7 +117,7 @@ var tag_settings_configs = {
             <label class="form-check-label" for="save-info">Save this information for next time</label>
           </div>
 
-          <hr class="my-4">
+          <hr class="my-4" />
 
           <h4 class="mb-3">Payment</h4>
 
@@ -165,7 +171,7 @@ var tag_settings_configs = {
             </div>
           </div>
 
-          <hr class="my-4">
+          <hr class="my-4" />
 
           <button class="w-100 btn btn-primary btn-lg" type="submit">Continue to checkout</button>
         </form>`},
@@ -500,4 +506,6 @@ var tag_settings_configs = {
 		  <p>...</p>
 		</div>`},
 	"RichText": {"html":"<pre>Rich text content</pre>"},
+	"DatabaseTable":  {"html":`<div data-app="DatabaseTable" >Database Table APP</div>` },
+	"Authentication": {"html":`<div data-app="Authentication" >Authentication APP</div>`},
 };

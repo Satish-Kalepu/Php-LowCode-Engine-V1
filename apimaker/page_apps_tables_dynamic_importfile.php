@@ -29,12 +29,12 @@ pre.sample_data::-webkit-scrollbar-thumb:hover { background: #555;}
 </style>
 <div id="app" >
 	<div class="leftbar" >
-		<?php require("page_apps_leftbar.php"); ?>
+		<?php require( "page_apps_leftbar.php" ); ?>
 	</div>
 	<div style="position: fixed;left:150px; top:40px; height: calc( 100% - 40px ); width:calc( 100% - 150px ); background-color: white; " >
 		<div style="padding: 10px;" >
 
-			<div style="float:right;"><a class="btn btn-outline-secondary btn-sm" v-bind:href="dbpath">Back</a></div>
+			<div style="float:right;"><a class="btn btn-outline-secondary btn-sm" v-bind:href="path+'tables_dynamic'">Back</a></div>
 
 			<h4>Table - Create from File</h4>
 
@@ -56,7 +56,8 @@ pre.sample_data::-webkit-scrollbar-thumb:hover { background: #555;}
 				</div>
 				<div v-if="step==2" >
 					<input type="button" class="btn btn-outline-dark btn-sm" v-on:click="cancel_step2" value="Cancel" style="float:right;">
-					<input v-if="tot_cnt<=20000" type="button" class="btn btn-outline-dark btn-sm" v-on:click="doimport" value="Import" style="float:right; margin-right: 10px;">
+					<div v-if="analyzing" style="color:blue; float:right; margin-right: 20px;" >Analyzing file</div>
+					<input v-else-if="tot_cnt<=20000" type="button" class="btn btn-outline-dark btn-sm" v-on:click="doimport" value="Import" style="float:right; margin-right: 10px;">
 
 					<div style="display: flex; gap:20px;">
 						<div>
@@ -167,8 +168,8 @@ pre.sample_data::-webkit-scrollbar-thumb:hover { background: #555;}
 				</div>
 				<div v-if="step==4" >
 					<div class="row mb-2">
-						<div class="col-6">Progress <span style="font-size:1.5rem;">{{ upload_progress }} %</span></div>
-						<div class="col-6">Uploaded <span style="font-size:1.5rem;">{{ upload_cnt }}/{{ tot_cnt }}</span></div>
+						<div class="col-6">Progress <span style="font-size:1.5rem;">{{ upload_progress }} %</span> </div>
+						<div class="col-6">Uploaded <span style="font-size:1.5rem;">{{ upload_cnt }}/{{ tot_cnt }}</span> </div>
 					</div>
 					<div class="row mb-2">
 						<div class="col-6">Success <span class="b-400" >{{ upload_success_cnt }}</span></div>
@@ -197,10 +198,6 @@ pre.sample_data::-webkit-scrollbar-thumb:hover { background: #555;}
 
 		</div>
 	</div>
-
-
-
-
 </div>
 
 <script>
@@ -223,10 +220,7 @@ var app = Vue.createApp({
 			"step": 1,
 			"tot_cnt": 0,
 			"sch_keys": {}, "sch_ikeys": {},
-			"add_table": {
-				"table": "",
-				"des": ""
-			},
+			"add_table": {"table": "", "des": ""},
 			"fields_match": {}, "keys_match": {},
 			"sample_data": "",
 			"upload_progress": 0,
@@ -238,6 +232,7 @@ var app = Vue.createApp({
 			"new_table_id": "",
 			"schema_1": {},
 			"schema_2": {},
+			"analyzing":false,
 		};
 	},
 	mounted : function(){
@@ -369,11 +364,15 @@ var app = Vue.createApp({
 			var p = 0;
 			var r = [];
 			var cnt = 0;
-			while( p<d.length-1 ){cnt++;if( cnt > 100 ){break;}
+			while( p<d.length-1 ){cnt++;if( cnt > 1000 ){break;}
 				//console.log("Pos:"+p);
 				var dd = d.substr( p, 200 );
 				//console.log( dd );
 				if( dd.trim() == "" ){
+					console.log(  (this.fpos +p) + " >= " + (this.filedata.length - 10) );
+					if( this.fpos +p >= this.filedata.length - 10 ){
+						r.push( "" );p++;this.fpos += p; return r;
+					}
 					break;
 				}
 				if( dd.substr(0,1) == "," ){
@@ -402,7 +401,10 @@ var app = Vue.createApp({
 					}
 				}
 			}
-			console.log("Read line failed with max loops");
+			if( this.fpos +p >= this.filedata.length - 10 ){
+				r.push( "" );p++;this.fpos += p; return r;
+			}
+			console.log("Read line failed with max loops: " + cnt);
 			return "Failed";
 		},
 		cancel_step2: function(){
@@ -416,7 +418,7 @@ var app = Vue.createApp({
 			this.tot_cnt = 0;
 		},
 		checkfile: function(){
-
+			this.analyzing = true;
 			if( this.upload_type == "CSV" ){
 				var d = this.filedata.substr(0,1024);
 				var line = d.split("\n")[0];
@@ -482,23 +484,25 @@ var app = Vue.createApp({
 				}}
 				if( i == 20 ){
 					setTimeout(this.checkfile_json_continue,500);
-				}
+				}else{this.analyzing = false;}
 				this.echo__( this.schema_1 );
 				this.sample_records = recs;
 				this.step = 2;
 			}
 		},
 		checkfile_json_continue: function(){
-			for(var i=0;i<20;i++){if( this.fpos < this.filedata.length-1 ){
+			while(1){
+				if( this.fpos >= this.filedata.length-1 ){this.analyzing = false;break;}
 				var ipos = this.filedata.indexOf("\n", this.fpos+1);
 				if( ipos == -1 ){
+					this.analyzing = false;
 					console.log("File end not found");
-					return;
+					break;
 				}else{
 					this.fpos=ipos;
 					this.tot_cnt++;
 				}
-			}}
+			}
 		},
 		checkfile_csv: function(){
 			this.err = "";
@@ -514,6 +518,9 @@ var app = Vue.createApp({
 			//return;
 			if( d === false ){ alert("Failed reading csv"); return false; }
 			if( typeof(d) == "object"){
+				for( i in d ){
+					d[i] = d[i].toLowerCase();
+				}
 				this.head_record = d;
 				this.fields_match = {};
 				this.sch_keys = {};
@@ -544,7 +551,7 @@ var app = Vue.createApp({
 			}
 			if( i == 100 ){
 				setTimeout(this.checkfile_csv_continue,500);
-			}
+			}else{this.analyzing = false;}
 			this.sample_records = recs;
 			this.step = 2;
 			if( r_cnt != c_cnt ){ this.err = "Header and records column count not same."; }
@@ -561,10 +568,10 @@ var app = Vue.createApp({
 		checkfile_csv_continue: function(){
 			while( 1 ){
 				var d = this.readcsvline();
-				console.log( d );
 				if( typeof(d) == "object" ){
 					this.tot_cnt++;
-				}else if( d == "end" ){ break; }else{ this.err = d; break; }
+				}else if( d == "end" ){ this.analyzing = false; break; }
+				else{ this.analyzing = false; this.err = d; break; }
 			}
 		},
 		openbrowse: function(){
@@ -906,6 +913,7 @@ var app = Vue.createApp({
 		}
 	}
 });
+
 app.component( "table_dyanmic_object", table_dyanmic_object );
 
 var obj = {
@@ -925,7 +933,9 @@ var obj = {
 		</li>
 	</ul>`
 }
+
 app.component( "obj", obj );
 app.mount("#app");
 
 </script>
+

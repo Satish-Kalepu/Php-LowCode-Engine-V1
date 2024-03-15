@@ -1,5 +1,7 @@
 <?php
 
+$apps_folder = "apps";
+
 $_use_encrypted_scripts = false;
 if( $_GET['action'] == "convert_scripts" ){
 	

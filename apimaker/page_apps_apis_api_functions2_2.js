@@ -15,6 +15,11 @@ var s2_seitreporp_tcejbo_gifnoc = {
 		"searchPattern": {"self": false,"return":"L","inputs":{
 			"p2": {"n": "Pattern", "m": true, "types": ["V", "T"], "v": {"t":"T","v":"/([a-z0-9]+)/i"} }
 		}},
+		"validate": {"self": false,"return":"B","inputs":{
+			"p2": {"n": "Rule", "m": true, "types": ["Validation"], "v": {"t":"Validation", "v":"Email"} },
+			"p3": {"n": "MinLength", "m": true, "types": ["N"], "v": {"t":"N", "v":"2"} },
+			"p4": {"n": "MaxLength", "m": true, "types": ["N"], "v": {"t":"N", "v":"50"} },
+		}},
 		"isNumeric": {"self": false,"return":"T"},
 		"subString": {"self": true, "replace": true, "return":"T", "inputs":{
 			"p2": {"n": "Start Index", "m": true, "types": ["V", "N"], "v": {"t":"N","v":"0"}},

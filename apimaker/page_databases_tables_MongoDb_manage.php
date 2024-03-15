@@ -126,7 +126,7 @@
 				</template>
 			</table>
 
-			<pre>{{ table }}</pre>
+			<!-- <pre>{{ table }}</pre> -->
 
 			</div>
 

@@ -432,11 +432,11 @@ var app = Vue.createApp({
 		},
 		add_index: function(){
 			this.new_index['name'] = this.new_index['name'].toLowerCase().trim();
-			if( this.new_index['name'].match(/^[a-z][a-z0-9\_\-\.]{1,25}$/) == null ){
+			if( this.new_index['name'].match(/^[a-z][a-z0-9\_\-\.]{1,25}$/i) == null ){
 				alert("Need proper index name");return false;
 			}
 			for(var i=0;i<this.new_index['keys'].length;i++){
-				if( this.new_index['keys'][i]['name'].match(/^[a-z][a-z0-9\_\-\.]{1,100}$/) == null ){
+				if( this.new_index['keys'][i]['name'].match(/^[a-z][a-z0-9\_\-\.]{1,100}$/i) == null ){
 					alert("Need proper field name for index:"+(i+1));return false;
 				}
 			}

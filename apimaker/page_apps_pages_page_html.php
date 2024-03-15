@@ -18,22 +18,24 @@
 
 	<div v-if="vshow__==false" >Loading...</div>
 	<div v-else>
-		<iframe ref="editor_iframe__"  class="editor_block_a" id="editor_block_a" ></iframe>
-		<!-- <div class="editor_block_a" id="editor_block_a" >
-			<div style="padding: 10px;" >
-				<?php 
-				//require("page_apps_pages_page_html_logic.php"); 
-				?>
+
+		<div v-show="edit_tab=='html'" >
+
+			<iframe ref="editor_iframe__"  class="editor_block_a" id="editor_block_a" ></iframe>
+			<div class="editor_border_left" data-item="editor_border_left" >
+				<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M14 15L17 12L14 9M10 9L7 12L10 15" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
 			</div>
-		</div> -->
-		<div class="editor_border_left" data-item="editor_border_left" >
-			<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<path d="M14 15L17 12L14 9M10 9L7 12L10 15" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-			</svg>
+			<div style="position: absolute; width: 10px;height: 10px; overflow: hidden;" >
+				<?php require("page_apps_pages_page_editor_template.html"); ?>
+			</div>
+
 		</div>
-		<div style="position: absolute; width: 10px;height: 10px; overflow: hidden;" >
-			<?php require("page_apps_pages_page_editor_template.html"); ?>
+		<div v-show="edit_tab=='source'" >
+			<div id="page_source_block" style="position: fixed; left: 160px; top:90px; height:calc( 100% - 100px - 40px ); width:calc( 100% - 170px ); background-color: #f8f8f8; " ></div>
 		</div>
+
 	</div>
 
 
@@ -68,7 +70,12 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<div v-if="tag_settings_type=='new'" >
+
+					<div v-if="tag_settings_type=='DatabaseTable'" >
+						<page_databasetable v-bind:tag="focused_app"></page_databasetable>
+
+					</div>
+					<div v-else-if="tag_settings_type=='new'" >
 						<div v-for="tt,ti in config_tags">
 							<div>{{ ti }}:</div>
 							<div v-for="td in tt" class="btn btn-outline-dark btn-sm" v-on:click="insert_item_at_location(td)" >{{ td }}</div>
