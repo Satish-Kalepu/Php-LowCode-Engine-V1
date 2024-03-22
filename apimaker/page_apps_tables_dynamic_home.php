@@ -282,6 +282,10 @@ var app = Vue.createApp({
 							if( response.data['status'] == "success" ){
 								this.cmsg = "Created";
 								this.create_table_modal.hide();
+								this.new_table = {
+									"table": "",
+									"des": "",
+								};
 								this.load_dynamic_tables();
 							}else{
 								this.cerr = response.data['error'];

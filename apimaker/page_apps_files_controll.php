@@ -231,10 +231,13 @@ if( $config_param3 ){
 		}
 
 		$vars_used = [];
-		preg_match_all("/\_\_[a-z\_\-]+\_\_/", $_POST['data'], $m);
+		preg_match_all("/[\-]{2}\w[a-z\-]+\w[\-]{2}/", $_POST['data'], $m);
+		//print_r( $m );
 		foreach( $m[0] as $i=>$j ){
-			$vars_used[ $j ] = 1 ;
+			$vars_used[ $j ] = 2;
 		}
+
+		//print_r( $vars_used );exit;
 
 		$res = $mongodb_con->update_one( $config_global_apimaker['config_mongo_prefix'] . "_files", [
 			"app_id"=> $config_param1,

@@ -69,9 +69,10 @@
 			$thing_id = "10002";
 		}else if( $api_slug == "user_auth_captcha" ){
 			$thing_id = "10003";
+		}else if( $api_slug == "verify_session_key" ){
+			$thing_id = "10004";
 		}
 	}
-
 	if( $path_params[1] == "tables_dynamic" ){
 		$thing_type = "table_dynamic";
 		if( !isset($path_params[2]) ){
@@ -111,9 +112,24 @@
 		}
 	}
 
-	{
+	$config_public_apis = [
+		["auth","verify_session_key"]
+	];
 
-		{
+	$allow_policy = false;
+	foreach( $config_public_apis as $i=>$j ){
+		if( $path_params[1] == $j[0] ){
+			if( isset($path_params[2]) ){
+				if( isset($j[1]) ){
+					if( $path_params[2] == $j[1] ){
+						$allow_policy = true;
+					}
+				}
+			}
+		}
+	}
+
+	if( !$allow_policy ){{
 			if( !isset($_SERVER['HTTP_ACCESS_KEY']) ){
 				http_response_code(403);
 				header("Content-Type: application/json");
@@ -213,10 +229,17 @@
 					http_response_code(403);
 					header("Content-Type: application/json");
 					echo json_encode(["status"=>"fail", "error"=>"Access Key Policy Rejected" ]);exit;
+				}else{
+					$resu = $mongodb_con->update_one( $db_prefix . "_user_keys", [
+						"app_id"=>$app_id,
+						"_id"=>$_SERVER['HTTP_ACCESS_KEY']
+					], [
+						'$set'=>['last_used'=>time(), 'last_ip'=>$_SERVER['REMOTE_ADDR']], 
+						'$inc'=>['hits'=>1]
+					]);
 				}
 			}
-		}
-	}
+	}}
 
 	if( $thing_type == "captcha" ){
 		if( !isset($path_params[2]) ){
@@ -319,6 +342,30 @@
 	}
 
 	if( $thing_type == "auth_api" ){
+		if( $api_slug == "verify_session_key" ){
+			if( !isset($_POST['session-key']) ){
+				http_response_code(400);header("Content-Type: application/json");
+				echo json_encode(["status"=>"fail", "error"=>"Session Key required"]);exit;
+			}else if( !preg_match( "/^[a-f0-9]{24}$/", $_POST['session-key'] ) ){
+				http_response_code(400);header("Content-Type: application/json");
+				echo json_encode(["status"=>"fail", "error"=>"Session Key incorrect"]);exit;
+			}
+			$res = $mongodb_con->find_one( $db_prefix . "_user_keys", ["app_id"=>$app_id, '_id'=>$_POST['session-key']] );
+			if( !$res['data'] ){
+				header("Content-Type: application/json");
+				echo json_encode(["status"=>"fail", "error"=>"Session Expired"]);exit;
+			}
+			//print_r( $res['data'] );exit;
+			$e = $res['data']['expire'];
+			//echo ($e - time());
+			if( $e > time() && $res['data']['ips'][0] == $_SERVER['REMOTE_ADDR'] . "/32" ){
+				header("Content-Type: application/json");
+				echo json_encode(["status"=>"success", "error"=>"SessionOK"]);exit;
+			}else{
+				header("Content-Type: application/json");
+				echo json_encode(["status"=>"fail", "error"=>"Session Expired", "e"=>($e - time()) ]);exit;
+			}
+		}
 		if( $api_slug == "generate_access_token" ){
 
 			if( !isset($_POST['access_key']) ){

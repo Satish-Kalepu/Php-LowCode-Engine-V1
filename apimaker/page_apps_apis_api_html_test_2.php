@@ -5,7 +5,7 @@
 		<div class="test_menu_sub_div" style="padding: 5px; height: calc( 100% - 80px ); overflow: auto;">
 			<div>
 				Engine Environment: <select v-model="s2_tttttttset['domain']" v-on:click="s2_tnemnorivne_tset_tceles" >
-					<option v-for="d,i in s2_pppppppppa['settings']['domains']" v-bind:value="d['domain']" >{{ d['domain'] }}</option>
+					<option v-for="d,i in s2_ssvne_tset" v-bind:value="d['d']" >{{ d['d'] }} ({{d['t']}})</option>
 				</select>
 			</div>
 			<div v-if="s2_tttttttset['domain']!=''" >

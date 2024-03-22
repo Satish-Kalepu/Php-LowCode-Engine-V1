@@ -70,7 +70,13 @@
 			<div class="mycol1" >
 				<input type="button" class="btn btn-outline-secondary btn-sm py-0" v-if="s2_smeti_dekcehc==0" value="+" v-on:click="s2_eegats_dda(s2_iiiiiegats)" style="padding:0px 3px;" v-bind:disabled="s2_ddekcol_si" >
 			</div>
-			<div class="mycol2" style="align-self: stretch;" >
+
+				<template v-if="'a' in s2_dddddegats" >
+					<div v-if="s2_dddddegats['a']===false&&s2_ddekcol_si==false" title="Disable/Comment/Skip" class="disable_btn" v-on:click="s2_elbasid_egats(s2_iiiiiegats)" ></div>
+					<div v-if="s2_dddddegats['a']===true&&s2_ddekcol_si==false" title="Enable/UnComment" class="enable_btn" v-on:click="s2_elbane_egats(s2_iiiiiegats)" ></div>
+				</template>
+				<div v-else class="mycol1d" >.</div>
+			<div v-bind:class="{'mycol2':true,'mycol3disabled':s2_dddddegats['a']}" style="align-self: stretch;" >
 				<div style="width:40px; padding:0px 5px;" align='right'>{{ (s2_iiiiiegats+1) }}</div>
 			</div>
 			<div class="mycol3" >
@@ -83,12 +89,12 @@
 						<div v-if="'vend' in s2_dddddegats" data-list="all" style="padding:0px 10px;" >{{ s2_dddddegats['k']['v'] }}</div>
 						<varselect v-else datatype="dropdown" datalist="all" datavar="k" datafor="stages" v-bind:v="s2_dddddegats['k']" v-bind:dataktype="s2_dddddegats['k']['t']"  v-bind:dataplg="s2_dddddegats['k']['plg']" v-bind:vars="s2_esiw_egats_srotcaf_lla[ s2_iiiiiegats ]" ></varselect>
 						<template v-if="s2_dddddegats['k']['v']=='Let'" >
-							<div class="editable" data-var="d:lhs" data-for="stages" ><div contenteditable data-for="stages" data-type="editable" data-var="d:lhs" data-allow="variable_name" >{{ s2_dddddegats['d']['lhs'] }}</div></div>
+							<div class="editable" data-var="d:lhs" data-for="stages" ><div contenteditable  spellcheck="false" data-for="stages" data-type="editable" data-var="d:lhs" data-allow="variable_name" >{{ s2_dddddegats['d']['lhs'] }}</div></div>
 							<div> as </div>
 							<inputtextbox datafor="stages" v-bind:v="s2_dddddegats['d']['rhs']" datavar="d:rhs" v-bind:vars="s2_esiw_egats_srotcaf_lla[s2_iiiiiegats]" ></inputtextbox>
 						</template>
 						<template v-if="s2_dddddegats['k']['v']=='LetComponent'" >
-							<div class="editable" data-var="d:lhs" data-for="stages" ><div contenteditable data-for="stages" data-type="editable" data-var="d:lhs" data-allow="variable_name" >{{ s2_dddddegats['d']['lhs'] }}</div></div>
+							<div class="editable" data-var="d:lhs" data-for="stages" ><div contenteditable  spellcheck="false" data-for="stages" data-type="editable" data-var="d:lhs" data-allow="variable_name" >{{ s2_dddddegats['d']['lhs'] }}</div></div>
 							<div> as </div>
 							<thing datafor="stages" v-bind:v="s2_dddddegats['d']['rhs']" datavar="d:rhs" v-bind:vars="s2_esiw_egats_srotcaf_lla[s2_iiiiiegats]" ></thing>
 						</template>
@@ -138,7 +144,7 @@
 								<div>
 									<div style="display:flex;">
 										<div>MaxLoops: </div>
-										<div class="editable" data-var="d:maxloops" data-for="stages" ><div contenteditable data-for="stages" data-type="editable" data-var="d:maxloops" data-allow="number" >{{ s2_dddddegats['d']['maxloops'] }}</div></div>
+										<div class="editable" data-var="d:maxloops" data-for="stages" ><div contenteditable  spellcheck="false" data-for="stages" data-type="editable" data-var="d:maxloops" data-allow="number" >{{ s2_dddddegats['d']['maxloops'] }}</div></div>
 									</div>
 								</div>
 							</div>
@@ -165,11 +171,11 @@
 								</div>
 								<div>
 									<div>As</div>
-									<div class="editable" data-var="d:as" data-for="stages" ><div contenteditable data-type="editable" data-var="d:as" data-allow="text" data-for="stages" >{{ s2_dddddegats['d']['as'] }}</div></div>
+									<div class="editable" data-var="d:as" data-for="stages" ><div contenteditable  spellcheck="false" data-type="editable" data-var="d:as" data-allow="text" data-for="stages" >{{ s2_dddddegats['d']['as'] }}</div></div>
 								</div>
 								<div>
 									<div>MaxLoops</div>
-									<div class="editable" data-var="d:maxloops" data-for="stages" ><div contenteditable data-type="editable" data-var="d:maxloops" data-allow="number" data-for="stages" >{{ s2_dddddegats['d']['maxloops'] }}</div></div>
+									<div class="editable" data-var="d:maxloops" data-for="stages" ><div contenteditable  spellcheck="false" data-type="editable" data-var="d:maxloops" data-allow="number" data-for="stages" >{{ s2_dddddegats['d']['maxloops'] }}</div></div>
 								</div>
 							</div>
 						</template>
@@ -182,11 +188,11 @@
 								<div> as </div>
 								<div>
 									<div>Key</div>
-									<div class="editable" data-var="d:key"  data-for="stages"><div contenteditable data-type="editable"  data-for="stages" data-var="d:key" data-allow="text" >{{ s2_dddddegats['d']['key'] }}</div></div>
+									<div class="editable" data-var="d:key"  data-for="stages"><div contenteditable  spellcheck="false" data-type="editable"  data-for="stages" data-var="d:key" data-allow="text" >{{ s2_dddddegats['d']['key'] }}</div></div>
 								</div>
 								<div>
 									<div>Value</div>
-									<div class="editable" data-var="d:value"  data-for="stages"><div contenteditable data-type="editable"  data-for="stages" data-var="d:value" data-allow="text" >{{ s2_dddddegats['d']['value'] }}</div></div>
+									<div class="editable" data-var="d:value"  data-for="stages"><div contenteditable  spellcheck="false" data-type="editable"  data-for="stages" data-var="d:value" data-allow="text" >{{ s2_dddddegats['d']['value'] }}</div></div>
 								</div>
 							</div>
 						</template>
@@ -209,7 +215,7 @@
 							<div style="display: flex; align-items:flex-start;">
 								<div data-type="dropdown" data-for="stages" data-list="vars" v-bind:data-var="'d:lhs:v:v'">{{ s2_dddddegats['d']['lhs']['v']['v'] }}</div>
 								<div>&nbsp;&nbsp;=&nbsp;&nbsp; </div>
-								<div class="editable" data-var="d:rhs:v" data-for="stages" ><div contenteditable data-for="stages" data-type="editable" data-var="d:rhs:v" data-allow="expression" >{{ s2_dddddegats['d']['rhs']['v'] }}</div></div>
+								<div class="editable" data-var="d:rhs:v" data-for="stages" ><div contenteditable  spellcheck="false" data-for="stages" data-type="editable" data-var="d:rhs:v" data-allow="expression" >{{ s2_dddddegats['d']['rhs']['v'] }}</div></div>
 								<div class="help-div" doc="expression.html">?</div>
 							</div>
 						</template>
@@ -292,6 +298,17 @@
 								<div>End Execution</div>
 							</div>
 						</template>
+						<template v-if="s2_dddddegats['k']['v']=='RespondVars'" >
+							<div>
+								<div v-for="rd,ri in s2_dddddegats['d']['outputs']" style="display:flex; column-gap:5px;">
+									<div>Variable</div>
+									<div title="Variable" data-type="dropdown" data-for="stages" v-bind:data-var="'d:outputs:'+ri+':v:v'" data-list="vars"  style="margin-bottom:5px;" >{{ s2_dddddegats['d']['outputs'][ ri ]['v']['v'] }}</div>
+									<div><div class="btn btn-outline-dark btn-sm py-0" v-on:click="s2_led_sravdnopser(s2_dddddegats['d']['outputs'],ri)">X</div></div>
+								</div>
+								<div class="btn btn-outline-dark btn-sm py-0" v-on:click="s2_hsup_sravdnopser(s2_dddddegats['d']['outputs'])">+</div>
+								<div>End Execution</div>
+							</div>
+						</template>
 						<template v-if="s2_dddddegats['k']['v']=='RespondXML'" >
 							<div>
 								<div style="display:flex;">
@@ -331,7 +348,7 @@
 							<div data-type="dropdown" data-for="stages" data-list="labels" data-var="d:v" >{{ s2_dddddegats['d']['v'] }}</div>
 						</template>
 						<template v-if="s2_dddddegats['k']['v']=='Sleep'" >
-							<div class="editable" data-var="d:v" data-for="stages"><div contenteditable data-for="stages" data-type="editable" data-var="d:v" data-allow="number" >{{ s2_dddddegats['d']['v'] }}</div></div>
+							<div class="editable" data-var="d:v" data-for="stages"><div contenteditable  spellcheck="false" data-for="stages" data-type="editable" data-var="d:v" data-allow="number" >{{ s2_dddddegats['d']['v'] }}</div></div>
 						</template>
 						<template v-if="s2_dddddegats['k']['v']=='MongoDb'" >
 							<mongodbv1 v-bind:ref="'stage_'+s2_iiiiiegats+'_comp'"  v-bind:refname="'stage_'+s2_iiiiiegats+'_comp'"  datafor="stages" v-bind:v="s2_dddddegats['d']" datavar="d"  v-bind:vars="s2_esiw_egats_srotcaf_lla[ s2_iiiiiegats ]" v-on:updated="s2_noitpo_detadpu"  ></mongodbv1>

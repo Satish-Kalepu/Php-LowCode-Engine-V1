@@ -128,6 +128,13 @@ const s2_smarap_egats_gifnoc = {
 			"output":{"t":"V","v":{"v":"","t":"","vs":false} },
 		},
 	},
+	"RespondVars": {
+		"p": {
+			"outputs":[
+				{"t":"V", "v":{"v":"","t":"","vs":false} }
+			],
+		},
+	},
 	"RespondXML": {
 		"p": {
 			"output":{"t":"O", "v":{

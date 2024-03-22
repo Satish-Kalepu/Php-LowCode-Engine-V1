@@ -58,9 +58,9 @@
 							<option v-for="d in cd" v-bind:value="d" >{{ d }}</option>
 						  </select>
 						  <span class="input-group-text">/</span>
-						  <input type="text" class="form-control  form-control-sm" placeholder="Path" v-model="settings['cloud-enginepath']"  style="max-width: 150px;" >
+						  <!-- <input type="text" class="form-control  form-control-sm" placeholder="Path" v-model="settings['cloud-enginepath']" style="max-width: 150px;" > -->
 						</div>
-						<div class="text-secondary">https://{{ settings['cloud-subdomain'] + '.' + settings['cloud-domain'] }}/{{ settings['cloud-enginepath'] }}</div>
+						<div class="text-secondary"><a target="_blank" v-bind:href="getclouddomain()" >{{ getclouddomain() }}</a></div>
 
 						<div>&nbsp;</div>
 						<div><label style="cursor: pointer;">Use an alias name for above domain  <input type="checkbox" v-model="settings['alias']" ></label></div>
@@ -144,17 +144,21 @@
 				<div style="background-color:#e8e8e8; padding: 5px 10px;">Other Settings</div>
 				<div style="padding:10px;">
 					<p>Home page </p>
-					<p>Type: <select class="form-select form-select-sm w-auto d-inline" v-model="settings['homepage']['t']">
-						<option value="" >Select</option>
-						<option value="page" >Page</option>
-						<option value="apisummary" >Api Summary</option>
-					</select>
-					<template v-if="settings['homepage']['t']=='page'" >
-						<select class="form-select form-select-sm w-auto d-inline" v-model="settings['homepage']['v']" >
-							<option v-for="p in pages" v-bind:value="p['_id']+':'+p['version_id']" >{{ p['name'] }}</option>
+					<template v-if="'homepage' in settings" >
+						<p>Type: <select class="form-select form-select-sm w-auto d-inline" v-model="settings['homepage']['t']">
+							<option value="" >Select</option>
+							<option value="page" >Page</option>
+							<option value="apisummary" >Api Summary</option>
 						</select>
+						<template v-if="'t' in settings['homepage']" >
+							<template v-if="settings['homepage']['t']=='page'" >
+								<select class="form-select form-select-sm w-auto d-inline" v-model="settings['homepage']['v']" >
+									<option v-for="p in pages" v-bind:value="p['_id']+':'+p['version_id']" >{{ p['name'] }}</option>
+								</select>
+							</template>
+						</template>
+						</p>
 					</template>
-					</p>
 					<div class="mb-2" >
 						<div><input type="button" class="btn btn-outline-dark btn-sm" value="UPDATE" v-on:click="app_save_other_settings" ></div>
 					</div>
@@ -164,21 +168,21 @@
 				</div>
 			</div>
 
-			<div style="border: 1px solid #ccc; margin-bottom: 20px; " >
+			<div v-if="'host' in settings" style="border: 1px solid #ccc; margin-bottom: 20px; " >
 				<div style="background-color:#e8e8e8; padding: 5px 10px;">Engine</div>
 				<div style="padding:10px;">
 
 					<template v-if="enginep" >
 
-					<p>Engine configuration file:</p>
-					<div>{{ enginep }}</div>
-					<pre style="width:90%; height: 150px;overflow: auto; padding: 10px; border: 1px solid #ccc;">{{ engined[0] }}</pre>
+						<p>Engine configuration file:</p>
+						<div>{{ enginep }}</div>
+						<pre style="width:90%; height: 150px;overflow: auto; padding: 10px; border: 1px solid #ccc;">{{ engined[0] }}</pre>
 
-					<p v-if="is_it_default()" >This app is the default app</p>
-					<p v-else>
-						<p style="color:red;">This app is not the default app</p>
-						<p>You can update the configuration file to make the current app default.</p>
-					</p>
+						<p v-if="is_it_default()" >This app is the default app</p>
+						<p v-else>
+							<p style="color:red;">This app is not the default app</p>
+							<p>You can update the configuration file to make the current app default.</p>
+						</p>
 
 					</template>
 					<p v-else>Engine configuration file does not exist</p>
@@ -246,6 +250,9 @@ var app = Vue.createApp({
 		this.load_pages();
 	},
 	methods: {
+		getclouddomain: function(){
+			return 'https://'+this.settings['cloud-subdomain'] + '.' + this.settings['cloud-domain'] +'/'+ (this.settings['cloud-enginepath']!=''?this.settings['cloud-enginepath']+'/':'');
+		},
 		is_it_default: function(){
 			if( this.enginep != "" ){
 				if( this.engined.indexOf( this.app__['_id'] ) > 0 ){
@@ -306,6 +313,9 @@ var app = Vue.createApp({
 			}
 		},
 		add_domain: function(){
+			if( 'domains' in this.settings == false ){
+				this.settings['domains'] = [];
+			}
 			this.settings['domains'].push({
 				"domain": "example.com",
 				"url": "https://www.example.com/engine/"
@@ -333,6 +343,11 @@ var app = Vue.createApp({
 			}
 		},
 		add_key: function(){
+			if( 'keys' in this.settings == false ){
+				this.settings['keys'] = [];
+			}else if( this.settings['keys'] == null || typeof(this.settings['keys']) != "object" ){
+				this.settings['keys'] = [];
+			}
 			axios.post("?", {
 				"action": "get_new_key",
 			}).then(response=>{

@@ -36,7 +36,8 @@ class mongodb_connection{
 			'typeMap'=>[
 				'array'=>'array',
 				'root'=>'array',
-				'document'=>'array'
+				'document'=>'array',
+				'object'=>'array',
 			]
 		] );
 		$this->database = $this->connection->{ $db };
@@ -233,6 +234,7 @@ class mongodb_connection{
 			}
 			return $cur;
 		}
+
 		function count($collection, $filter = array(), $option = array() ){
 			$col = $this->database->{$collection};
 			try{

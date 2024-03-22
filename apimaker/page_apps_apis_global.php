@@ -22,7 +22,7 @@
 
 
 				<p>Engine Environment: <select v-model="test__['domain']" v-on:click="select_test_environment__" >
-						<option v-for="d,i in app__['settings']['domains']" v-bind:value="d['domain']" >{{ d['domain'] }}</option>
+						<option v-for="d,i in test_envs__" v-bind:value="d['d']" >{{ d['d'] }} ({{d['t']}})</option>
 					</select>
 				</p>
 				<p>{{ test_url__ }}</p>
@@ -83,6 +83,40 @@
 								<div v-bind:id="'collapse'+d['_id']" class="accordion-collapse collapse" v-bind:aria-labelledby="d['_id']" data-bs-parent="#auth_apis_list">
 									<div class="accordion-body">
 										<div class="btn btn-outline-dark btn-sm" style="float:right;" v-on:click="show_test3('auth_apis',ti)">Test</div>
+										<p>{{ d['des'] }}</p>
+										<div>{{ d['input-method'] }} {{ test_url__ }}{{ d['path'] }}</div>
+										<div>Content-Type: application/json</div>
+										<div>Access-Key: xxxxxxx</div>
+										<div>&nbsp;</div>
+										<pre v-if="'vpost_help' in d">{{ d['vpost_help'] }}</pre>
+										<pre v-else-if="'vpost' in d">{{ d['vpost'] }}</pre>
+									</div>
+								</div>
+							</div>
+						</div>
+				      </div>
+				    </div>
+				  </div>
+
+				  <div class="accordion-item">
+				    <h2 class="accordion-header" id="captcha_apis">
+				      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsecaptchaapis"  aria-controls="collapsecaptcha">
+				        Captcha APIs
+				      </button>
+				    </h2>
+				    <div id="collapsecaptchaapis" class="accordion-collapse collapse" aria-labelledby="captcha_apis" data-bs-parent="#main">
+				      <div class="accordion-body">
+						<!-- <p>Authentication APIs</p> -->
+						<div class="accordion" id="captcha_apis_list">
+							<div v-for="d,ti in apis['captcha']" class="accordion-item">
+								<h2 class="accordion-header" v-bind:id="d['_id']">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" v-bind:data-bs-target="'#collapse'+d['_id']"  v-bind:aria-controls="'collapse'+d['_id']">
+									{{ d['input-method'] }} {{ test_url__ }}{{ d['path'] }}
+									</button>
+								</h2>
+								<div v-bind:id="'collapse'+d['_id']" class="accordion-collapse collapse" v-bind:aria-labelledby="d['_id']" data-bs-parent="#captcha_apis_list">
+									<div class="accordion-body">
+										<div class="btn btn-outline-dark btn-sm" style="float:right;" v-on:click="show_test6('captcha',ti)">Test</div>
 										<p>{{ d['des'] }}</p>
 										<div>{{ d['input-method'] }} {{ test_url__ }}{{ d['path'] }}</div>
 										<div>Content-Type: application/json</div>
@@ -224,14 +258,13 @@
 
 				</div>
 
-
 			</div>
 		</div>
 	</div>
 
 
 	<div class="modal fade" id="popup_test__" tabindex="-1" >
-	  <div class="modal-dialog modal-xl">
+	  <div class="modal-dialog modal-lg modal-xl">
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <div class="modal-title" ><h5 class="d-inline">API Test</h5></div>
@@ -240,7 +273,7 @@
 	      <div class="modal-body"  style="position: relative;">
 
 	      	<p>Engine Environment: <select v-model="test__['domain']" v-on:click="select_test_environment__" >
-					<option v-for="d,i in app__['settings']['domains']" v-bind:value="d['domain']" >{{ d['domain'] }}</option>
+					<option v-for="d,i in test_envs__" v-bind:value="d['d']" >{{ d['d'] }} ({{d['t']}})</option>
 				</select>
 			</p>
 			<!-- <pre>{{ apis__[ test_type__ ][ test_table_id__ ] }}</pre> -->
@@ -294,6 +327,8 @@
 	  </div>
 	</div>
 
+
+
 </div>
 <script>
 var app = Vue.createApp({
@@ -323,6 +358,7 @@ var app = Vue.createApp({
 				"path": "",
 				"factors": {"t":"O", "v": {}}
 			},
+			"test_envs__": [],
 			"test_url__"			: "",
 			"test_path__": "",
 			"test_type__": "",
@@ -338,8 +374,40 @@ var app = Vue.createApp({
 	},
 	mounted(){
 		this.load_apis();
+		this.set_test_environments__();
 	},
 	methods: {
+		set_test_environments__: function(){
+			var e = [];
+			for( var d in this.app__['settings']['domains'] ){
+				e.push({
+					"t": "custom",
+					"u": this.app__['settings']['domains'][ d ]['url'],
+					"d": this.app__['settings']['domains'][ d ]['domain'],
+				});
+			}
+			if( 'cloud' in this.app__['settings'] ){
+				if( this.app__['settings']['cloud'] ){
+					var d = this.app__['settings']['cloud-subdomain'] + "." + this.app__['settings']['cloud-domain'];
+					e.push({
+						"t": "cloud",
+						"u": "https://" + d + "/",
+						"d": d,
+					});
+				}
+			}
+			if( 'alias' in this.app__['settings'] ){
+				if( this.app__['settings']['alias'] ){
+					var d = this.app__['settings']['alias-domain'];
+					e.push({
+						"t": "cloud-alias",
+						"u": "https://" + d + "/",
+						"d": d,
+					});
+				}
+			}
+			this.test_envs__ = e;
+		},
 		dotest_table: function(){
 
 			this.terr = "";
@@ -352,12 +420,14 @@ var app = Vue.createApp({
 
 			this.test_data__ = this.ace_editor.getValue();
 
-			var vdata = {};
-			try{
-				vdata = JSON.parse( this.test_data__ );
-			}catch(e){
-				this.terr = "JSON format error";
-				return false;
+			if( this.test_api_method__ == "POST" ){
+				var vdata = {};
+				try{
+					vdata = JSON.parse( this.test_data__ );
+				}catch(e){
+					this.terr = "JSON format error";
+					return false;
+				}
 			}
 			var vh = {};
 			if( this.access_token__ != "" ){
@@ -366,19 +436,33 @@ var app = Vue.createApp({
 
 			this.tmsg = "Testing API ...";
 			this.terr = "";
-
-			axios.post( this.test_url__ + this.test_path__, vdata, vh ).then(response=>{
-				this.tmsg = "";
-				if( response.status == 200 ){
-					this.test_response__ = response;
-				}else{
-					this.terr = "Response Error: " . response.status;
-				}
-			}).catch(error=>{
-				this.tmsg = "";this.terr = "Error";
-				console.log( error );
-				this.test_error__ = error;
-			});
+			if( this.test_api_method__ == "POST" ){
+				axios.post( this.test_url__ + this.test_path__, vdata, vh ).then(response=>{
+					this.tmsg = "";
+					if( response.status == 200 ){
+						this.test_response__ = response;
+					}else{
+						this.terr = "Response Error: " . response.status;
+					}
+				}).catch(error=>{
+					this.tmsg = "";this.terr = "Error";
+					console.log( error );
+					this.test_error__ = error;
+				});
+			}else{
+				axios.get( this.test_url__ + this.test_path__, vh ).then(response=>{
+					this.tmsg = "";
+					if( response.status == 200 ){
+						this.test_response__ = response;
+					}else{
+						this.terr = "Response Error: " . response.status;
+					}
+				}).catch(error=>{
+					this.tmsg = "";this.terr = "Error";
+					console.log( error );
+					this.test_error__ = error;
+				});
+			}
 		},
 		generate_access_key: function(){
 			this.kmsg = "Generating Temporary Key ...";
@@ -427,6 +511,9 @@ var app = Vue.createApp({
 			}
 		},
 		show_test: function(t,ti,at){
+			this.terr = "";
+			this.test_response__ = {};
+			this.test_error__ = {};
 			this.test_type__ = t;
 			this.test_thing_id__ = this.apis[ t ][ ti ]['_id'];
 			this.test_api_type__ = at;
@@ -451,6 +538,9 @@ var app = Vue.createApp({
 			this.ace_editor.setValue( this.test_data__ );
 		},
 		show_test2: function(t,di,ti,at){
+			this.terr = "";
+			this.test_response__ = {};
+			this.test_error__ = {};
 			this.test_type__ = t;
 			this.test_db_id__ = di;
 			this.test_thing_id__ = this.apis[ 'databases' ][ di ]['tables'][ ti ]['_id'];
@@ -464,6 +554,9 @@ var app = Vue.createApp({
 			setTimeout(this.init_ace, 500);
 		},
 		show_test3: function(t,ti){
+			this.terr = "";
+			this.test_response__ = {};
+			this.test_error__ = {};
 			this.test_type__ = t;
 			this.test_db_id__ = "";
 			this.test_thing_id__ = this.apis[ 'auth_apis' ][ ti ]['_id']+'';
@@ -477,6 +570,9 @@ var app = Vue.createApp({
 			setTimeout(this.init_ace, 500);
 		},
 		show_test5: function(t,ti){
+			this.terr = "";
+			this.test_response__ = {};
+			this.test_error__ = {};
 			this.test_type__ = t;
 			this.test_db_id__ = "";
 			this.test_thing_id__ = this.apis[ 'apis' ][ ti ]['_id']+'';
@@ -489,15 +585,29 @@ var app = Vue.createApp({
 			this.test_popup__.show();
 			setTimeout(this.init_ace, 500);
 		},
+		show_test6: function(t,ti){
+			this.terr = "";
+			this.test_response__ = {};
+			this.test_error__ = {};
+			this.test_type__ = t;
+			this.test_db_id__ = "";
+			this.test_thing_id__ = this.apis[ 'captcha' ][ ti ]['_id']+'';
+			this.test_api_type__ = "";
+			this.test_api_method__ = this.apis[ 'captcha' ][ ti ][ 'input-method' ];
+			this.test_path__ = this.apis[ 'captcha' ][ ti ]['path'];
+			this.test_data__ = this.apis[ 'captcha' ][ ti ][ 'vpost' ];
+			// console.log( this.test_data__ );
+			this.test_popup__ = new bootstrap.Modal( document.getElementById('popup_test__') );
+			this.test_popup__.show();
+			setTimeout(this.init_ace, 500);
+		},
 		select_test_environment__: function(){
 			setTimeout(this.select_test_environment__2,200);
 		},
 		select_test_environment__2: function(){
-			for( var d in this.app__['settings']['domains'] ){
-				if( this.app__['settings']['domains'][ d ]['domain'] == this.test__['domain'] ){
-					this.test__['path'] = this.app__['settings']['domains'][ d ]['path'];
-					var tu = this.app__['settings']['domains'][ d ]['url'] 
-					//+ "?version_id=<?=$config_param4 ?>&test_token=<?=md5($config_param4) ?>";
+			for( var i=0;i<this.test_envs__.length;i++ ){
+				if( this.test_envs__[i]['d'] == this.test__['domain'] ){
+					var tu = this.test_envs__[i]['u']
 					this.test_url__ = tu;
 					break;
 				}

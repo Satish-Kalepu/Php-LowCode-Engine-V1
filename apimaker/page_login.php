@@ -54,6 +54,7 @@ var app = createApp({
   methods: {
   	dologin: function(){
   		if( this.cap == false ){
+  			this.user = this.user.trim();
   			if( this.user.match(/^[a-z0-9]+$/) && this.pass.length>3 ){
 	  			this.cap = true;
 	  			this.get_captcha();

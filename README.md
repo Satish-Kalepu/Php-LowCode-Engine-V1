@@ -23,7 +23,7 @@ Apache 2.4,  PHP 8.2, MongoDB 5+
 
 ## Install 
 
-```git clone https://github.com/Satish-Kalepu/backendmaker_library.git```
+```git clone https://github.com/Satish-Kalepu/Php-LowCode-Engine-V1```
 
 ### Docker Compose
 ```docker compose up ```

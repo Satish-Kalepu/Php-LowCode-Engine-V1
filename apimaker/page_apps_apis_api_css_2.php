@@ -72,6 +72,15 @@
 		-webkit-box-flex: 0;
 		min-height:20px;
 	}
+	.mycol1d{
+		position:relative;
+		width:10px;
+		min-height:20px;
+	}
+	.disable_btn{ width:10px; min-height:20px; background-color:#f8f8f8; cursor:pointer; align-self: stretch; }
+	.disable_btn:hover{ background-color:#aaa; }
+	.enable_btn{ width:10px; min-height:20px; background-color:#aaa; cursor:pointer; align-self: stretch; }
+	.enable_btn:hover{ background-color:#f8f8f8; }
 	.mycol11{
 		position:relative;
 		width:25px;
@@ -99,6 +108,7 @@
 		max-width:calc( 100% - 110px );;
 		-webkit-box-flex:1;
 	}
+	
 	.mycolv{
 		width:98%; max-height:200px; overflow:auto; resize:both;
 	}
@@ -412,6 +422,14 @@
 	    }
     } 
 
+    .mycol3disabled{
+		background-color: #ccc;
+	}
+	.mycol3disabled *{
+		color:#999;
+		background-color: #ccc;
+	}
+
 
     .test_loader2 {
 	  width: 60px;
@@ -474,5 +492,6 @@
 
 .help-div{ display:inline; padding:2px; cursor:pointer; background-color:#f8f8f8; padding:0px 5px; }
 .help-div:hover{ font-weight:bold; background-color:#e0e0e0; }
+
 
 </style>

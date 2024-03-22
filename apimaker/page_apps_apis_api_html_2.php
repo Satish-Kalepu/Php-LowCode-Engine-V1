@@ -6,8 +6,11 @@
 	<div style="position: fixed;left:150px; top:40px; height: 60px; width:calc( 100% - 150px ); background-color: white; overflow: hidden; border-bottom:1px solid #ccc; " >
 		<div style="padding: 10px;" >
 			<div>
-				<h5 class="d-inline">API: /engine/{{ s2_iiiiiiiipa['name'] }}</h5>
+				<h5 class="d-inline">API: /{{ s2_iiiiiiiipa['name'] }}</h5>
 				<div v-on:click="s2_mrof_tide_nepo" class="btn btn-default btn-sm" style="float:right;" ><i class="fa fa-lg fa-pencil-square-o" ></i></div>
+				<select v-model="s2_di_noisrev" class="form-select form-select-sm w-auto" style="float:right;" >
+					<option v-for="vd in s2_snoisrev_ipa" v-bind:value="vd['_id']" >{{ vd['version'] }}{{ (vd['_id']==s2_iiiiiiiipa['_id']?"Active":"") }}</option>
+				</select>
 			</div>
 			<div class="d-inline" >{{ s2_iiiiiiiipa['des'] }}</div>
 			<div v-if="msg" class="alert alert-primary" >{{ msg }}</div>
@@ -53,8 +56,8 @@
 	        	<div>&nbsp;</div>
 	        	<div>Description</div>
 	        	<textarea spellcheck="false" class="form-control" v-model="s2_iiipa_tide['des']" ></textarea>
-	        	<div v-if="cmsg" class="alert alert-success" >{{ cmsg }}</div>
-	        	<div v-if="cerr" class="alert alert-success" >{{ cerr }}</div>
+	        	<div v-if="s2_gggggggsmc" class="alert alert-success" >{{ s2_gggggggsmc }}</div>
+	        	<div v-if="s2_rrrrrrrrec" class="alert alert-danger" >{{ s2_rrrrrrrrec }}</div>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>

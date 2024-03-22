@@ -113,8 +113,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-              <div>__engine_path__</div>
-              <div>__engine_url__</div>
+              <div>--engine-path--</div>
+              <div>--engine-url--</div>
           </div>
         </div>
       </div>
@@ -146,6 +146,9 @@ var app = Vue.createApp({
       app_id: "<?=$app['_id'] ?>",
       app__: <?=json_encode($app) ?>,
       file__: <?=json_encode($file) ?>,
+      test_envs__: [],
+      test_url__: "",
+      test_domain__: "",
       image_src: "",
       vurls: {},
       current_path: "/",
@@ -185,8 +188,66 @@ var app = Vue.createApp({
       setTimeout(this.init,100);
     }
     this.update_paths();
+    this.set_test_environments__();
   },
   methods: {
+
+    set_test_environments__: function(){
+      var e = [];
+      for( var d in this.app__['settings']['domains'] ){
+        e.push({
+          "t": "custom",
+          "u": this.app__['settings']['domains'][ d ]['url'],
+          "d": this.app__['settings']['domains'][ d ]['domain'],
+        });
+      }
+      if( 'cloud' in this.app__['settings'] ){
+        if( this.app__['settings']['cloud'] ){
+          var d = this.app__['settings']['cloud-subdomain'] + "." + this.app__['settings']['cloud-domain'];
+          e.push({
+            "t": "cloud",
+            "u": "https://" + d + "/",
+            "d": d,
+          });
+        }
+      }
+      if( 'alias' in this.app__['settings'] ){
+        if( this.app__['settings']['alias'] ){
+          var d = this.app__['settings']['alias-domain'];
+          e.push({
+            "t": "cloud-alias",
+            "u": "https://" + d + "/",
+            "d": d,
+          });
+        }
+      }
+      this.test_envs__ = e;
+      if( e.length == 1 ){
+        this.test_domain__ = e[1]['d']+'';
+        this.select_test_environment__2();
+      }
+    },
+    select_test_environment__: function(){
+      setTimeout(this.select_test_environment__2,200);
+    },
+    select_test_environment__2: function(){
+      for( var i=0;i<this.test_envs__.length;i++ ){
+        //in this.app__['settings']['domains'] ){
+        if( this.test_envs__[i]['d'] == this.test_domain__ ){
+          //this.test__['path'] = this.app__['settings']['domains'][ d ]['path'];
+          var tu = this.test_envs__[i]['u'] + "?version_id=<?=$config_param4 ?>&test_token=<?=md5($config_param4) ?>";
+          if( this.test_debug__ ){
+            tu  = tu + "&debug=true";
+          }
+          if( this.api__['input-method'] == "GET" ){
+            tu = tu + "&" + this.make_query_string__( this.test__['factors']['v'] );
+          }
+          this.test_url__ = tu;
+          break;
+        }
+      }
+    },
+
     isitimage: function(){
       if( this.file__['type'].match(/^image/i) ){
         this.image_src = "data:"+this.file__['type']+";base64," + this.file__['data'];

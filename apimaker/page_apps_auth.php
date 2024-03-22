@@ -38,7 +38,8 @@
 								<td>Key</td>
 								<td>Updated</td>
 								<td>Expires</td>
-								<td>Active</td>
+								<td>Last Used</td>
+								<td>Hits</td>
 							</tr>
 							<tr v-for="v,i in ak_keys">
 								<td><div class="bsvg" v-on:click="ak_edit_open(i)"><img src="<?=$config_global_apimaker_path ?>images/edit.svg" style="width:20px;" ></div></td>
@@ -46,23 +47,32 @@
 								<td nowrap>{{ v['_id'] }}</td>
 								<td nowrap>{{ v['updated'].substr(0,16) }}</td>
 								<td nowrap>
-									<div>{{ v['expire'] }}</div>
+									<!-- <div>{{ v['expire'] }}</div> -->
 									<div v-html="ak_list_get_date( v['expire'] )"></div>
 								</td>
-								<td>{{ v['active'] }}</td>
+								<td nowrap>
+									<template v-if="'last_used' in v" ><div v-html="ak_list_last_date( v['last_used'] )"></div></template>
+								</td>
+								<td>
+									<template v-if="'hits' in v" >{{ v['hits'] }}</template>
+								</td>
 							</tr>
 						</table>
 
 					</div>
 					<div v-if="tab=='tokens'" >
-						<div v-if="ak_msg" >{{ ak_msg }}</div>
-						<div v-if="ak_error" ckass="text-danger" >{{ ak_error }}</div>
+						<div style="min-height:30px;">
+							<div v-if="ak_msg" >{{ ak_msg }}</div>
+							<div v-if="ak_error" ckass="text-danger" >{{ ak_error }}</div>
+						</div>
 						<table class="table table-bordered table-sm w-auto">
 							<tr>
 								<td></td><td></td>
 								<td>Token</td>
 								<td>Created</td>
 								<td>Expires</td>
+								<td>Last Used</td>
+								<td>Hits</td>
 								<td>IP</td>
 								<td>UserAgent</td>
 							</tr>
@@ -72,8 +82,14 @@
 								<td nowrap>{{ v['_id'] }}</td>
 								<td nowrap>{{ v['updated'].substr(0,16) }}</td>
 								<td nowrap>
-									<div>{{ v['expire'] }}</div>
+									<!-- <div>{{ v['expire'] }}</div> -->
 									<div v-html="token_get_date( v['expire'] )"></div>
+								</td>
+								<td nowrap>
+									<template v-if="'last_used' in v" ><div v-html="token_last_date( v['last_used'] )"></div></template>
+								</td>
+								<td>
+									<template v-if="'hits' in v" >{{ v['hits'] }}</template>
 								</td>
 								<td>{{ v['ips'][0] }}</td>
 								<td>{{ v['ua'] }}</td>
@@ -1242,10 +1258,18 @@ var app = Vue.createApp({
 			var d = new Date(t);
 			var t2 = (new Date()).getTime();
 			//var dd = d.toISOString().substr(0,16).replace("T", " ");
-			var dd = d.toLocaleString();
+			var dd = d.toDateString() + " "+ d.toTimeString().substr(0,20);
+			var dd = this.toDateString(t);
 			if( t < t2 ){
 				dd = dd + "<BR><span class='text-danger' >Expired</span>";
 			}
+			return dd;
+		},
+		ak_list_last_date: function(t){
+			var t = Number(t)*1000;
+			var d = new Date(t);
+			var dd = d.toDateString() + " "+ d.toTimeString().substr(0,20);
+			var dd = this.toDateString(t);
 			return dd;
 		},
 		token_get_date: function(t){
@@ -1254,17 +1278,25 @@ var app = Vue.createApp({
 			var t2 = (new Date()).getTime();
 			console.log( t - t2 );
 			//var dd = d.toISOString().substr(0,16).replace("T", " ");
-			var dd = d.toISOString();
-			//var dd = this.toDateString(t);
+			var dd = d.toDateString() + " "+ d.toTimeString().substr(0,20);
+			var dd = this.toDateString(t);
 			if( t < t2 ){
 				dd = dd + "<BR><span class='text-danger' >Expired</span>";
 			}
 			return dd;
 		},
+		token_last_date: function(t){
+			var t = Number(t)*1000;
+			var d = new Date(t);
+			//var dd = d.toISOString().substr(0,16).replace("T", " ");
+			//var dd = d.toDateString() + " "+ d.toTimeString().substr(0,20);
+			var dd = this.toDateString(t);
+			return dd;
+		},
 		toDateString(t){
 			var dt = new Date( t );
 			var vy  = Number(dt.getFullYear());
-			var vm  = Number(dt.getMonth());
+			var vm  = Number(dt.getMonth()+1);
 			var vd  = Number(dt.getDate());
 			var vhr = Number(dt.getHours());
 			var vmn = Number(dt.getMinutes());

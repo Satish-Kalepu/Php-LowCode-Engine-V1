@@ -11,13 +11,15 @@
 			<div style="float:right;" ><div class="btn btn-outline-dark btn-sm" v-on:click="show_create_app()" >Create App</div></div>
 			<div style="float:right;" ><div class="btn btn-outline-dark btn-sm me-2" v-on:click="importnow()" >Import</div></div>
 			<div class="h3 mb-3">APPs</div>
-			<div v-for="v,vi in apps" style="padding:5px; border-radius:5px; margin-bottom: 10px; border:1px solid #999;" >
-				<div style="float:right;">
-					<div class="btn btn-outline-dark btn-sm me-2" v-on:click="clone_app__(v['_id'])" >Clone</div>
-					<div class="btn btn-outline-dark btn-sm" v-on:click="delete_app__(v['_id'])" >X</div>
+			<div style="height: calc( 100% - 100px ); overflow: auto;">
+				<div v-for="v,vi in apps" style="padding:5px; border-radius:5px; margin-bottom: 10px; border:1px solid #999;" >
+					<div style="float:right;">
+						<div class="btn btn-outline-dark btn-sm me-2" v-on:click="clone_app__(v['_id'])" >Clone</div>
+						<div class="btn btn-outline-danger btn-sm" v-on:click="delete_app__(v['_id'])" >X</div>
+					</div>
+					<div><a v-bind:href="'<?=$config_global_apimaker_path ?>apps/'+v['_id']" style="cursor:pointer;"><b>{{ v['app'] }}</b></a></div>
+					<div>{{ v['des'] }}</div>
 				</div>
-				<div><a v-bind:href="'<?=$config_global_apimaker_path ?>apps/'+v['_id']" style="cursor:pointer;"><b>{{ v['app'] }}</b></a></div>
-				<div>{{ v['des'] }}</div>
 			</div>
 		</div>
 	</div>

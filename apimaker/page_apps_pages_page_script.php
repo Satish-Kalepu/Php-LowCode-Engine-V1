@@ -332,8 +332,32 @@ var app = s__({
 		setTimeout(this.initialize_events,1000);
 		setTimeout(this.initialize_tables,2000);
 		setInterval(this.vmtt_set,300);
+		this.set_preview_urls();
 	},
 	methods: {
+
+		set_preview_urls: function(){
+			//alert( this.vurl );
+			var urls = {};
+			if( 'cloud' in this.app__['settings'] ){if( this.app__['settings']['cloud'] ){
+				urls['cloud'] = "https://" + this.app__['settings']['cloud-subdomain'] + '.' + this.app__['settings']['cloud-domain'] + '/' + this.app__['settings']['cloud-enginepath'] + this.file__['path'].substr(1,500) + this.file__['name'];
+				if( 'alias' in this.app__['settings'] ){if( this.app__['settings']['alias'] ){
+					urls['alias'] = "https://" + this.app__['settings']['alias-domain'] + this.file__['path'].substr(1,500) + this.file__['name'];
+				}}
+			}}
+			if( 'domains' in this.app__['settings'] ){
+				urls['domains'] = [];
+				for(var d=0;d<this.app__['settings']['domains'].length;d++ ){
+					urls['domains'].push( this.app__['settings']['domains'][ d ]['url'] + this.file__['path'].substr(1,500) + this.file__['name'] );
+				}
+			}
+			this.vurls = urls;
+		},
+		previewit: function(){
+			this.url_modal = new bootstrap.Modal(document.getElementById('url_modal'));
+			this.url_modal.show();
+		},
+
 		delete_tag: function(){
 			if( confirm("Are you sure to delete tag: " + this.focused.nodeName + "\n\n" + html_beautify( this.focused.outerHTML) ) ){
 				this.focused.remove();

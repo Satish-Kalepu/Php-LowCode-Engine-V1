@@ -1,7 +1,7 @@
 
 	<a class="left_btn" href="<?=$config_global_apimaker_path ?>">APPs</a>
 	<!-- <p style='padding:5px; margin:5px; color:#333; font-weight: 500;'><?=htmlspecialchars($app['app']) ?></p> -->
-	<a class="left_btn <?=$config_param2=='home'||$config_param2==''?"left_btn_active":"" ?>" v-bind:href="path+'home'" style="font-weight: 500;">sdf dsfd fdsf <?=htmlspecialchars($app['app']) ?></a>
+	<a class="left_btn <?=$config_param2=='home'||$config_param2==''?"left_btn_active":"" ?>" v-bind:href="path+'home'" style="font-weight: 500;"><?=htmlspecialchars($app['app']) ?></a>
 	<a class="left_btn <?=$config_param2=='apis'?"left_btn_active":"" ?>" v-bind:href="path+'apis'">APIs</a>
 	<a class="left_btn <?=$config_param2=='apis_global'?"left_btn_active":"" ?>" v-bind:href="path+'apis_global'">Global APIs</a>
 	<a class="left_btn <?=$config_param2=='functions'?"left_btn_active":"" ?>" v-bind:href="path+'functions'">Functions</a>

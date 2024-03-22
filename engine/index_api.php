@@ -400,7 +400,7 @@
 			echo $d;
 		}else if( $api_version['output-type'] == "text/plain" ){
 			//print_r( $result );exit;
-			request_log($result['status'], $result['error'], $api_version['output-type'], substr($result['body'],0,1024), $log);
+			//request_log($result['status'], $result['error'], $api_version['output-type'], substr($result['body'],0,1024), $log);
 			header("content-type: text/plain");
 			echo $result['body'] . "\n";
 			if( $_GET['debug'] ){
@@ -408,7 +408,7 @@
 			}
 		}else{
 			//require("layout_home.php");
-			request_log("fail", "unhandled output type", "text/plain", "", []);
+			//request_log("fail", "unhandled output type", "text/plain", "", []);
 			header("http/1.1 404 not found");
 			header("content-type: text/plain");
 			header("stage: one");

@@ -60,6 +60,7 @@ if( $_POST['action'] == "get_global_apis" ){
 	$apis = [
 		"apis"=>[],
 		"auth_apis"=>[],
+		"captcha"=>[],
 		"tables_dynamic"=>[],
 		"databases"=>[],
 	];
@@ -145,6 +146,29 @@ if( $_POST['action'] == "get_global_apis" ){
 	"code": "",
 	"expire_minutes": 2 //optional
 }',
+	];
+	$apis['auth_apis'][] = [
+		"_id"=>"10004",
+		"path" => "_api/auth/verify_session_key",
+		"name"=>"verify_session_key",
+		"des"=>"Verify session key validity",
+		'input-method'=>"POST",
+		"vpost"=>json_encode([
+			'session_key'=>"",
+		],JSON_PRETTY_PRINT),
+		"vpost_help"=>'{
+	"session_key": "",
+}',
+	];
+
+	$apis['captcha'][] = [
+		"_id"=>"10101",
+		"path" => "_api/captcha/get",
+		"name"=>"get",
+		"des"=>"Generate Captcha",
+		'input-method'=>"POST",
+		"vpost"=>'{"ok":"ok"}',
+		"vpost_help"=>'{"ok":"ok"}',
 	];
 
 	$res = $mongodb_con->find( $config_global_apimaker['config_mongo_prefix'] . "_tables_dynamic", [
@@ -409,6 +433,12 @@ if( $_POST['action'] == "generate_access_token" ){
 		$thing = [
 			"_id"=>"auth_api:".$_POST['thing_id'],
 			"thing"=>"auth_api:something"
+		];
+	}else if( $_POST['type'] == "captcha" ){
+		$service = "captcha";
+		$thing = [
+			"_id"=>"captcha:".$_POST['thing_id'],
+			"thing"=>"captcha:something"
 		];
 	}else{
 		json_response("fail", "unknown type");

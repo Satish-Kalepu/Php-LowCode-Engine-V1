@@ -110,6 +110,7 @@ if( $config_param4 && $main_api ){
 		echo404("Incorrect API Version ID");
 	}
 	$res = $mongodb_con->find_one( $config_global_apimaker['config_mongo_prefix'] . "_apis_versions", [
+		"app_id"=>$config_param1,
 		"api_id"=>$main_api['_id'],
 		"_id"=>$config_param4
 	]);
@@ -117,6 +118,18 @@ if( $config_param4 && $main_api ){
 		$api = $res['data'];
 	}else{
 		echo404("Api version not found!");
+	}
+
+	$res = $mongodb_con->find( $config_global_apimaker['config_mongo_prefix'] . "_apis_versions", [
+		"app_id"=>$config_param1,
+		"api_id"=>$main_api['_id'],
+	], ['projection'=>[ 'version'=>1 ] ]);
+	if( $res['data'] ){
+		$api_versions = $res['data'];
+	}
+
+	if( $main_api['version_id'] == $api['_id'] ){
+		
 	}
 
 	if( !isset($api['auth-type']) ){

@@ -26,6 +26,7 @@ $loc = [
 	"../config_global_apimaker.php",
 	"../../config_global_apimaker.php",
 	"/var/tmp/config_global_apimaker.php",
+	"/tmp/config_global_apimaker.php",
 ];
 $locc=0;
 $file_loc = "";

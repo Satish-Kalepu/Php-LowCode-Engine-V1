@@ -54,6 +54,8 @@ var app = s2_ssssssssss({
 			s2_rrrrrrrrec: "",
 			s2_pppppppppa: <?=json_encode($app) ?>,
 			s2_iiiiiiiipa: <?=json_encode($api) ?>,
+			s2_snoisrev_ipa: <?=json_encode($api_versions) ?>,
+			s2_di_noisrev: "<?=$api['_id'] ?>",
 			s2_iiipa_tide: {},
 			s2_ladom_tide: false,
 			s2_nnnnnnekot: "",
@@ -99,6 +101,7 @@ var app = s2_ssssssssss({
 			"s2_gggol_tset"			: [],
 			"s2_gubed_tset"			: false,
 			"s2_gnitiaw_tset"		: false,
+			"s2_ssvne_tset": [],
 			"s2_lllru_tset"			: "",
 			"s2_wweiv_nosj"			: false,
             "s2_sutats_kcol"			: 0,
@@ -212,7 +215,7 @@ var app = s2_ssssssssss({
 					"sub": [
 						"SetResponseStatus", "SetResponseHeader", "SetCookie",
 						"RespondStatus",
-						"RespondJSON", "RespondVar", "RespondXML", "AddHTML", "RenderHTML",
+						"RespondJSON", "RespondVar", "RespondVars", "RespondXML", "AddHTML", "RenderHTML",
 						"Log",
 					]
 				},
@@ -352,6 +355,7 @@ var app = s2_ssssssssss({
 			}
 		}
 		this.s2_atad_laitini_daol();
+		this.s2_stnemnorivne_tset_tes();
 		//document.addEventListener("mousedown", this.event_mousedown );
 		document.addEventListener("keyup", this.s2_puyek_tneve );
 		document.addEventListener("keydown", this.s2_nwodyek_tneve);
@@ -361,14 +365,46 @@ var app = s2_ssssssssss({
 		window.addEventListener("paste", this.s2_etsap_tneve, true);
 	},
 	methods: {
+		s2_stnemnorivne_tset_tes: function(){
+			var e = [];
+			for( var d in this.s2_pppppppppa['settings']['domains'] ){
+				e.push({
+					"t": "custom",
+					"u": this.s2_pppppppppa['settings']['domains'][ d ]['url'],
+					"d": this.s2_pppppppppa['settings']['domains'][ d ]['domain'],
+				});
+			}
+			if( 'cloud' in this.s2_pppppppppa['settings'] ){
+				if( this.s2_pppppppppa['settings']['cloud'] ){
+					var d = this.s2_pppppppppa['settings']['cloud-subdomain'] + "." + this.s2_pppppppppa['settings']['cloud-domain'];
+					e.push({
+						"t": "cloud",
+						"u": "https://" + d + "/",
+						"d": d,
+					});
+				}
+			}
+			if( 'alias' in this.s2_pppppppppa['settings'] ){
+				if( this.s2_pppppppppa['settings']['alias'] ){
+					var d = this.s2_pppppppppa['settings']['alias-domain'];
+					e.push({
+						"t": "cloud-alias",
+						"u": "https://" + d + "/",
+						"d": d,
+					});
+				}
+			}
+			this.s2_ssvne_tset = e;
+		},
 		s2_tnemnorivne_tset_tceles: function(){
 			setTimeout(this.s2_tnemnorivne_tset_tceles2,200);
 		},
 		s2_tnemnorivne_tset_tceles2: function(){
-			for( var d in this.s2_pppppppppa['settings']['domains'] ){
-				if( this.s2_pppppppppa['settings']['domains'][ d ]['domain'] == this.s2_tttttttset['domain'] ){
-					this.s2_tttttttset['path'] = this.s2_pppppppppa['settings']['domains'][ d ]['path'];
-					var tu = this.s2_pppppppppa['settings']['domains'][ d ]['url'] + "?version_id=<?=$config_param4 ?>&test_token=<?=md5($config_param4) ?>";
+			for( var i=0;i<this.s2_ssvne_tset.length;i++ ){
+				//in this.s2_pppppppppa['settings']['domains'] ){
+				if( this.s2_ssvne_tset[i]['d'] == this.s2_tttttttset['domain'] ){
+					//this.s2_tttttttset['path'] = this.s2_pppppppppa['settings']['domains'][ d ]['path'];
+					var tu = this.s2_ssvne_tset[i]['u'] + "?version_id=<?=$config_param4 ?>&test_token=<?=md5($config_param4) ?>";
 					if( this.s2_gubed_tset ){
 						tu  = tu + "&debug=true";
 					}
@@ -882,6 +918,12 @@ var app = s2_ssssssssss({
 					this.s2_ooooooohce("Not key object");
 				}
 			}else{this.s2_ooooooohce("k not found");}
+		},
+		s2_hsup_sravdnopser: function(v){
+			v.push({"t":"V", "v":{"v":"","t":"","vs":false} });
+		},
+		s2_led_sravdnopser: function(v,ri){
+			v.splice(ri,1);
 		},
 		s2_evas_atad_pupop: function(){
 			this.s2_ladom_pupop.hide();
@@ -1475,19 +1517,19 @@ var app = s2_ssssssssss({
 					      "k": {"v": "Let", "t": "c", "vs": false}, "pk": "Let",
 					      "t": "c",
 					      "d": {"lhs": "a","rhs": {"t": "N","v": 10}},
-					      "l": 1,"e": false,"ee": true,"er": "","wr": ""
+					      "l": 1,"e": false,"ee": true,"er": "","wr": "", "a": false,
 					    },
 					    {
 					      "k": {"v": "Let", "t": "c", "vs": false}, "pk": "Let",
 					      "t": "c",
 					      "d": {"lhs": "b","rhs": {"t": "N","v": 10}},
-					      "l": 1,"e": false,"ee": true,"er": "","wr": ""
+					      "l": 1,"e": false,"ee": true,"er": "","wr": "", "a": false,
 					    },
 					    {
 					      "k": {"v": "Let", "t": "c", "vs": false}, "pk": "Let",
 					      "t": "c",
 					      "d": {"lhs": "c","rhs": {"t": "N","v": 0}},
-					      "l": 1,"e": false,"ee": true,"er": "","wr": ""
+					      "l": 1,"e": false,"ee": true,"er": "","wr": "", "a": false,
 					    },
 					    {
 					      "k": {"v": "Math","t": "c","vs": false},"pk": "Math",
@@ -1502,16 +1544,40 @@ var app = s2_ssssssssss({
 					            ],"OP": "."}
 					        ]
 					      },
-					      "l": 1,"e": false,"ee": true,"er": "","wr": ""
+					      "l": 1,"e": false,"ee": true,"er": "","wr": "", "a": false,
 					    },
+					    // {
+					    //   "k": {"v": "Respond","t": "c","vs": false},"pk": "Respond",
+					    //   "t": "c",
+					    //   "d": {"t": "O","v": {"status": {"t": "T","v": "success","k":"status"},"data": {"t": "V","v": {"v": "c","t": "N","vs": {"v": "","t": "","d": []}},"k":"data"}}},
+					    //   "l": 1,"e": false,"ee": true,"er": "","wr": "", "a": false,
+					    // },
 					    {
-					      "k": {"v": "Respond","t": "c","vs": false},"pk": "Respond",
-					      "t": "c",
-					      "d": {"t": "O","v": {"status": {"t": "T","v": "success","k":"status"},"data": {"t": "V","v": {"v": "c","t": "N","vs": {"v": "","t": "","d": []}},"k":"data"}}},
-					      "l": 1,"e": false,"ee": true,"er": "","wr": ""
-					    }
+							"k": {"v": "RespondJSON", "t": "c", "vs": false}, "pk": "RespondJSON",
+							"t": "c",
+							"d": {
+								"output": {
+								  "t": "O",
+								  "v": {
+									"status": {"t": "T","v": "success","k": "status"},
+									"data": {"t": "V","v": {"v": "c","t": "N","vs": {"v": "","t": "","d": []}},"k": "data"}
+								  }
+								},
+								"pretty": {"t": "B","v": "false"}
+							},
+							"l": 1,"e": false,"ee": true,"er": "","wr": "", "a": false,
+						}
+
+
 				];
 				this.s2_ddeen_evas=true;
+			}else{
+				for(var i=0;i<this.s2_eeeeenigne['stages'].length;i++){
+					if( 'a' in this.s2_eeeeenigne['stages'][i] == false ){
+						this.s2_eeeeenigne['stages'][i]['a'] = false;
+						this.s2_ddeen_evas=true;
+					}
+				}
 			}
 			var dt = new Date();
 			this.s2_raey_tnerruc = dt.getFullYear();
@@ -3137,6 +3203,7 @@ var app = s2_ssssssssss({
 					"ee": true, //editable
 					"er": "",
 					"wr": "",
+					"a": false,
 				});
 				new_stage_id = this.s2_eeeeenigne['stages'].length-1;
 			}else{
@@ -3154,11 +3221,20 @@ var app = s2_ssssssssss({
 					"ee": true,
 					"er": "",
 					"wr": "",
+					"a": false,
 				});
 			}
 			this.s2_skcehc_dnif();
 			this.s2_ddeen_evas = true;
 			this.s2_selbairav_llif();
+		},
+		s2_elbasid_egats: function(vi){
+			this.s2_eeeeenigne['stages'][ vi ]['a'] = true;
+			this.s2_ddeen_evas = true;
+		},
+		s2_elbane_egats: function(vi){
+			this.s2_eeeeenigne['stages'][ vi ]['a'] = false;
+			this.s2_ddeen_evas = true;
 		},
 		s2_egats_egnahc_egats: function( vid, new_key, new_type ){
 			this.s2_egats_detaerc_tsuj = vid;
@@ -3203,7 +3279,7 @@ var app = s2_ssssssssss({
 								"l": curstage,
 								"e": false,
 								"d": {},
-								"er": "","wr": "",
+								"er": "","wr": "","a":false,
 								"vrand": s2_ddddddnarv,
 								"vend": true
 							});
@@ -3214,7 +3290,7 @@ var app = s2_ssssssssss({
 								"l": (curstage+1),
 								"e": false,
 								"d": {},
-								"er": "","wr": "",
+								"er": "","wr": "","a":false,
 							});
 						}
 					}

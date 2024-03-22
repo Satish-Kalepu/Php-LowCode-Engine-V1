@@ -300,12 +300,11 @@
 		header( "Cache-Control: post-check=0, pre-check=0", false );
 		header( "Pragma: no-cache" );		
 		if( $file_version['t'] == "inline" ){
-
 			if( isset($file_version['vars_used']) ){
 				if( is_array($file_version['vars_used']) ){
 					$vars = [
-						"__engine_url__" =>"https://" . $_SERVER['HTTP_HOST'] . $config_global_apimaker_engine['config_engine_path'],
-						"__engine_path__"=>$config_global_apimaker_engine['config_engine_path'],
+						"--engine-url--" =>"https://" . $_SERVER['HTTP_HOST'] . $config_global_apimaker_engine['config_engine_path'],
+						"--engine-path--"=>$config_global_apimaker_engine['config_engine_path'],
 					];
 					foreach( $file_version['vars_used'] as $var ){
 						if( isset($vars[$var]) ){
@@ -314,7 +313,6 @@
 					}
 				}
 			}
-
 			echo $file_version['data'];
 		}else if( $file_version['t'] == "base64" && preg_match("/^image/i", $file_version['type']) ){
 			echo base64_decode($file_version['data']);exit;
